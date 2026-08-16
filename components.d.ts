@@ -15,11 +15,14 @@ declare module 'vue' {
     Data1: typeof import('./src/components/data/data1.vue')['default']
     Data2: typeof import('./src/components/data/data2.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCol: typeof import('element-plus/es')['ElCol']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPagination: typeof import('element-plus/es')['ElPagination']
+    ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
@@ -28,9 +31,11 @@ declare module 'vue' {
     Login: typeof import('./src/components/Login.vue')['default']
     Main: typeof import('./src/components/Main.vue')['default']
     MenuBar: typeof import('./src/components/MenuBar.vue')['default']
-    Placeholder: typeof import('./src/components/Placeholder.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Web: typeof import('./src/components/Web.vue')['default']
+  }
+  export interface GlobalDirectives {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

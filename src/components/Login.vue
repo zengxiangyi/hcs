@@ -1,22 +1,35 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { baseAPI } from '../api/base'
+import type { LoginResult } from '../api/base'
+
 const router = useRouter()
 
 const username = ref('')
 const password = ref('')
+const loading = ref(false)
 
-function handleLogin() {
-  // TODO: 接入登录逻辑
-  console.log('username:', username.value, 'password:', password.value)
-  if(username.value === 'admin' && password.value === '123456'){
-    console.log('登录成功')
-    // 跳转到main.vue
-    router.push('/web')
-
-  }else{
-    console.log('登录失败')
+async function handleLogin() {
+  if (!username.value || !password.value) {
+    ElMessage.warning('请输入用户名和密码')
     return
+  }
+  loading.value = true
+  try {
+    // baseAPI.login 返回 ApiResponse<LoginResult>，取 data 为业务数据
+    const { data } = (await baseAPI.login({
+      username: username.value,
+      password: password.value,
+    })) as { data: LoginResult }
+    localStorage.setItem('token', data.token)
+    ElMessage.success('登录成功')
+    router.push('/web')
+  } catch (err: any) {
+    ElMessage.error(err?.message || '登录失败')
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -40,7 +53,7 @@ function handleLogin() {
           placeholder="密码"
           autocomplete="current-password"
         />
-        <button class="login-button" type="submit">确定</button>
+        <button class="login-button" type="submit" :disabled="loading">{{ loading ? '登录中...' : '确定' }}</button>
       </form>
     </div>
   </div>

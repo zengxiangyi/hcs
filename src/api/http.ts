@@ -50,4 +50,16 @@ http.interceptors.response.use(
   }
 )
 
-export default http
+/**
+ * 类型化封装：因响应拦截器已把 AxiosResponse 解包为 ApiResponse<T>，
+ * 故各方法直接返回 Promise<ApiResponse<T>>（T 为业务 data 类型）。
+ * 调用处通过 res.data 取业务数据。
+ */
+export interface TypedHttp {
+  get: <T>(url: string, config?: Record<string, unknown>) => Promise<ApiResponse<T>>
+  post: <T>(url: string, data?: unknown, config?: Record<string, unknown>) => Promise<ApiResponse<T>>
+  put: <T>(url: string, data?: unknown, config?: Record<string, unknown>) => Promise<ApiResponse<T>>
+  delete: <T>(url: string, config?: Record<string, unknown>) => Promise<ApiResponse<T>>
+}
+
+export default http as unknown as TypedHttp
