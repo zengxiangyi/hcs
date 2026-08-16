@@ -47,6 +47,8 @@
 | `tsconfig.node.json` | Node 端代码（Vite 配置）的 TS 配置。目标 `es2023`，模块 `nodenext`，启用 `verbatimModuleSyntax`；编译范围：`vite.config.ts`。 |
 | `README.md` | 项目说明文档。简介 Vue 3 + TypeScript + Vite 模板用法，附 `<script setup>` 与官方 TypeScript 指南链接。 |
 | `.gitignore` | Git 版本控制忽略规则（详见上文）。 |
+| `.prettierrc.json` | Prettier 代码格式化配置。包含 `printWidth: 100`、`tabWidth: 2`、`singleQuote`（单引号）、`trailingComma: "es5"`、`arrowParens: "avoid"`、`endOfLine: "auto"`、`vueIndentScriptAndStyle: false` 等；支持 Vue SFC 的嵌入式语言格式化。 |
+| `.prettierignore` | Prettier 格式化时忽略的文件/目录清单，与 `.gitignore` 类似，含 `node_modules`、`package-lock.json`、`yarn.lock`、`pnpm-lock.yaml`、`dist`、`build`、`coverage`、`*.min.js/css`、各类 `*-debug.log*`、`.env*`、`.vscode`、`.idea`、Vim 交换文件、`.DS_Store`、`Thumbs.db` 等。 |
 
 ---
 
@@ -102,6 +104,8 @@
 ```
 page/
 ├── .gitignore                    # Git 忽略规则
+├── .prettierrc.json              # Prettier 格式化配置
+├── .prettierignore               # Prettier 忽略规则
 ├── index.html                    # HTML 入口
 ├── package.json                  # npm 项目配置
 ├── package-lock.json             # 依赖锁文件
