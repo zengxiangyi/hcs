@@ -32,8 +32,13 @@ app.setErrorHandler((error, request, reply) => {
     return reply.status(400).send(fail(400, error.issues.map(i => i.message).join('; ')))
   }
   app.log.error(error)
-  if (error.statusCode && error.statusCode < 500) {
-    return reply.status(error.statusCode).send(fail(error.statusCode, error.message))
+  // error 在此回调中类型为 unknown，先收窄为 Error 再读取可选属性 statusCode
+  if (error instanceof Error) {
+    const statusCode =
+      'statusCode' in error && typeof error.statusCode === 'number' ? error.statusCode : undefined
+    if (statusCode && statusCode < 500) {
+      return reply.status(statusCode).send(fail(statusCode, error.message))
+    }
   }
   return reply.status(500).send(fail(500, '服务器内部错误'))
 })

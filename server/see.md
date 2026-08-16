@@ -72,15 +72,13 @@ server/
 | 字段 | 列名 | 类型 | 约束 | 说明 |
 |------|------|------|------|------|
 | id | `id` | int | PK, autoincrement | 自增主键 |
-| name | `name` | varchar(64) | not null | 姓名 |
-| role | `role` | varchar(32) | not null | 角色（管理员/编辑/访客） |
-| dept | `dept` | varchar(64) | not null | 部门 |
-| status | `status` | varchar(16) | not null, default `启用` | 启用/禁用 |
-| createTime | `create_time` | varchar(32) | not null | 创建时间，字符串存储 `YYYY-MM-DD HH:mm` |
+| userName | `userName` | varchar(64) | not null | 姓名 |
+| roleName | `roleName` | varchar(32) | not null | 角色（管理员/编辑/访客） |
+| department | `department` | varchar(64) | not null | 部门 |
+| state | `state` | varchar(16) | not null, default `启用` | 启用/禁用 |
+| createTime | `createTime` | varchar(32) | not null | 创建时间，字符串存储 `YYYY-MM-DD HH:mm` |
 
-索引：`idx_name`、`idx_dept`、`idx_status`。
-
-> 字段刻意与前端 `data1.vue` / `data2.vue` 表格列对齐；时间用字符串是为了和前端展示格式一致。
+> 字段刻意与前端 `data2.vue` 表格列对齐；时间用字符串是为了和前端展示格式一致。
 
 ### 4.2 `accounts` 登录账号表
 
