@@ -6,9 +6,10 @@ import type { UserRow } from '../../api/data'
 
 // 查询条件
 const query = ref({
-  keyword: '',
-  dept: '',
-  status: '',
+  userName: '',
+  roleName: '',
+  department: '',
+  state: '',
 })
 
 const statusOptions = ['启用', '禁用']
@@ -26,9 +27,10 @@ async function fetchData() {
   loading.value = true
   try {
     const res = await dataAPI.getUsers({
-      keyword: query.value.keyword.trim(),
-      dept: query.value.dept,
-      status: query.value.status,
+      userName: query.value.userName.trim(),
+      roleName: query.value.roleName.trim(),
+      department: query.value.department,
+      state: query.value.state,
       page: currentPage.value,
       pageSize: pageSize.value,
     })
@@ -47,7 +49,7 @@ function handleSearch() {
 }
 
 function handleReset() {
-  query.value = { keyword: '', dept: '', status: '' }
+  query.value = { userName: '', roleName:'',department: '', state: '' }
   currentPage.value = 1
   fetchData()
 }
@@ -70,10 +72,10 @@ const formRef = ref()
 // 隐藏输入框：存储 id，用于区分新增/修改
 const form = ref({
   id: 0,
-  name: '',
-  role: '',
-  dept: '',
-  status: '启用',
+  userName: '',
+  roleName: '',
+  department: '',
+  state: '启用',
 })
 
 function handleEdit(row: UserRow) {
@@ -85,7 +87,7 @@ function handleEdit(row: UserRow) {
 async function handleDelete(row: UserRow) {
   try {
     const res = await dataAPI.deleteUser(row.id)
-    ElMessage.success(res.msg || `已删除：${row.name}`)
+    ElMessage.success(res.msg || `已删除：${row.userName}`)
     // 若删除的是当前页最后一条且不是第一页，回退一页
     if (tableData.value.length === 1 && currentPage.value > 1) {
       currentPage.value -= 1
@@ -98,7 +100,7 @@ async function handleDelete(row: UserRow) {
 
 function handleAdd() {
   dialogTitle.value = '新增用户'
-  form.value = { id: 0, name: '', role: '', dept: '', status: '启用' }
+  form.value = { id: 0, userName: '', roleName: '', department: '', state: '启用' }
   dialogVisible.value = true
 }
 
@@ -109,19 +111,19 @@ async function handleSave() {
       if (form.value.id) {
         // 修改
         await dataAPI.updateUser(form.value.id, {
-          name: form.value.name,
-          role: form.value.role,
-          dept: form.value.dept,
-          status: form.value.status,
+          userName: form.value.userName,
+          roleName: form.value.roleName,
+          department: form.value.department,
+          state: form.value.state,
         })
         ElMessage.success('修改成功')
       } else {
         // 新增
         await dataAPI.addUser({
-          name: form.value.name,
-          role: form.value.role,
-          dept: form.value.dept,
-          status: form.value.status,
+          userName: form.value.userName,
+          roleName: form.value.roleName,
+          department : form.value.department,
+          state: form.value.state,
         })
         ElMessage.success('新增成功')
       }
@@ -154,21 +156,29 @@ onMounted(fetchData)
 
     <!-- 查询区 -->
     <el-form :inline="true" class="query-form" @submit.prevent>
-      <el-form-item label="关键字">
+      <el-form-item label="姓名">
         <el-input
-          v-model="query.keyword"
-          placeholder="姓名 / 角色 / ID"
+          v-model="query.userName"
+          placeholder="姓名"
+          clearable
+          style="width: 180px"
+        />
+      </el-form-item>
+      <el-form-item label="角色">
+        <el-input
+          v-model="query.roleName"
+          placeholder="角色"
           clearable
           style="width: 180px"
         />
       </el-form-item>
       <el-form-item label="部门">
-        <el-select v-model="query.dept" placeholder="全部部门" clearable style="width: 140px">
+        <el-select v-model="query.department" placeholder="全部部门" clearable style="width: 140px">
           <el-option v-for="d in deptOptions" :key="d" :label="d" :value="d" />
         </el-select>
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="query.status" placeholder="全部状态" clearable style="width: 120px">
+        <el-select v-model="query.state" placeholder="全部状态" clearable style="width: 120px">
           <el-option v-for="s in statusOptions" :key="s" :label="s" :value="s" />
         </el-select>
       </el-form-item>
@@ -188,12 +198,12 @@ onMounted(fetchData)
     <!-- 表格 -->
     <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
       <el-table-column type="index" label="序号" width="70" />
-      <el-table-column prop="name" label="姓名" min-width="120" />
-      <el-table-column prop="role" label="角色" min-width="120" />
-      <el-table-column prop="dept" label="部门" min-width="120" />
-      <el-table-column prop="status" label="状态" min-width="100">
+      <el-table-column prop="userName" label="姓名" min-width="120" />
+      <el-table-column prop="roleName" label="角色" min-width="120" />
+      <el-table-column prop="department" label="部门" min-width="120" />
+      <el-table-column prop="state" label="状态" min-width="100">
         <template #default="{ row }">
-          <el-tag :type="row.status === '启用' ? 'success' : 'danger'">{{ row.status }}</el-tag>
+          <el-tag :type="row.state === '启用' ? 'success' : 'danger'">{{ row.state }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" min-width="180" />
@@ -224,19 +234,19 @@ onMounted(fetchData)
         <el-form-item prop="id">
           <el-input v-model="form.id" type="hidden" />
         </el-form-item>
-        <el-form-item label="姓名" prop="name" :rules="[{ required: true, message: '请输入姓名', trigger: 'blur' }]">
-          <el-input v-model="form.name" placeholder="请输入姓名" />
+        <el-form-item label="姓名" prop="userName" :rules="[{ required: true, message: '请输入姓名', trigger: 'blur' }]">
+          <el-input v-model="form.userName" placeholder="请输入姓名" />
         </el-form-item>
-        <el-form-item label="角色" prop="role" :rules="[{ required: true, message: '请输入角色', trigger: 'blur' }]">
-          <el-input v-model="form.role" placeholder="请输入角色" />
+        <el-form-item label="角色" prop="roleName" :rules="[{ required: true, message: '请输入角色', trigger: 'blur' }]">
+          <el-input v-model="form.roleName" placeholder="请输入角色" />
         </el-form-item>
-        <el-form-item label="部门" prop="dept" :rules="[{ required: true, message: '请选择部门', trigger: 'change' }]">
-          <el-select v-model="form.dept" placeholder="请选择部门" style="width: 100%">
+        <el-form-item label="部门" prop="department" :rules="[{ required: true, message: '请选择部门', trigger: 'change' }]">
+          <el-select v-model="form.department" placeholder="请选择部门" style="width: 100%">
             <el-option v-for="d in deptOptions" :key="d" :label="d" :value="d" />
           </el-select>
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="form.status" style="width: 100%">
+        <el-form-item label="状态" prop="state">
+          <el-select v-model="form.state" style="width: 100%">
             <el-option v-for="s in statusOptions" :key="s" :label="s" :value="s" />
           </el-select>
         </el-form-item>

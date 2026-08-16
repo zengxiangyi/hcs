@@ -3,18 +3,19 @@ import http from './http'
 /** 用户数据行（对齐 data2 表格列） */
 export interface UserRow {
   id: number
-  name: string
-  role: string
-  dept: string
-  status: string
+  userName: string
+  roleName: string
+  department: string
+  state: string
   createTime: string
 }
 
 /** 用户列表查询参数 */
 export interface UserListParams {
-  keyword?: string
-  dept?: string
-  status?: string
+  userName?: string
+  roleName?: string
+  department?: string
+  state?: string
   page?: number
   pageSize?: number
 }
@@ -30,10 +31,10 @@ export interface UserListResult {
 /** 用户新增/修改入参 */
 export interface UserSaveParams {
   id?: number
-  name: string
-  role: string
-  dept: string
-  status: string
+  userName: string
+  roleName: string
+  department: string
+  state: string
 }
 
 export const dataAPI = {

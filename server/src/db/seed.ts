@@ -26,8 +26,8 @@ async function seed() {
     ['吴十', '编辑', '财务部', '禁用', '2026-08-12 17:25'],
   ]
 
-  for (const [name, role, dept, status, createTime] of samples) {
-    await db.insert(users).values({ name, role, dept, status, createTime })
+  for (const [userName, roleName, department, state, createTime] of samples) {
+    await db.insert(users).values({userName, roleName, department, state, createTime})
   }
 
   console.log('seed 完成：已插入 admin 账号与 8 条示例用户')

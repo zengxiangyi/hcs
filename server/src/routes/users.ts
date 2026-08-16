@@ -12,36 +12,43 @@ const formatNow = () => {
 }
 
 const listQuerySchema = z.object({
-  keyword: z.string().optional().default(''),
-  dept: z.string().optional().default(''),
-  status: z.string().optional().default(''),
+  userName: z.string().optional().default(''),
+  roleName: z.string().optional().default(''),
+  department: z.string().optional().default(''),
+  state: z.string().optional().default(''),
   page: z.coerce.number().int().min(1).optional().default(1),
   pageSize: z.coerce.number().int().min(1).optional().default(10),
 })
 
 const saveSchema = z.object({
   id: z.number().int().optional(),
-  name: z.string().min(1, '请输入姓名'),
-  role: z.string().min(1, '请输入角色'),
-  dept: z.string().min(1, '请选择部门'),
-  status: z.string().min(1, '请选择状态'),
+  userName: z.string().min(1, '请输入姓名'),
+  roleName: z.string().min(1, '请输入角色'),
+  department: z.string().min(1, '请选择部门'),
+  state: z.string().min(1, '请选择状态'),
 })
 
 export async function userRoutes(fastify: FastifyInstance) {
   // 用户列表（含关键字 / 部门 / 状态 过滤 + 分页）
   fastify.get('/api/users', async (request, reply) => {
     const query = listQuerySchema.parse(request.query)
-    const { keyword, dept, status, page, pageSize } = query
+    const { userName, roleName,department, state, page, pageSize } = query
 
     const conditions = []
-    if (keyword) {
-      const kw = `%${keyword}%`
+    if (userName) {
+      const kw = `%${userName}%`
       conditions.push(
-        or(like(users.name, kw), like(users.role, kw), like(String(users.id), kw))
+        or(like(users.userName, kw))
       )
     }
-    if (dept) conditions.push(eq(users.dept, dept))
-    if (status) conditions.push(eq(users.status, status))
+     if (roleName) {
+      const kw = `%${roleName}%`
+      conditions.push(
+         like(users.roleName, kw)
+      )
+    }
+    if (department) conditions.push(eq(users.department, department))
+    if (state) conditions.push(eq(users.state, state))
 
     const where = conditions.length ? and(...conditions) : undefined
 
@@ -73,10 +80,10 @@ export async function userRoutes(fastify: FastifyInstance) {
     const [inserted] = await db
       .insert(users)
       .values({
-        name: body.name,
-        role: body.role,
-        dept: body.dept,
-        status: body.status,
+        userName: body.userName,
+        roleName: body.roleName,
+        department: body.department,
+        state: body.state,
         createTime: formatNow(),
       })
       .$returningId()
@@ -98,10 +105,10 @@ export async function userRoutes(fastify: FastifyInstance) {
     await db
       .update(users)
       .set({
-        name: body.name,
-        role: body.role,
-        dept: body.dept,
-        status: body.status,
+        userName: body.userName,
+        roleName: body.roleName,
+        department: body.department,
+        state: body.state,
       })
       .where(eq(users.id, uid))
 

@@ -2,30 +2,19 @@ import {
   mysqlTable,
   int,
   varchar,
-  timestamp,
-  index,
 } from 'drizzle-orm/mysql-core'
 
 /**
- * 用户表 —— 字段对齐前端 data1.vue / data2.vue 表格列：
- * id / name / role / dept / status / createTime
+ * 用户表 —— 字段对齐前端 data1.vue / data2.vue 表格列
  */
-export const users = mysqlTable(
-  'users',
-  {
+export const users = mysqlTable('users',{
     id: int('id').autoincrement().primaryKey(),
-    name: varchar('name', { length: 64 }).notNull(),
-    role: varchar('role', { length: 32 }).notNull(),
-    dept: varchar('dept', { length: 64 }).notNull(),
-    status: varchar('status', { length: 16 }).notNull().default('启用'),
-    // 时间以字符串存储，与前端展示格式 YYYY-MM-DD HH:mm 保持一致
-    createTime: varchar('create_time', { length: 32 }).notNull(),
-  },
-  (table) => ({
-    nameIdx: index('idx_name').on(table.name),
-    deptIdx: index('idx_dept').on(table.dept),
-    statusIdx: index('idx_status').on(table.status),
-  })
+    userName: varchar('userName', { length: 64 }).notNull(),
+    roleName: varchar('roleName', { length: 32 }).notNull(),
+    department: varchar('department', { length: 64 }).notNull(),
+    state: varchar('state', { length: 16 }).notNull().default('启用'),
+    createTime: varchar('createTime', { length: 32 }).notNull(),
+  }
 )
 
 /** 登录用户表 —— 存储账号密码 */
