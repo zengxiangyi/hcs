@@ -13,14 +13,10 @@ function handleLogout() {
 
 <template>
   <div class="title">
-    <div class="left">
-        <h2>欢迎使用Vue3.0+Vite2.0+TypeScript开发的后台管理系统</h2>
-    </div>
+    <div class="left">欢迎使用Vue3.0+Vite2.0+TypeScript开发的后台管理系统</div>
     <div class="right">
-      <div>
-        <h2>当前用户：{{username}}</h2>
-      </div>
-      <div>
+      <div>当前用户：{{username}}</div>
+      <div class="right-btn">
         <el-button type="danger" size="primary" @click="handleLogout">退出</el-button>
       </div>
     </div>
@@ -52,22 +48,25 @@ function handleLogout() {
   align-items: center;
   height: 50px;
   padding: 0 20px;
-  background-color: #f5f5f5;
+  color:#ffffff;
+  background-color: #1E90FF;
 }
 
 .title .left {
   /* 靠左对齐 */
   display: flex;
-  font-size: 16px;
   align-items: center;
+  margin-left:10px;
 }
 
 .title .right {
   /* 靠右对齐 */
   display: flex;
-  font-size: 14px;
   align-items: center;
-  gap: 16px;
+  margin-right:10px;
+}
+.title .right-btn{
+  margin-left:10px;
 }
 
 .layout {

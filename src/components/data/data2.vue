@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { UploadFilled } from '@element-plus/icons-vue'
+import * as XLSX from 'xlsx'
 import { dataAPI } from '../../api/data'
 import type { UserRow } from '../../api/data'
 
@@ -139,12 +141,70 @@ function handleCancel() {
   dialogVisible.value = false
 }
 
+// ---------- 导入 ----------
+const importDialogVisible = ref(false)
+const importLoading = ref(false)
+
 function handleImport() {
-  ElMessage.info('导入')
+  importDialogVisible.value = true
 }
 
-function handleExport() {
-  ElMessage.info('导出')
+async function handleImportConfirm(file: File) {
+  importLoading.value = true
+  try {
+    const data = await file.arrayBuffer()
+    const workbook = XLSX.read(data)
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
+    // 按表头转为对象数组
+    const rows = XLSX.utils.sheet_to_json<Record<string, any>>(firstSheet)
+
+    let success = 0
+    for (const row of rows) {
+      const userName = String(row['姓名'] ?? '').trim()
+      const roleName = String(row['角色'] ?? '').trim()
+      const department = String(row['部门'] ?? '').trim()
+      const state = String(row['状态'] ?? '启用').trim() || '启用'
+      if (!userName || !roleName || !department) continue
+      await dataAPI.addUser({ userName, roleName, department, state })
+      success++
+    }
+
+    ElMessage.success(`导入成功 ${success} 条`)
+    importDialogVisible.value = false
+    fetchData()
+  } catch (err: any) {
+    ElMessage.error(err?.message || '导入失败，请检查文件格式')
+  } finally {
+    importLoading.value = false
+  }
+}
+
+// ---------- 导出 ----------
+async function handleExport() {
+  try {
+    const list = await dataAPI.getUsers({
+      userName: query.value.userName.trim(),
+      roleName: query.value.roleName.trim(),
+      department: query.value.department,
+      state: query.value.state,
+      page: 1,
+      pageSize: 99999,
+    })
+    const sheetData = list.data.list.map((row) => ({
+      姓名: row.userName,
+      角色: row.roleName,
+      部门: row.department,
+      状态: row.state,
+      创建时间: row.createTime,
+    }))
+    const sheet = XLSX.utils.json_to_sheet(sheetData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, sheet, '用户数据')
+    XLSX.writeFile(workbook, `用户数据_${Date.now()}.xlsx`)
+    ElMessage.success(`导出 ${sheetData.length} 条`)
+  } catch (err: any) {
+    ElMessage.error(err?.message || '导出失败')
+  }
 }
 
 onMounted(fetchData)
@@ -254,6 +314,28 @@ onMounted(fetchData)
       <template #footer>
         <el-button @click="handleCancel">取消</el-button>
         <el-button type="primary" @click="handleSave">保存</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 导入 Dialog -->
+    <el-dialog v-model="importDialogVisible" title="导入用户数据" width="480px">
+      <el-upload
+        drag
+        :auto-upload="false"
+        :limit="1"
+        accept=".xlsx,.xls"
+        :on-change="(uploadFile: any) => handleImportConfirm(uploadFile.raw)"
+        :show-file-list="false"
+        style="width: 100%"
+      >
+        <div style="padding: 20px 0">
+          <el-icon :size="48" color="#c0c4cc"><UploadFilled /></el-icon>
+          <div style="margin-top: 8px">拖拽文件到此处，或点击选择文件</div>
+          <div style="font-size: 12px; color: #909399; margin-top: 4px">仅支持 .xlsx / .xls 格式</div>
+        </div>
+      </el-upload>
+      <template #footer>
+        <el-button @click="importDialogVisible = false" :disabled="importLoading">取消</el-button>
       </template>
     </el-dialog>
   </div>

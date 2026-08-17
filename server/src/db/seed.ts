@@ -7,14 +7,28 @@ import { db, pool } from './client.js'
 import { accounts, users } from './schema.js'
 
 async function seed() {
-  // 登录账号 admin / 123456
-  await db.insert(accounts).values({
-    username: 'admin',
-    password: '123456',
-    name: '管理员',
-  })
+  // 登录账号 admin / 123456 —— 用 onDuplicateKeyUpdate 保证重复执行不报错
+  await db
+    .insert(accounts)
+    .values({
+      username: 'admin',
+      password: '123456',
+      name: '管理员',
+      cellphone: '13800138000',
+      email: 'admin@example.com',
+    })
+    .onDuplicateKeyUpdate({
+      set: {
+        password: '123456',
+        name: '管理员',
+        cellphone: '13800138000',
+        email: 'admin@example.com',
+      },
+    })
 
-  // 示例用户（对齐前端 data2.vue mock 数据）
+  // 示例用户（对齐前端 data2.vue mock 数据）—— 先清空再批量插入，保证可重复执行
+  await db.delete(users)
+
   const samples = [
     ['张三', '管理员', '技术部', '启用', '2026-08-01 10:00'],
     ['李四', '编辑', '内容部', '启用', '2026-08-02 11:30'],
@@ -26,9 +40,15 @@ async function seed() {
     ['吴十', '编辑', '财务部', '禁用', '2026-08-12 17:25'],
   ]
 
-  for (const [userName, roleName, department, state, createTime] of samples) {
-    await db.insert(users).values({userName, roleName, department, state, createTime})
-  }
+  await db.insert(users).values(
+    samples.map(([userName, roleName, department, state, createTime]) => ({
+      userName,
+      roleName,
+      department,
+      state,
+      createTime,
+    }))
+  )
 
   console.log('seed 完成：已插入 admin 账号与 8 条示例用户')
   await pool.end()

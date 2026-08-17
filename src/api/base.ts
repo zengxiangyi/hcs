@@ -20,6 +20,17 @@ export interface LoginResult {
   user: UserInfo
 }
 
+/** 重置密码：身份验证入参（手机号 + 邮箱） */
+export interface VerifyIdentityParams {
+  cellphone: string
+  email: string
+}
+
+/** 重置密码：设置新密码入参 */
+export interface ResetPasswordParams extends VerifyIdentityParams {
+  newPassword: string
+}
+
 export const baseAPI = {
   /** 登录 */
   login: (data: LoginParams): Promise<ApiResponse<LoginResult>> =>
@@ -27,4 +38,10 @@ export const baseAPI = {
   /** 查询用户信息 */
   getUserInfo: (): Promise<ApiResponse<UserInfo>> =>
     http.get<UserInfo>('/api/user/info') as Promise<ApiResponse<UserInfo>>,
+  /** 重置密码：验证手机号 + 邮箱是否匹配 */
+  verifyIdentity: (data: VerifyIdentityParams): Promise<ApiResponse<null>> =>
+    http.post<null>('/api/auth/verify-identity', data) as Promise<ApiResponse<null>>,
+  /** 重置密码：验证通过后设置新密码 */
+  resetPassword: (data: ResetPasswordParams): Promise<ApiResponse<null>> =>
+    http.post<null>('/api/auth/reset-password', data) as Promise<ApiResponse<null>>,
 }

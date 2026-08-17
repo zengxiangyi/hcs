@@ -46,6 +46,12 @@ http.interceptors.response.use(
         window.location.href = '/'
       }
     }
+    // HTTP 非 2xx 时解包后端业务错误信息（body 为 { code, msg }），
+    // 使调用处能通过 err.message 拿到「验证信息错误」等业务提示
+    const res = error.response?.data as ApiResponse | undefined
+    if (res && typeof res.code === 'number' && res.code !== 200) {
+      return Promise.reject(new Error(res.msg || '请求失败'))
+    }
     return Promise.reject(error)
   }
 )

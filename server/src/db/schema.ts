@@ -23,4 +23,7 @@ export const accounts = mysqlTable('accounts', {
   username: varchar('username', { length: 64 }).notNull().unique(),
   password: varchar('password', { length: 128 }).notNull(),
   name: varchar('name', { length: 64 }),
+  // 用于“忘记密码”身份验证，与 email 一起校验是否匹配
+  cellphone: varchar('cellphone', { length: 20 }).notNull().default(''),
+  email: varchar('email', { length: 128 }).notNull().default(''),
 })
