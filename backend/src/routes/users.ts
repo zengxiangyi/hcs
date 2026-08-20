@@ -6,6 +6,19 @@ import { db } from '../db/client.js'
 import { users } from '../db/schema.js'
 import { success, fail } from '../utils/response.js'
 
+/**
+ * 解析路由 /:id 参数为整数；非法（NaN/负数）时直接返 400 并回 null。
+ * 路由参数在 Zod 无法覆盖的层级，需在此显式校验，避免 NaN 进入 SQL。
+ */
+async function parseIdOr400(reply: FastifyReply, raw: unknown): Promise<number | null> {
+  const id = Number(raw)
+  if (!Number.isInteger(id) || id <= 0) {
+    reply.status(400).send(fail(400, '无效的用户 ID'))
+    return null
+  }
+  return id
+}
+
 const formatNow = () => {
   const d = new Date()
   const pad = (n: number) => String(n).padStart(2, '0')
@@ -103,8 +116,8 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   // 修改用户
   fastify.put('/api/users/:id', async (request, reply) => {
-    const { id } = request.params as { id: string }
-    const uid = Number(id)
+    const uid = await parseIdOr400(reply, (request.params as { id: string }).id)
+    if (uid === null) return
     const existing = await findUserOr404(reply, uid)
     if (!existing) return
 
@@ -125,8 +138,8 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   // 删除用户
   fastify.delete('/api/users/:id', async (request, reply) => {
-    const { id } = request.params as { id: string }
-    const uid = Number(id)
+    const uid = await parseIdOr400(reply, (request.params as { id: string }).id)
+    if (uid === null) return
     const existing = await findUserOr404(reply, uid)
     if (!existing) return
 

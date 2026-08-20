@@ -49,24 +49,24 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.post('/api/auth/register', async (request, reply) => {
     const body = registerSchema.parse(request.body)
 
-    // 用户名唯一性校验：已存在则拒绝注册
-    const exist = await db
-      .select({ id: accounts.id })
-      .from(accounts)
-      .where(eq(accounts.username, body.username))
-      .limit(1)
-
-    if (exist.length) {
-      return reply.status(400).send(fail(400, '用户名已存在'))
+    // 用户名唯一性由 accounts.username 的 UNIQUE 约束在 DB 层保证（避免先查后插的竞态窗口）。
+    // 若并发插入导致唯一键冲突，统一捕获为「用户名已存在」，不向客户端泄露底层错误。
+    try {
+      await db.insert(accounts).values({
+        username: body.username,
+        // 密码契约为「直存直比」：前端已提交 md5 密文，后端原样存储，与登录比对保持一致
+        password: body.password,
+        name: body.username, // 前端注册未传昵称，默认取用户名
+        cellphone: body.cellphone,
+        email: body.email,
+      })
+    } catch (err) {
+      // 仅当唯一键冲突时视为「用户名已存在」，其余 DB 错误继续上抛交由全局错误处理
+      if (err instanceof Error && /ER_DUP_ENTRY/i.test(err.message)) {
+        return reply.status(400).send(fail(400, '用户名已存在'))
+      }
+      throw err
     }
-
-    await db.insert(accounts).values({
-      username: body.username,
-      password: body.password,
-      name: body.username, // 前端注册未传昵称，默认取用户名
-      cellphone: body.cellphone,
-      email: body.email,
-    })
     return success(null, '注册成功')
   })
 
@@ -125,6 +125,7 @@ export async function authRoutes(fastify: FastifyInstance) {
       return reply.status(400).send(fail(400, '验证信息错误'))
     }
 
+    // 密码契约为「直存直比」：前端已提交 md5 密文，后端原样存储，与登录比对保持一致
     await db.update(accounts).set({ password: body.newPassword }).where(eq(accounts.id, account[0].id))
     return success(null, '密码重置成功')
   })

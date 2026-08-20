@@ -10,5 +10,5 @@ import { createHash } from 'node:crypto'
  * - 注意：MD5 已被攻破，切勿用于新系统的口令散列；此处仅因与既有前端约定保持兼容而保留。
  */
 export function md5(str: string): string {
-  return createHash('md5').update(str, 'utf8').digest('hex')
+  return createHash('md5').update(String(str), 'utf8').digest('hex')
 }

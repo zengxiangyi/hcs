@@ -96,7 +96,8 @@
 | cellphone | `cellphone` | varchar(20) | not null, default `''` | 手机号（忘记密码验证） |
 | email | `email` | varchar(128) | not null, default `''` | 邮箱（忘记密码验证） |
 
-> **安全说明**：密码经 `md5(password)` 哈希后存储（见 `utils/md5.ts`，基于 Node 内置 `node:crypto.createHash('md5')`），登录时前端同样提交 md5 后的密文进行比对；前端契约要求密码以 md5 格式提交。仍属演示强度，生产环境建议升级为 `bcrypt`/`argon2`。
+> **⚠️ 安全说明（历史兼容性包袱）**：密码经 `md5(password)` 哈希后存储（见 `utils/md5.ts`，基于 Node 内置 `node:crypto.createHash('md5')`），登录时前端同样提交 md5 后的密文进行比对；前端契约要求密码以 md5 格式提交。
+> **MD5 已被攻破，不可用于安全散列**，此处纯属与既有前端约定保持兼容而保留的历史包袱，**不应视为规范做法**。任何新系统禁止沿用此方案，生产环境应升级为 `bcrypt`/`argon2` 等自适应成本哈希。相关契约测试见 `src/utils/__tests__/md5.test.ts`。
 > `cellphone` + `email` 用于在忘记密码流程中做身份验证，与 `accounts` 记录匹配后才允许重置。
 
 ---
@@ -243,7 +244,7 @@ npm run dev
 - [ ] **`GET /api/user/info` 语义临时**：返回表首条记录，仅占位前端展示，后续应改为按登录用户或 token 解析。
 - [ ] **无 `dist/` 生产构建产物**提交（`npm run build` 可用，未配置部署）。
 - [ ] **无 Dockerfile / 部署配置**。
-- [ ] **密码哈希强度**：当前为 md5（演示强度），生产环境建议升级为 `bcrypt`/`argon2`。
+- [ ] **密码哈希强度（⚠️ 历史包袱，非规范）**：当前为 md5（已被攻破，仅因前端兼容保留），生产环境务必升级为 `bcrypt`/`argon2`。
 - [ ] **无刷新令牌 / 细粒度权限控制**（JWT 仅含 id/name/username，未做角色级路由鉴权）。
 
 ---
@@ -253,6 +254,6 @@ npm run dev
 1. **扩展新表**：在 `src/db/schema.ts` 用 `mysqlTable` 定义，跑 `npm run db:generate` + `db:push`。
 2. **新增路由**：仿照 `src/routes/users.ts` 写一个导出 `fastify: FastifyInstance` 的函数，在 `index.ts` 注册；受保护接口自动受全局 preHandler 拦截。
 3. **新增免校验接口**：若新接口需跳过 JWT 鉴权，在 `index.ts` 的 `preHandler` 白名单（如 `/api/auth/`）或 `PUBLIC_PATHS` 中补充。
-4. **密码处理**：新增账号 / 改密码务必走 `utils/md5.ts` 的 `md5()`（基于 Node 内置 `node:crypto`），与前端提交格式保持一致。
+4. **密码处理**：新增账号 / 改密码务必走 `utils/md5.ts` 的 `md5()`（基于 Node 内置 `node:crypto`），与前端提交格式保持一致。⚠️ 注意 md5 仅为历史兼容性包袱（非规范），仅用于维护现有契约，新功能不得新引入 md5 散列。
 5. **保持契约一致**：任何响应改动务必维持 `{ code, data, msg }` 结构，否则前端拦截器会误判；登录失败保持 `400`。
 6. **安全升级前**：md5 仅为演示强度，生产部署前建议升级密码哈希算法并补充权限控制。

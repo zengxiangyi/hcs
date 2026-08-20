@@ -7,10 +7,20 @@ import { userRoutes } from './routes/users.js'
 import { authRoutes } from './routes/auth.js'
 import { fail, success } from './utils/response.js'
 
+// 生产基线：JWT_SECRET 缺失时拒绝启动，避免 token 可被伪造（不回退到硬编码默认值）
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET) {
+  // eslint-disable-next-line no-console
+  console.error('[fatal] 缺少环境变量 JWT_SECRET，无法安全签发 token，已拒绝启动。')
+  process.exit(1)
+}
+
 const app = Fastify({
   logger: true,
 })
 
+// CORS：因部署/发布来源暂不确定，白名单无法预置，保留反射请求来源 + 凭证模式，
+// 待上线确定前端域名后再收紧为白名单（origin: ['https://...']）。
 await app.register(cors, {
   origin: true,
   credentials: true,
@@ -18,7 +28,7 @@ await app.register(cors, {
 
 // JWT 插件：登录后签发 token（含用户信息），有效期 8 小时
 await app.register(jwt, {
-  secret: process.env.JWT_SECRET || 'dev-secret-change-me',
+  secret: JWT_SECRET,
   sign: { expiresIn: '8h' },
 })
 

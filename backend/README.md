@@ -70,3 +70,4 @@
 
 - `users`：`id / userName / roleName / department / state / createTime`，`createTime` 为字符串 `YYYY-MM-DD HH:mm`，字段对齐前端 `data1.vue` / `data2.vue` 表格。
 - `accounts`：`id / username / password / name / cellphone / email`，登录账号（测试账号 `admin / 123456`，密码存 `md5`）。
+  > ⚠️ **MD5 为历史兼容性包袱（非规范做法）**：md5 已被攻破，仅因与既有前端约定兼容而保留，新系统禁止沿用，生产环境应升级为 `bcrypt`/`argon2`。
