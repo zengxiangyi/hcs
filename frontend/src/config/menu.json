@@ -1,0 +1,148 @@
+{
+  "menu": [
+    {
+      "name": "蓝本工艺",
+      "path": "/technology",
+      "icon": "home",
+      "children": [
+        {
+          "name": "工艺配置",
+          "path": "/web/hcs/tech/board",
+          "icon": "home"
+        }]
+    },
+    {
+      "name": "蓝本管理",
+      "path": "/bluePrint",
+      "icon": "home",
+      "children": [
+        {
+          "name": "蓝本查看",
+          "path": "/web/data/data2",
+          "icon": "home"
+        }]
+    },
+    {
+      "name": "审批流程",
+      "path": "/approval",
+      "icon": "home",
+      "children": [
+        {
+          "name": "我发起的",
+          "path": "/web/approval/send",
+          "icon": "home"
+        },
+        {
+          "name": "待处理",
+          "path": "/approval/undo",
+          "icon": "home"
+        },
+        {
+          "name": "已处理",
+          "path": "/approval/done",
+          "icon": "home"
+        },
+        {
+          "name": "已结束",
+          "path": "/web/hcs/flow/closed",
+          "icon": "home"
+        }
+      ]
+    },
+    {
+      "name": "产品工艺",
+      "path": "/productTech",
+      "icon": "home",
+      "children": [
+        {
+          "name": "调拨单",
+          "path": "/productTech/config",
+          "icon": "home"
+        }
+      ]
+    },
+    {
+      "name": "产品状态",
+      "path": "/productStatus",
+      "icon": "home",
+      "children": [
+        {
+          "name": "状态查询",
+          "path": "/productStatus/view",
+          "icon": "home"
+        }
+      ]
+    },
+    {
+      "name": "产品流程",
+      "path": "/process",
+      "icon": "home",
+      "children": [
+        {
+          "name": "流程处理",
+          "path": "/process/deal",
+          "icon": "home"
+        },
+        {
+          "name": "工序任务",
+          "path": "/web/hcs/process/job",
+          "icon": "home"
+        }
+      ]
+    },
+    {
+      "name": "成文信息",
+      "path": "/info",
+      "icon": "home",
+      "children": [
+        {
+          "name": "附件上传",
+          "path": "/web/hcs/info/file",
+          "icon": "home"
+        },
+        {
+          "name": "工艺卡",
+          "path": "/info/techCard",
+          "icon": "home"
+        }
+    ]
+    },
+    {
+      "name": "系统管理",
+      "path": "/system",
+      "icon": "home",
+      "children": [
+        {
+          "name": "用户管理",
+          "path": "/web/hcs/sys/user",
+          "icon": "home",
+          "right": "page:user"
+        },
+        {
+          "name": "角色管理",
+          "path": "/web/hcs/sys/role",
+          "icon": "home",
+          "right": "page:role"
+        },
+        {
+          "name": "权限管理",
+          "path": "/web/hcs/sys/right",
+          "icon": "home",
+          "right": "page:right"
+        },
+        {
+          "name": "角色用户关联",
+          "path": "/web/hcs/sys/roleUser",
+          "icon": "home",
+          "right": "page:roleUser"
+        },
+        {
+          "name": "角色权限关联",
+          "path": "/web/hcs/sys/roleRight",
+          "icon": "home",
+          "right": "page:roleRight"
+        }
+      ]
+    }
+  ]
+}

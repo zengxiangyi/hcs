@@ -1,0 +1,14 @@
+/* 全局基础样式 —— 精简自 Vue 模板默认样式，仅保留应用实际使用的基础重置与排版 */
+
+:root {
+  font: 18px/145% system-ui, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: 0.18px;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
