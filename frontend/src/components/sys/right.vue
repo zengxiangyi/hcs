@@ -29,7 +29,7 @@ const total = ref(0)
 async function refresh() {
   loading.value = true
   try {
-    const res = await rightAPI.list({
+    const res = await rightAPI.search({
       category: query.value.category || undefined,
       name: query.value.name || undefined,
       code: query.value.code || undefined,

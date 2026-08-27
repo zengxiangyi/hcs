@@ -188,7 +188,6 @@ async function onSave() {
 
 /** 取消：重置表单数据 */
 function onCancel() {
-  debugger;
   basicForm.value = {
     code: '', name: '', graph: '', materialCode: '', materialName: '',
     weight: '',firstLevel: '', secondLevel: '',customer:'',model:'', 

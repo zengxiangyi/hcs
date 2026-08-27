@@ -22,7 +22,6 @@ async function handleLogin() {
   }
   loading.value = true
   try {
-    debugger;
     // baseAPI.login 返回 Promise<ApiResponse<LoginResult>>，取 data 为业务数据
     const { data } = await baseAPI.login({
       username: u,

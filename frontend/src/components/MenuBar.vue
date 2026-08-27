@@ -56,9 +56,7 @@ const props = withDefaults(
 )
 
 // 最终渲染的菜单（已按权限过滤）
-debugger;
 const visibleItems = computed(() => filterMenu(props.items))
-debugger;
 
 defineOptions({ name: 'MenuBar' })
 

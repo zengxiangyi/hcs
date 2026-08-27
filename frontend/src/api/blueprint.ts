@@ -52,14 +52,8 @@ export interface BluePrintListResult {
 
 export const blueprintAPI = {
   /** 蓝本清单列表 */
-  getList: (params?: BluePrintListParams) =>
-    http.get<BluePrintListResult>('/api/blueprint/list', { params }),
-
-
   search: (params?: BluePrintListParams) =>
     http.post<BluePrintListResult>('/api/blueprint/search', { params }),
-
-
 
   /** 删除蓝本 */
   delete: (code: string, edition: string) => http.delete<null>(`/api/blueprint/${code}/${edition}`),

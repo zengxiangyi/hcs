@@ -130,7 +130,6 @@ const loading = ref(false)
 
 // 查询（服务端分页 + 过滤）
 async function fetchData() {
-  debugger;
   loading.value = true
   try {
     const res = await blueprintAPI.search({
@@ -142,7 +141,6 @@ async function fetchData() {
       page: currentPage.value,
       pageSize: pageSize.value,
     })
-    debugger;
     tableData.value = res.data.content
     total.value = res.data.total
   } catch (err) {
