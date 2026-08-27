@@ -144,10 +144,10 @@ onMounted(refresh)
 
     <el-table :data="tableData" border stripe style="width: 100%">
       <el-table-column type="index" label="序号" width="70" />
-      <el-table-column prop="name" label="角色名称" min-width="140" />
-      <el-table-column prop="code" label="角色编码" min-width="140" />
+      <el-table-column prop="name" label="角色名称" min-width="120" />
+      <el-table-column prop="code" label="角色编码" min-width="120" />
       <el-table-column prop="category" label="分类" min-width="120" />
-      <el-table-column prop="remark" label="备注" min-width="200" />
+      <el-table-column prop="remark" label="备注" min-width="300" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
