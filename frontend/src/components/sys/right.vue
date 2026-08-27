@@ -9,6 +9,7 @@ interface RightForm {
   code: string
   name: string
   category: string
+  parent: string
   remark: string
 }
 
@@ -18,6 +19,7 @@ const query = ref({ category: '', name: '', code: '' })
 
 const categoryOptions = ref([
   { label: '按钮', value: 'button' },
+  { label: '目录', value: 'directory' },
   { label: '页面', value: 'page' }
 ])
 
@@ -68,10 +70,10 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const formRef = ref<FormInstance>()
 const editId = ref(0)
-const form = ref<RightForm>({ code: '', name: '', category: 'page', remark: '' })
+const form = ref<RightForm>({ code: '', name: '', category: 'page', remark: '', parent: ''})
 
 function resetForm() {
-  form.value = { code: '', name: '', category: 'page', remark: '' }
+  form.value = { code: '', name: '', category: 'page', remark: '', parent: ''}
   editId.value = 0
   formRef.value?.clearValidate()
 }
@@ -85,7 +87,7 @@ function handleAdd() {
 function handleEdit(row: RightRow) {
   dialogTitle.value = '编辑权限'
   editId.value = row.id
-  form.value = { code: row.code, name: row.name, category: row.category, remark: row.remark }
+  form.value = { code: row.code, name: row.name, category: row.category, remark: row.remark, parent: row.parent}
   dialogVisible.value = true
 }
 
@@ -165,6 +167,7 @@ onMounted(refresh)
           {{ categoryOptions.find((c) => c.value === row.category)?.label || row.category }}
         </template>
       </el-table-column>
+      <el-table-column prop="parent" label="父级" min-width="160" />
       <el-table-column prop="remark" label="备注" min-width="160" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
@@ -197,6 +200,9 @@ onMounted(refresh)
           <el-select v-model="form.category" placeholder="请选择类型" style="width: 100%">
             <el-option v-for="c in categoryOptions" :key="c.value" :label="c.label" :value="c.value" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="父级" prop="parent">
+          <el-input v-model="form.parent" placeholder="父级编码" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" :rows="2" placeholder="备注说明" />

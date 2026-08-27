@@ -13,7 +13,7 @@ const selectedRoleCode = ref<string>('')
 const loading = ref(false)
 
 // 分类中文映射（right.category 存的是 page/button）
-const categoryLabels: Record<string, string> = { page: '页面', button: '按钮' }
+const categoryLabels: Record<string, string> = { page: '页面', button: '按钮', directory: '目录'}
 
 // 按分类分组展示权限
 const groupedRights = computed(() => {
@@ -143,7 +143,6 @@ function groupIndeterminate(group: { category: string; label: string; list: Righ
               class="right-item"
             >
               {{ r.name }}
-              <el-tag size="small" type="info" style="margin-left: 6px">{{ r.code }}</el-tag>
             </el-checkbox>
           </div>
         </div>
@@ -156,12 +155,111 @@ function groupIndeterminate(group: { category: string; label: string; list: Righ
 </template>
 
 <style scoped>
-.sys-page { padding: 20px; color: #333; }
-.panel-title { font-weight: 600; margin-bottom: 10px; color: #303133; }
-.role-menu { border-right: none; max-height: 420px; overflow: auto; }
-.right-group { border: 1px solid #ebeef5; border-radius: 6px; margin-bottom: 12px; }
-.group-head { padding: 10px 14px; background: #f5f7fa; border-bottom: 1px solid #ebeef5; }
-.group-body { padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 10px 24px; }
+/* ===================== 页面整体 ===================== */
+.sys-page {
+  padding: 24px;
+  color: #303133;
+  background: linear-gradient(180deg, #f6f8fc 0%, #f2f5fa 100%);
+  min-height: 100%;
+  border-radius: 12px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2d3d;
+  margin: 0 0 6px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-title::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #409eff, #79bbff);
+}
+
+/* 顶部提示条美化 */
+.sys-page :deep(.el-alert) {
+  border-radius: 10px;
+  border: 1px solid #d9ecff;
+  background: linear-gradient(90deg, #ecf5ff, #f4f8ff);
+  box-shadow: 0 2px 6px rgba(64, 158, 255, 0.06);
+}
+
+/* ===================== 左右面板容器 ===================== */
+.sys-page :deep(.el-row) {
+  margin-top: 16px;
+}
+
+/* 角色列面板 */
+.sys-page > div:not(.page-title) .el-col:nth-child(1),
+.sys-page .el-col-4 {
+  background: #fff;
+  border: 1px solid #e6ebf2;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 4px 16px rgba(31, 45, 61, 0.06);
+}
+
+/* 权限分配面板 */
+.sys-page .el-col-20 {
+  background: #fff;
+  border: 1px solid #e6ebf2;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 4px 16px rgba(31, 45, 61, 0.06);
+}
+
+.panel-title {
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #1f2d3d;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-title::before {
+  content: '';
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  background: #409eff;
+}
+
+/* ===================== 角色菜单（回退为默认样式） ===================== */
+.role-menu {
+  border-right: none;
+  max-height: 420px;
+  overflow: auto;
+}
+
+/* ===================== 权限分组卡片（回退为默认样式） ===================== */
+.right-group {
+  border: 1px solid #ebeef5;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+.group-head {
+  padding: 10px 14px;
+  background: #f5f7fa;
+  border-bottom: 1px solid #ebeef5;
+}
+.group-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+}
 .right-item { margin-right: 0; }
-.footer-bar { margin-top: 16px; text-align: right; }
+
+/* ===================== 底部保存栏 ===================== */
+.footer-bar {
+  margin-top: 16px;
+  text-align: right;
+}
 </style>

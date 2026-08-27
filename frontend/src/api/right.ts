@@ -11,6 +11,8 @@ export interface RightRow {
   category: string
   /** 备注 remark */
   remark: string
+  /** 父级权限 code */
+  parent: string
 }
 
 /** 权限列表查询参数 */

@@ -16,6 +16,11 @@ const loading = ref(false)
 const checkedUserCodes = ref<string[]>([])
 const tableData = ref<SysUserRow[]>([])
 
+// 分页参数
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+
 async function loadRoles() {
   const res = await roleAPI.search({page:1, pageSize: 99999 })
   roleOptions.value = res.data.content
@@ -25,9 +30,10 @@ async function loadRoles() {
 }
 
 async function loadUsers() {
-  const res = await sysUserAPI.search({ pageSize: 99999 })
+  const res = await sysUserAPI.search({ page: currentPage.value, pageSize: pageSize.value })
   userOptions.value = res.data.content
-  tableData.value = userOptions.value
+  tableData.value = res.data.content
+  total.value = res.data.total
 }
 
 async function syncChecked() {
@@ -44,7 +50,10 @@ async function syncChecked() {
   }
 }
 
-watch(selectedRoleCode, syncChecked)
+watch(selectedRoleCode, () => {
+  currentPage.value = 1
+  syncChecked()
+})
 
 onMounted(async () => {
   loading.value = true
@@ -55,6 +64,11 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+// 翻页/改页大小后重新拉取数据
+function handlePageChange() {
+  loadUsers()
+}
 
 async function handleSave() {
   if (!selectedRoleCode.value) return ElMessage.warning('请先选择角色')
@@ -95,6 +109,9 @@ async function handleSave() {
         <div class="panel-title">
           用户列表
         </div>
+        <div class="footer-bar">
+          <el-button type="primary" @click="handleSave">保存关联</el-button>
+        </div>
         <el-table :data="tableData" border stripe style="width: 100%">
           <el-table-column width="60">
             <template #header>
@@ -109,8 +126,16 @@ async function handleSave() {
           <el-table-column prop="department" label="部门" min-width="120" />
           <el-table-column prop="position" label="岗位" min-width="100" />
         </el-table>
-        <div class="footer-bar">
-          <el-button type="primary" @click="handleSave">保存关联</el-button>
+        <div class="pager">
+          <el-pagination
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            @current-change="(p: number) => { currentPage = p; handlePageChange() }"
+            @size-change="(s: number) => { pageSize = s; currentPage = 1; handlePageChange() }"
+          />
         </div>
       </el-col>
     </el-row>
@@ -121,5 +146,6 @@ async function handleSave() {
 .sys-page { padding: 20px; color: #333; }
 .panel-title { font-weight: 600; margin-bottom: 10px; color: #303133; }
 .role-menu { border-right: none; max-height: 420px; overflow: auto; }
-.footer-bar { margin-top: 16px; text-align: right; }
+.footer-bar { margin-top: 16px; text-align: right;margin-bottom: 16px; }
+.pager { margin-top: 14px; display: flex; justify-content: flex-end; }
 </style>
