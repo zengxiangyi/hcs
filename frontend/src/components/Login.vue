@@ -236,7 +236,7 @@ async function handleRegister() {
     <el-dialog
       v-model="resetDialogVisible"
       title="重置密码"
-      width="400px"
+      width="460px"
       :close-on-click-modal="false"
       append-to-body
     >
@@ -292,7 +292,7 @@ async function handleRegister() {
     <el-dialog
       v-model="registerDialogVisible"
       title="注册新账号"
-      width="500px"
+      width="560px"
       :close-on-click-modal="false"
       append-to-body
     >
@@ -331,7 +331,7 @@ async function handleRegister() {
   </div>
 </template>
 
-<style scoped>
+<style>
 :global(#app) {
   width: 100%;
   min-height: 100vh;
@@ -349,21 +349,30 @@ async function handleRegister() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: lightblue;
+  padding: 24px;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 }
 
 .login-card {
-  background-color: lightgray;
-  border-radius: 8px;
-  padding: 40px 32px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 360px;
+  max-width: 100%;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 44px 36px 36px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
   min-width: 300px;
 }
 
 .login-title {
-  margin: 0 0 24px;
+  margin: 0 0 28px;
   text-align: center;
-  color: #000;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #1e3c72, #2a5298);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .login-form {
@@ -387,43 +396,74 @@ async function handleRegister() {
 .login-input {
   box-sizing: border-box;
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #000;
+  height: 42px;
+  padding: 10px 14px;
+  border: 1px solid #e0e4ec;
+  border-radius: 8px;
+  background-color: #f7f9fc;
+  color: #1f2d3d;
   font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.login-input::placeholder {
+  color: #a8b0bd;
 }
 
 .login-input:focus {
   outline: none;
-  border-color: orange;
+  background-color: #fff;
+  border-color: #2a5298;
+  box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.15);
+}
+
+.login-input:hover {
+  border-color: #b8c2d4;
 }
 
 .login-button {
   box-sizing: border-box;
   width: 100%;
+  height: 44px;
+  margin-top: 4px;
   padding: 10px 12px;
   border: none;
-  border-radius: 4px;
-  background-color: orange;
-  color: #000;
-  font-size: 14px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #1e3c72, #2a5298);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
   cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
 }
 
 .login-button:hover {
-  background-color: darkorange;
+  box-shadow: 0 8px 20px rgba(42, 82, 152, 0.35);
+  transform: translateY(-1px);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
 }
 
 .forgot-link {
-  color: #666;
+  color: #5a6b85;
   font-size: 13px;
   text-decoration: none;
+  transition: color 0.2s;
 }
 
 .forgot-link:hover {
-  color: orange;
+  color: #2a5298;
+  text-decoration: underline;
 }
 
 .link-row {
@@ -431,6 +471,7 @@ async function handleRegister() {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-top: 2px;
 }
 
 .reset-form {
@@ -441,6 +482,94 @@ async function handleRegister() {
 
 .reset-tip {
   margin: 0;
-  color: #666;
+  color: #8190a5;
   font-size: 13px;
+  line-height: 1.5;
+}
+
+/* 对话框整体：加宽加高、品牌风格 */
+.el-dialog {
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.el-dialog__header {
+  margin: 0;
+  padding: 20px 24px;
+}
+
+.el-dialog__title {
+  color: #1f2d3d;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.el-dialog__body {
+  padding: 28px 32px;
+  min-height: 200px;
+}
+
+.el-dialog__footer {
+  padding: 0 32px 28px;
+}
+
+/* 注册表单：增大行距与控件，与登录页风格统一 */
+.register-form .el-form-item {
+  margin-bottom: 20px;
+}
+
+.register-form .el-input__wrapper {
+  border-radius: 8px;
+  background-color: #f7f9fc;
+  box-shadow: 0 0 0 1px #e0e4ec inset;
+  padding: 1px 14px;
+}
+
+.register-form .el-input__wrapper.is-focus {
+  background-color: #fff;
+  box-shadow: 0 0 0 1px #2a5298 inset, 0 0 0 3px rgba(42, 82, 152, 0.15);
+}
+
+.register-form .el-input__inner {
+  height: 40px;
+  color: #1f2d3d;
+  font-size: 14px;
+}
+
+.register-form .el-input__inner::placeholder {
+  color: #a8b0bd;
+}
+
+.register-form .el-form-item__label {
+  color: #5a6b85;
+  font-weight: 500;
+}
+
+/* 对话框底部主按钮与登录按钮风格一致 */
+.dialog-footer .el-button--primary {
+  background: linear-gradient(90deg, #1e3c72, #2a5298);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 16px rgba(42, 82, 152, 0.3);
+}
+
+.dialog-footer .el-button--primary:hover {
+  box-shadow: 0 8px 20px rgba(42, 82, 152, 0.4);
+  transform: translateY(-1px);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.dialog-footer .el-button:not(.el-button--primary) {
+  border-radius: 8px;
+  padding: 10px 24px;
+}
+
+/* 对话框内输入框与按钮适配品牌风格 */
+.el-dialog .login-input {
+  height: 40px;
 }</style>
