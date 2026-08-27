@@ -179,7 +179,7 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
 .menu-tree {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 8px 0;
   width: 100%;
 }
 
@@ -190,27 +190,29 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 5px;
+  gap: 10px;
+  margin: 2px 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  margin-top: 5px;
   user-select: none;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .menu-item:hover {
-  background-color: rgba(30, 144, 255, 0.08);
+  background-color: #eef3fb;
 }
 
 .menu-item.active {
-  color: #1e90ff;
-  background-color: rgba(30, 144, 255, 0.12);
-  font-weight: 800;
+  color: #1e5aa8;
+  background: linear-gradient(90deg, rgba(30, 90, 168, 0.14), rgba(30, 144, 255, 0.06));
+  box-shadow: inset 3px 0 0 #1e5aa8;
+  font-weight: 600;
 }
 
 /* 键盘导航时的焦点可见性，提升可访问性 */
 .menu-item:focus-visible {
-  outline: 2px solid #1e90ff;
+  outline: 2px solid #1e5aa8;
   outline-offset: -2px;
 }
 
@@ -218,19 +220,19 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
+  width: 18px;
   flex: none;
-  font-size: 16px;
-  color: #666;
+  font-size: 17px;
+  color: #5a6b85;
   transition: color 0.2s;
 }
 
 .menu-item:hover .menu-icon {
-  color: #1e90ff;
+  color: #1e5aa8;
 }
 
 .menu-item.active .menu-icon {
-  color: #1e90ff;
+  color: #1e5aa8;
 }
 
 .menu-arrow {
@@ -240,7 +242,7 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
   width: 14px;
   flex: none;
   font-size: 12px;
-  color: #888;
+  color: #a3aeba;
   transition: transform 0.2s ease;
 }
 
@@ -283,45 +285,50 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
 .menu-children .menu-tree::before {
   content: '';
   position: absolute;
-  left: 20px;
-  top: 2px;
-  bottom: 2px;
+  left: 26px;
+  top: 4px;
+  bottom: 4px;
   width: 1px;
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(30, 90, 168, 0.12);
 }
 
 /* 通过 :deep() 穿透到递归子组件内部的 .menu-item，弱化子级样式以区分层级。
    子项填满容器（与父级等宽），层级缩进通过左 padding 体现，而非缩减容器宽度。 */
 .menu-children :deep(.menu-item) {
-  width: 100%;
+  width: auto;
   box-sizing: border-box;
-  padding: 8px 5px 8px 40px;
+  margin: 1px 8px;
+  padding: 8px 12px 8px 34px;
   font-weight: 400;
-  color: #555;
+  color: #4a586b;
+  font-size: 16px;
 }
 
 .menu-children :deep(.menu-item .menu-icon) {
-  color: #888;
+  width: 16px;
+  font-size: 16px;
+  color: #7d8aa0;
 }
 
 .menu-children :deep(.menu-item:hover) {
-  background-color: rgba(30, 144, 255, 0.08);
+  background-color: #eef3fb;
 }
 
 .menu-children :deep(.menu-item:hover .menu-icon) {
-  color: #1e90ff;
+  color: #1e5aa8;
 }
 
 /* 子级键盘焦点可见性与一级对齐，保证跨层级交互态一致 */
 .menu-children :deep(.menu-item:focus-visible) {
-  outline: 2px solid #1e90ff;
+  outline: 2px solid #1e5aa8;
   outline-offset: -2px;
 }
 
 .menu-children :deep(.menu-item.active) {
-  color: #1e90ff;
-  background-color: rgba(30, 144, 255, 0.12);
-  font-weight: 800;
+  color: #1e5aa8;
+  background: linear-gradient(90deg, rgba(30, 90, 168, 0.14), rgba(30, 144, 255, 0.06));
+  box-shadow: inset 3px 0 0 #1e5aa8;
+  font-weight: 600;
 }
 
 /* 子级菜单项左侧小圆点指示，进一步区分层级 */
@@ -330,12 +337,12 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
   flex: none;
   width: 6px;
   height: 6px;
-  margin-right: 6px;
+  margin-right: 8px;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(30, 90, 168, 0.25);
 }
 
 .menu-children :deep(.menu-item.active)::before {
-  background-color: #1e90ff;
+  background-color: #1e5aa8;
 }
 </style>

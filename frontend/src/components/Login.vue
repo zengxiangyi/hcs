@@ -207,25 +207,29 @@ async function handleRegister() {
   <div class="login-container">
     <div class="login-card">
       <form class="login-form" @submit.prevent="handleLogin">
-        <h2 class="login-title">登录</h2>
-        <label for="login-username" class="sr-only">用户名</label>
-        <input
-          id="login-username"
-          v-model="username"
-          class="login-input"
-          type="text"
-          placeholder="用户名"
-          autocomplete="username"
-        />
-        <label for="login-password" class="sr-only">密码</label>
-        <input
-          id="login-password"
-          v-model="password"
-          class="login-input"
-          type="password"
-          placeholder="密码"
-          autocomplete="current-password"
-        />
+        <h2 class="login-title">宝钢轧辊热处理数智化系统</h2>
+        <div class="field-row">
+          <label for="login-username" class="field-label">用户名</label>
+          <input
+            id="login-username"
+            v-model="username"
+            class="login-input"
+            type="text"
+            placeholder="请输入用户名"
+            autocomplete="username"
+          />
+        </div>
+        <div class="field-row">
+          <label for="login-password" class="field-label">密码</label>
+          <input
+            id="login-password"
+            v-model="password"
+            class="login-input"
+            type="password"
+            placeholder="请输入密码"
+            autocomplete="current-password"
+          />
+        </div>
         <button class="login-button" type="submit" :disabled="loading">{{ loading ? '登录中...' : '确定' }}</button>
         <div class="link-row">
           <a class="forgot-link" href="#" @click.prevent="openRegisterDialog">注册账号</a>
@@ -347,87 +351,159 @@ async function handleRegister() {
 }
 
 .login-container {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: #EEF4FF;
+  background: linear-gradient(135deg, #eef3fb 0%, #dce7f7 45%, #cfe0f5 100%);
+  overflow: hidden;
+}
+
+/* 背景装饰光晕，营造专业氛围 */
+.login-container::before,
+.login-container::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+}
+.login-container::before {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  right: -80px;
+  background: rgba(150, 190, 255, 0.5);
+}
+.login-container::after {
+  width: 380px;
+  height: 380px;
+  bottom: -120px;
+  left: -80px;
+  background: rgba(140, 170, 240, 0.5);
 }
 
 .login-card {
-  width: 360px;
+  position: relative;
+  z-index: 1;
+  width: 400px;
   max-width: 100%;
-  background-color: #fff;
-  border-radius: 16px;
-  padding: 44px 36px 36px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-  min-width: 300px;
+  background-color: rgba(255, 255, 255, 0.98);
+  border-radius: 14px;
+  padding: 34px 38px 34px;
+  box-shadow: 0 24px 60px rgba(80, 120, 190, 0.2), 0 2px 8px rgba(80, 120, 190, 0.12);
+  min-width: 320px;
+}
+
+/* 品牌区：左上角标识 + 系统名称 */
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+.login-logo {
+  width: 200px;
+  height: 42px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(42, 82, 152, 0.35);
+}
+.login-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+.login-subtitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2d3d;
+  letter-spacing: 1px;
 }
 
 .login-title {
-  margin: 0 0 28px;
+  margin: 0 0 26px;
   text-align: center;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  background: linear-gradient(90deg, #1e3c72, #2a5298);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1f2d3d;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-bottom: 12px;
+}
+.login-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 32px;
+  height: 3px;
+  border-radius: 2px;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.field-label {
+  width: 56px;
+  flex-shrink: 0;
+  color: #1f2d3d;
+  font-size: 14px;
+  text-align: right;
   white-space: nowrap;
-  border: 0;
 }
 
 .login-input {
   box-sizing: border-box;
   width: 100%;
-  height: 42px;
+  height: 44px;
   padding: 10px 14px;
-  border: 1px solid #e0e4ec;
+  border: 1px solid #d9dfe9;
   border-radius: 8px;
-  background-color: #f7f9fc;
+  background-color: #fff;
   color: #1f2d3d;
   font-size: 14px;
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
 .login-input::placeholder {
-  color: #a8b0bd;
+  color: #a3adbf;
 }
 
 .login-input:focus {
   outline: none;
-  background-color: #fff;
   border-color: #2a5298;
-  box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.15);
+  box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.12);
 }
 
 .login-input:hover {
-  border-color: #b8c2d4;
+  border-color: #a9b6cc;
 }
 
 .login-button {
   box-sizing: border-box;
   width: 100%;
-  height: 44px;
-  margin-top: 4px;
+  height: 46px;
+  margin-top: 2px;
   padding: 10px 12px;
   border: none;
   border-radius: 8px;
@@ -435,7 +511,7 @@ async function handleRegister() {
   color: #fff;
   font-size: 15px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
 }
@@ -465,7 +541,7 @@ async function handleRegister() {
 
 .forgot-link:hover {
   color: #2a5298;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .link-row {
@@ -473,7 +549,9 @@ async function handleRegister() {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-top: 2px;
+  margin-top: 4px;
+  border-top: 1px solid #eef1f6;
+  padding-top: 16px;
 }
 
 .reset-form {
