@@ -42,7 +42,7 @@ export interface RoleSaveParams {
 /** 角色接口 */
 export const roleAPI = {
   /** 角色列表（服务端分页） */
-  list: (params?: RoleListParams) => http.get<RoleListResult>('/api/sysRole/list', { params }),
+  search: (params?: RoleListParams) => http.post<RoleListResult>('/api/sysRole/search', params),
   /** 新增角色 */
   add: (data: RoleSaveParams) => http.post<RoleRow>('/api/sysRole/save', data),
   /** 修改角色 */

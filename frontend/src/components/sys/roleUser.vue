@@ -17,7 +17,7 @@ const checkedUserCodes = ref<string[]>([])
 const tableData = ref<SysUserRow[]>([])
 
 async function loadRoles() {
-  const res = await roleAPI.list({ pageSize: 99999 })
+  const res = await roleAPI.search({page:1, pageSize: 99999 })
   roleOptions.value = res.data.content
   if (roleOptions.value.length && !selectedRoleCode.value) {
     selectedRoleCode.value = roleOptions.value[0].code
@@ -25,7 +25,7 @@ async function loadRoles() {
 }
 
 async function loadUsers() {
-  const res = await sysUserAPI.list({ pageSize: 99999 })
+  const res = await sysUserAPI.search({ pageSize: 99999 })
   userOptions.value = res.data.content
   tableData.value = userOptions.value
 }

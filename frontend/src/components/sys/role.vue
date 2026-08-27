@@ -22,9 +22,10 @@ const pageSize = ref(10)
 const total = ref(0)
 
 async function refresh() {
+  debugger;
   loading.value = true
   try {
-    const res = await roleAPI.list({
+    const res = await roleAPI.search({
       name: query.value.name || undefined,
       page: currentPage.value,
       pageSize: pageSize.value,

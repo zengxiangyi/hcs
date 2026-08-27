@@ -29,7 +29,7 @@ const groupedRights = computed(() => {
 const checkedRightCodes = ref<string[]>([])
 
 async function loadRoles() {
-  const res = await roleAPI.list({ pageSize: 99999 })
+  const res = await roleAPI.search({page:1, pageSize: 99999 })
   roleOptions.value = res.data.content
   if (roleOptions.value.length && !selectedRoleCode.value) {
     selectedRoleCode.value = roleOptions.value[0].code
@@ -37,7 +37,7 @@ async function loadRoles() {
 }
 
 async function loadRights() {
-  const res = await rightAPI.list({ pageSize: 99999 })
+  const res = await rightAPI.search({page:1,pageSize: 99999 })
   rightOptions.value = res.data.content
 }
 

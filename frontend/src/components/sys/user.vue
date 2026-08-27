@@ -37,7 +37,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 async function refresh() {
   loading.value = true
   try {
-    const res = await sysUserAPI.list({
+    const res = await sysUserAPI.search({
       code: query.value.code.trim() || undefined,
       name: query.value.name.trim() || undefined,
       department: query.value.department || undefined,

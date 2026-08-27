@@ -97,7 +97,7 @@ export interface SysUserSaveParams {
 /** 系统用户接口（后端已开发完毕） */
 export const sysUserAPI = {
   /** 用户列表（服务端分页） */
-  list: (params?: SysUserListParams) => http.get<SysUserListResult>('/api/sysUser/list', { params }),
+  search: (params?: SysUserListParams) => http.post<SysUserListResult>('/api/sysUser/search', params),
   /** 新增用户 */
   add: (data: SysUserSaveParams) => http.post<SysUserRow>('/api/sysUser/save', data),
   /** 修改用户 */

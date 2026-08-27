@@ -45,8 +45,8 @@ export interface ConstValueSaveParams {
 /** 常量值接口 */
 export const constValueAPI = {
   /** 常量值列表（服务端分页） */
-  list: (params?: ConstValueListParams) =>
-    http.get<ConstValueListResult>('/api/constValue/list', { params }),
+  search: (params?: ConstValueListParams) =>
+    http.post<ConstValueListResult>('/api/constValue/search', params),
   /** 新增常量值 */
   add: (data: ConstValueSaveParams) => http.post<ConstValueRow>('/api/constValue/save', data),
   /** 修改常量值 */

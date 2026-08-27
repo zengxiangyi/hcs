@@ -25,7 +25,7 @@ const total = ref(0)
 async function refresh() {
   loading.value = true
   try {
-    const res = await constValueAPI.list({
+    const res = await constValueAPI.search({
       code: query.value.code || undefined,
       name: query.value.name || undefined,
       category: query.value.category || undefined,

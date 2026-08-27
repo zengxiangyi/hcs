@@ -42,7 +42,7 @@ export interface RightSaveParams {
 /** 权限接口 */
 export const rightAPI = {
   /** 权限列表（服务端分页） */
-  search: (params?: RightListParams) => http.post<RightListResult>('/api/sysRight/search', { params }),
+  search: (params?: RightListParams) => http.post<RightListResult>('/api/sysRight/search', params),
   /** 新增权限 */
   add: (data: RightSaveParams) => http.post<RightRow>('/api/sysRight/save', data),
   /** 修改权限 */
