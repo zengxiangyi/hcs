@@ -1,0 +1,138 @@
+/* ============================================================
+ * 公共页面样式 —— 后台管理页面通用布局（查询区 / 工具栏 / 表格 / 分页）
+ *
+ * 用法：在页面模板中为对应区域添加下列 class 即可复用，
+ * 并删除该页面 <style scoped> 中的同名样式，避免重复与冲突。
+ * 类名：
+ *   .page-title    页面标题（带左侧品牌竖条）
+ *   .query-form    查询条件区（白底卡片）
+ *   .toolbar       工具栏 / 操作按钮区（白底卡片）
+ *   .pagination    分页区（白底卡片）
+ *   表格直接使用 .el-table 即可获得统一样式（卡片圆角、表头渐变、hover 高亮）
+ * ============================================================ */
+
+/* ===== 页面标题 ===== */
+.page-title {
+  margin: 0 0 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2d3d;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-left: 12px;
+}
+.page-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #409eff, #66b1ff);
+}
+
+/* ===== 查询区域 ===== */
+.query-form {
+  margin-bottom: 16px;
+  padding: 16px 20px 2px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #ebeef5;
+  box-shadow: 0 1px 4px rgba(31, 45, 61, 0.04);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.query-form .el-form-item {
+  margin-bottom: 14px;
+  margin-right: 18px;
+}
+.query-form .el-form-item__label {
+  color: #606266;
+  font-weight: 500;
+}
+.query-form .el-input {
+  --el-input-border-radius: 8px;
+}
+
+/* ===== 工具栏（按钮区域） ===== */
+.toolbar {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(31, 45, 61, 0.04);
+}
+.toolbar .el-button {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* ===== 表格区域 ===== */
+.el-table {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(31, 45, 61, 0.04);
+  --el-table-header-bg-color: #f5f7fa;
+  --el-table-header-text-color: #606266;
+  --el-table-header-font-weight: 600;
+}
+.el-table th.el-table__cell {
+  background: linear-gradient(180deg, #fafbfc, #f2f4f7);
+  letter-spacing: 0.3px;
+}
+.el-table td.el-table__cell {
+  padding: 12px 0;
+}
+.el-table .el-table__row:hover > td.el-table__cell {
+  background-color: #f0f7ff;
+}
+.el-table .el-table__row--striped {
+  transition: background-color 0.2s;
+}
+
+/* ===== 表格操作按钮 ===== */
+.el-table .el-button.is-link {
+  font-weight: 500;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.el-table .el-button.is-link.el-button--primary:hover {
+  background: rgba(64, 158, 255, 0.1);
+  transform: translateY(-1px);
+}
+.el-table .el-button.is-link.el-button--danger:hover {
+  background: rgba(245, 108, 108, 0.1);
+  transform: translateY(-1px);
+}
+.el-table .el-button.is-link + .el-button.is-link {
+  margin-left: 4px;
+}
+
+/* ===== 分页区域 ===== */
+.pagination {
+  margin-top: 16px;
+  justify-content: flex-end;
+  padding: 14px 16px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(31, 45, 61, 0.04);
+}
+.pagination .el-pagination.is-background .el-pager li,
+.pagination .el-pagination.is-background .btn-prev,
+.pagination .el-pagination.is-background .btn-next {
+  border-radius: 6px;
+}
+.pagination .el-pagination.is-background .el-pager li.is-active {
+  background: linear-gradient(135deg, #409eff, #66b1ff);
+  font-weight: 600;
+}
+.pagination .el-pagination__sizes .el-select {
+  --el-select-border-radius: 6px;
+}

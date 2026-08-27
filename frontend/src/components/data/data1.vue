@@ -104,8 +104,8 @@ function handleSearch(){
       <el-table-column prop="createTime" label="创建时间" min-width="180" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="primary" link @click="handleEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" link @click="handleDelete(row)">删除</el-button>
+          <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -116,19 +116,5 @@ function handleSearch(){
 .data-page {
   padding: 20px;
   color: #333;
-}
-
-.page-title {
-  margin: 0 0 16px;
-  font-size: 18px;
-  color: #303133;
-}
-
-.query-form {
-  margin-bottom: 10px;
-}
-
-.toolbar {
-  margin-bottom: 10px;
 }
 </style>

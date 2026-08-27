@@ -273,18 +273,9 @@ onMounted(() => {
   padding-left: 8px;
 }
 
-.query-form {
-  margin-bottom: 16px;
-}
-
 .selected-tip {
   margin-bottom: 12px;
   font-size: 13px;
   color: #606266;
-}
-
-.pagination {
-  margin-top: 16px;
-  justify-content: flex-end;
 }
 </style>

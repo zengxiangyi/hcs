@@ -122,12 +122,6 @@ function next() {
   color: #333;
 }
 
-.page-title {
-  margin: 0 0 16px;
-  font-size: 18px;
-  color: #303133;
-}
-
 .flow-body {
   display: flex;
   gap: 16px;

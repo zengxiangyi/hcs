@@ -161,8 +161,8 @@ onMounted(() => {
       <el-table-column prop="remark" label="备注" min-width="180" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="primary" link @click="handleEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" link @click="handleDelete(row)">删除</el-button>
+          <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -205,9 +205,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.sys-page { padding: 20px; color: #333; }
-.page-title { margin: 0 0 16px; font-size: 18px; color: #303133; }
-.query-form { margin-bottom: 16px; }
-.toolbar { margin-bottom: 16px; }
-.pagination { margin-top: 16px; justify-content: flex-end; }
+/* 页面级公共样式（.page-title / .query-form / .toolbar / .el-table / .pagination）
+   已抽离至 src/style/common.css，全局复用。此处仅保留页面私有样式。 */
+.sys-page {
+  padding: 20px;
+  color: #333;
+  min-height: 100%;
+}
 </style>

@@ -119,7 +119,6 @@ async function handleSave() {
 
 <style scoped>
 .sys-page { padding: 20px; color: #333; }
-.page-title { margin: 0 0 16px; font-size: 18px; color: #303133; }
 .panel-title { font-weight: 600; margin-bottom: 10px; color: #303133; }
 .role-menu { border-right: none; max-height: 420px; overflow: auto; }
 .footer-bar { margin-top: 16px; text-align: right; }

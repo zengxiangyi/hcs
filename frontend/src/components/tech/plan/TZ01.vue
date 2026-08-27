@@ -79,8 +79,8 @@ async function removeRow(index: number) {
         </el-table-column>
         <el-table-column label="操作" width="120">
           <template #default="{ $index }">
-            <el-button type="primary" link @click="insertRow($index)">插入</el-button>
-            <el-button type="danger" link @click="removeRow($index)">删除</el-button>
+            <el-button type="primary" @click="insertRow($index)">插入</el-button>
+            <el-button type="danger" @click="removeRow($index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

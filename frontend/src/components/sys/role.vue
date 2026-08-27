@@ -150,8 +150,8 @@ onMounted(refresh)
       <el-table-column prop="remark" label="备注" min-width="200" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="primary" link @click="handleEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" link @click="handleDelete(row)">删除</el-button>
+          <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -192,8 +192,4 @@ onMounted(refresh)
 
 <style scoped>
 .sys-page { padding: 20px; color: #333; }
-.page-title { margin: 0 0 16px; font-size: 18px; color: #303133; }
-.query-form { margin-bottom: 16px; }
-.toolbar { margin-bottom: 16px; }
-.pagination { margin-top: 16px; justify-content: flex-end; }
 </style>

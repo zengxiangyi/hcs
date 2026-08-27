@@ -266,19 +266,4 @@ onMounted(fetchData)
   padding: 20px;
   color: #333;
 }
-
-.page-title {
-  margin: 0 0 16px;
-  font-size: 18px;
-  color: #303133;
-}
-
-.query-form {
-  margin-bottom: 16px;
-}
-
-.pagination {
-  margin-top: 16px;
-  justify-content: flex-end;
-}
 </style>

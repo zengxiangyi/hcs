@@ -120,12 +120,6 @@ function next() {
   color: #333;
 }
 
-.page-title {
-  margin: 0 0 16px;
-  font-size: 18px;
-  color: #303133;
-}
-
 /* 顶部水平页签 */
 .step-tabs {
   display: flex;
