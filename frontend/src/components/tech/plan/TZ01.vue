@@ -77,7 +77,7 @@ async function removeRow(index: number) {
         <el-table-column label="备注">
           <template #default="{ row }"><el-input v-model="row.remark" placeholder="请输入" /></template>
         </el-table-column>
-        <el-table-column label="操作" width="120">
+        <el-table-column label="操作" width="220">
           <template #default="{ $index }">
             <el-button type="primary" @click="insertRow($index)">插入</el-button>
             <el-button type="danger" @click="removeRow($index)">删除</el-button>

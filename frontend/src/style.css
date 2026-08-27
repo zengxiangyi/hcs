@@ -7,6 +7,12 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* ===== 公共文字颜色变量（全局可复用） =====
+   * 引用方式：color: var(--color-text-main);
+   * 若需切换主题/深浅色，只需在此统一修改即可全局生效。 */
+  --color-text-main: #000000;   /* 正文/标题：纯黑 */
+  --color-text-aux: #000000;    /* 辅助文字（标签冒号等）：跟随正文 */
 }
 
 body {
