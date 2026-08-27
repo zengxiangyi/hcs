@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { blueprintAPI, type BluePrintRow } from '../../api/blueprint'
+
+const router = useRouter()
 
 defineOptions({ name: 'BluePrintList' })
 
@@ -130,7 +133,7 @@ async function fetchData() {
   debugger;
   loading.value = true
   try {
-    const res = await blueprintAPI.getList({
+    const res = await blueprintAPI.search({
       code: query.value.code.trim() || undefined,
       name: query.value.name.trim() || undefined,
       state: query.value.state || undefined,
@@ -185,7 +188,8 @@ function stateTagType(state: string): 'info' | 'warning' | 'success' | 'danger' 
 }
 
 function handleEdit(row: BluePrintRow) {
-  ElMessage.info(`编辑：${row.code} ${row.name}`)
+  // 跳转到蓝本草稿页，通过 code 参数加载编辑信息
+  router.push({ name: 'Draft', query: { code: row.code, edition: row.edition} })
 }
 
 async function handleDelete(row: BluePrintRow) {

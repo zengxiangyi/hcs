@@ -20,6 +20,7 @@ declare module 'vue' {
     Data2: typeof import('./src/components/data/data2.vue')['default']
     Dbd: typeof import('./src/components/hcs/product/dbd.vue')['default']
     Done: typeof import('./src/components/approval/done.vue')['default']
+    Draft: typeof import('./src/components/tech/draft.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']

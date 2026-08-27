@@ -65,11 +65,15 @@ export const techAPI = {
   save: (data: TechBoardSaveDTO): Promise<ApiResponse<TechBoardSaveDTO>> =>
     http.post<TechBoardSaveDTO>('/api/blueprint/save', data) as Promise<ApiResponse<TechBoardSaveDTO>>,
 
-  /** 获取工艺看板 */
+  /** 获取工艺看板（按 id） */
   get: (id: number): Promise<ApiResponse<TechBoardSaveDTO>> =>
     http.get<TechBoardSaveDTO>(`/api/blueprint/${id}`) as Promise<ApiResponse<TechBoardSaveDTO>>,
 
-  /** 查看草稿 */
+  /** 查看草稿（按 code和edition 加载蓝本编辑信息） */
+  getByCode: (code: string,edition: string): Promise<ApiResponse<TechBoardSaveDTO>> =>
+    http.get<TechBoardSaveDTO>(`/api/blueprint/code/${code}/${edition}`) as Promise<ApiResponse<TechBoardSaveDTO>>,
+
+  /** 查看草稿列表 */
   getList: (params?: BluePrintListParams): Promise<ApiResponse<BluePrintListResult>> =>
     http.get<BluePrintListResult>('/api/blueprint/list', { params }) as Promise<ApiResponse<BluePrintListResult>>,
 

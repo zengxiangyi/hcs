@@ -6,10 +6,11 @@
       "icon": "Cpu",
       "children": [
         {
-          "name": "工艺创建",
+          "name": "蓝本创建",
           "path": "/web/tech/board",
           "icon": "Cpu"
-        }]
+        }
+      ]
     },
     {
       "name": "蓝本管理",
