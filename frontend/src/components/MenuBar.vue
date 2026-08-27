@@ -2,8 +2,17 @@
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowRight } from '@element-plus/icons-vue'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import menuData from '../config/menu.json'
-import { hasRight } from './hcs/sys/permission'
+import { hasRight } from './sys/permission'
+
+/** 将菜单 icon 字段（Element Plus 图标名）解析为组件；无效时回退到 Document */
+function iconComp(name?: string) {
+  if (name && (ElementPlusIconsVue as Record<string, unknown>)[name]) {
+    return (ElementPlusIconsVue as Record<string, unknown>)[name]
+  }
+  return ElementPlusIconsVue.Document
+}
 
 interface MenuItem {
   name: string
@@ -32,10 +41,12 @@ function filterMenu(items: MenuItem[]): MenuItem[] {
 }
 
 const props = withDefaults(
-  defineProps<{ items?: MenuItem[] }>(),
+  defineProps<{ items?: MenuItem[]; topLevel?: boolean }>(),
   {
     // 未传入菜单时，默认加载 config/menu.json
     items: () => menuData.menu as MenuItem[],
+    // 仅顶级菜单需要为箭头预留固定宽度以保证标题对齐；嵌套层级靠 padding 缩进
+    topLevel: true,
   },
 )
 
@@ -132,14 +143,20 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
         @click="handleClick(item)"
         @keydown="handleKeydown(item, $event)"
       >
+        <span class="menu-icon">
+          <el-icon><component :is="iconComp(item.icon)" /></el-icon>
+        </span>
         <span
-          v-if="hasChildren(item)"
           class="menu-arrow"
-          :class="{ expanded: expanded.has(item.path) }"
+          :class="{
+            'has-children': hasChildren(item),
+            expanded: expanded.has(item.path),
+            'reserve-slot': props.topLevel,
+          }"
         >
           <el-icon><ArrowRight /></el-icon>
         </span>
-        <span>{{ item.name }}</span>
+        <span class="menu-label">{{ item.name }}</span>
       </div>
       <!-- 子菜单默认隐藏，点击父级后展开 -->
       <div
@@ -147,7 +164,7 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
         class="menu-children"
         role="group"
       >
-        <MenuBar :items="filterMenu(item.children!)" />
+        <MenuBar :items="filterMenu(item.children!)" :top-level="false" />
       </div>
     </li>
   </ul>
@@ -171,16 +188,19 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
   gap: 8px;
   padding: 5px 5px;
   cursor: pointer;
+  margin-top: 5px;
   user-select: none;
   transition: background-color 0.2s;
 }
 
 .menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(30, 144, 255, 0.08);
 }
 
 .menu-item.active {
+  color: #1e90ff;
   background-color: rgba(30, 144, 255, 0.12);
+  font-weight: 800;
 }
 
 /* 键盘导航时的焦点可见性，提升可访问性 */
@@ -189,8 +209,23 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
   outline-offset: -2px;
 }
 
-.menu-item.has-children {
-  font-weight: 600;
+.menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  flex: none;
+  font-size: 16px;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.menu-item:hover .menu-icon {
+  color: #1e90ff;
+}
+
+.menu-item.active .menu-icon {
+  color: #1e90ff;
 }
 
 .menu-arrow {
@@ -198,9 +233,22 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
   align-items: center;
   justify-content: center;
   width: 14px;
+  flex: none;
   font-size: 12px;
   color: #888;
   transition: transform 0.2s ease;
+}
+
+/* 顶级菜单：无子菜单的项也保留箭头占位宽度（reserve-slot + 隐藏图标），
+   保证有/无子菜单的一级标题左对齐 */
+.menu-arrow.reserve-slot:not(.has-children) {
+  visibility: hidden;
+}
+
+/* 嵌套层级：仅对真正拥有子菜单的项显示箭头；无子菜单项不占位，
+   缩进由 .menu-item 左 padding 体现，避免标题被额外偏移 */
+.menu-children :deep(.menu-arrow):not(.has-children) {
+  display: none;
 }
 
 /* 展开时箭头顺时针旋转 90°，配合过渡动画形成平滑展开指示 */
@@ -247,8 +295,22 @@ function handleKeydown(item: MenuItem, event: KeyboardEvent) {
   color: #555;
 }
 
+.menu-children :deep(.menu-item .menu-icon) {
+  color: #888;
+}
+
 .menu-children :deep(.menu-item:hover) {
   background-color: rgba(30, 144, 255, 0.08);
+}
+
+.menu-children :deep(.menu-item:hover .menu-icon) {
+  color: #1e90ff;
+}
+
+/* 子级键盘焦点可见性与一级对齐，保证跨层级交互态一致 */
+.menu-children :deep(.menu-item:focus-visible) {
+  outline: 2px solid #1e90ff;
+  outline-offset: -2px;
 }
 
 .menu-children :deep(.menu-item.active) {

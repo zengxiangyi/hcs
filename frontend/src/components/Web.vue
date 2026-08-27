@@ -3,17 +3,16 @@ import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus'
 import MenuBar from './MenuBar.vue'
-import { baseAPI } from '../api/base';
 
 defineOptions({ name: 'Web' })
 
 const router = useRouter()
 const route = useRoute()
 
-/** 顶栏标题文案（中立化，不含具体技术栈版本号，便于长期复用） */
-const SYS_TITLE = '宝钢轧辊热处理工艺管理系统'
+/** 顶栏标题文本 */
+const SYS_TITLE = '宝钢轧辊热处理工艺数智化系统'
 
-/** 当前登录用户名；登录后由 getUserInfo 填充真实值 */
+/** 当前登录用户名；登录后由 loadUserInfo 填充真实值 */
 const username = ref('')
 
 /** 加载当前登录用户信息，展示真实用户名；失败时保留空串占位 */
@@ -39,13 +38,14 @@ onMounted(() => {
 
 async function handleLogout() {
   try {
-    await baseAPI.logout()
-  } catch {
-    // 接口异常不阻塞退出：本地清理凭证后仍可跳转登录页
-  } finally {
+    // await baseAPI.logout()
     localStorage.removeItem('token')
     ElMessage.success('已退出登录')
     router.push('/login')
+  } catch {
+    // 接口异常不阻塞退出：本地清理凭证后仍可跳转登录页
+  } finally {
+    console.log('handleLogout')
   }
 }
 </script>
@@ -114,7 +114,7 @@ async function handleLogout() {
 .layout-left {
   flex: 0 0 15%;
   width: 15%;
-  min-width: 150px; /* 固定 15% 宽度时用 min-width 防止窄屏下被挤压 */
+  min-width: 180px; /* 固定 12% 宽度时用 min-width 防止窄屏下被挤压 */
   background-color: #EDEDED;
 }
 

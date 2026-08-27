@@ -29,7 +29,7 @@ The frontend models the API response envelope as `ApiResponse<T>` = `{ code, dat
 
 - `src/api/http.ts` — the single axios instance with request interceptor (injects `Authorization: Bearer <token>` from `localStorage`) and response interceptor (envelope unwrap + 401 handling). Exported as a typed `TypedHttp` (get/post/put/delete returning `Promise<ApiResponse<T>>`).
 - `src/api/base.ts` — auth-related endpoints (`/api/auth/login`, `/api/auth/logout`, `/api/auth/verify-identity`, `/api/auth/reset-password`, `/api/user/info`) + their TS param/result interfaces.
-- `src/api/data.ts` — user CRUD endpoints (`/api/users`) + paginated list query types.
+- `src/api/user.ts` — user CRUD endpoints (`/api/users`) + paginated list query types.
 - `src/router/index.ts` — routes + a global `beforeEach` guard. `WHITE_LIST` contains route names that skip auth (currently `Login`); all other routes require a token to exist locally AND validate against the backend `getUserInfo()`. On failure it clears the token and redirects to `/` with a `redirect` query param.
 - `src/components/` — `Login.vue` (login + two-step password reset dialog), `Web.vue` (authenticated layout shell with top bar + left menu + nested `<router-view>`), `MenuBar.vue` (recursive menu driven by `src/config/menu.json`), and the feature page `src/components/data/data2.vue` (fully wired to CRUD with server-side pagination + XLSX import/export).
 - `src/utils/md5.ts` — hand-rolled MD5; passwords are MD5-hashed **before** being sent.

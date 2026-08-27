@@ -2,11 +2,8 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { baseAPI } from '../api/base'
+import { baseAPI } from '../api/auth'
 import { md5 } from '../utils/md5'
-import { setCurrentUser } from './hcs/sys/permission'
-import { users } from './hcs/sys/mock'
-
 defineOptions({ name: 'Login' })
 
 const router = useRouter()
@@ -17,24 +14,22 @@ const loading = ref(false)
 
 async function handleLogin() {
   const u = username.value.trim()
-  // 密码不做 trim：密码可能合法包含首尾空格，trim 会改变凭据导致登录失败
-  const p = password.value
+  const p = password.value.trim()
   if (!u || !p) {
     ElMessage.warning('请输入用户名和密码')
     return
   }
   loading.value = true
   try {
+    debugger;
     // baseAPI.login 返回 Promise<ApiResponse<LoginResult>>，取 data 为业务数据
     const { data } = await baseAPI.login({
       username: u,
       password: md5(p),
     })
+    
     localStorage.setItem('token', data.token)
     localStorage.setItem('user', JSON.stringify(data.user))
-    // mock 演示：用登录账号匹配本地用户，写入其角色权限集合（真实项目应由后端在登录返回中给出）
-    const mockUser = users.find((u) => u.username === data.user?.username)
-    if (mockUser) setCurrentUser(mockUser.id)
     ElMessage.success('登录成功')
     router.push('/web')
   } catch (err: any) {

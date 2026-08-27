@@ -61,6 +61,7 @@
 | 文件 | 用途 |
 |------|------|
 | `docs/struct.md` | 本文件，记录项目结构与 `.gitignore` 解析。 |
+| `docs/api.md` | 前端接口文档：逐模块说明 `src/api/` 下各导出对象（`dataAPI` / `roleAPI` / `rightAPI` / `roleUserAPI` / `roleRightAPI`）的端点、入参与返回类型，以及实体关联（用户/角色/权限）。 |
 
 ---
 
@@ -98,7 +99,12 @@
 |------|------|
 | `src/api/http.ts` | axios 单例封装，统一拦截：请求拦截注入 `Authorization: Bearer <token>`（读自 `localStorage`）；响应拦截解包统一响应体 `ApiResponse<T> = { code, data, msg }`，`code !== 200` 时以 `err.message` 抛出后端 `msg`；HTTP 401 视为 token 失效，清理本地凭证并跳转 `/`。导出类型化 `TypedHttp`（get/post/put/delete 返回 `Promise<ApiResponse<T>>`）。 |
 | `src/api/base.ts` | 认证相关端点 + TS 类型：`/api/auth/login`、`/api/auth/verify-identity`、`/api/auth/reset-password`、`/api/user/info`，封装为 `baseAPI` 对象。 |
-| `src/api/data.ts` | 用户 CRUD 端点 + TS 类型：`/api/users` 列表（服务端分页）/新增/修改/删除，封装为 `dataAPI` 对象。 |
+| `src/api/user.ts` | 用户 CRUD 端点 + TS 类型：`/api/users` 列表（服务端分页）/新增/修改/删除，封装为 `dataAPI` 对象。 |
+| `src/api/role.ts` | 角色管理端点 + TS 类型：`/api/role/list`、`/api/role`（POST/PUT/DELETE），封装为 `roleAPI`。 |
+| `src/api/right.ts` | 权限管理端点 + TS 类型：`/api/right/list`、`/api/right`，封装为 `rightAPI`。 |
+| `src/api/roleUser.ts` | 用户-角色关联端点 + TS 类型：`/api/role-user`，封装为 `roleUserAPI`。 |
+| `src/api/roleRight.ts` | 角色-权限关联端点 + TS 类型：`/api/role-right`，封装为 `roleRightAPI`。 |
+| `src/api/constValue.ts` | 常量值管理端点 + TS 类型：`/api/const-value`，封装为 `constValueAPI`。 |
 
 ### 6.3 `src/config/` — 静态配置
 
@@ -147,7 +153,8 @@ frontend/
 ├── tsconfig.node.json            # 构建端 TS 配置
 ├── components.d.ts               # 自动生成的组件类型声明
 ├── docs/
-│   └── struct.md                 # 项目结构说明（本文件）
+│   ├── struct.md                 # 项目结构说明（本文件）
+│   └── api.md                    # 前端接口文档（各 API 模块端点/类型）
 ├── openspec/                     # 规范驱动开发目录
 │   ├── config.yaml
 │   ├── changes/                  # 变更提案（含 archive/）
@@ -161,7 +168,12 @@ frontend/
     ├── api/                      # 接口层
     │   ├── http.ts               # axios 单例 + 拦截器（Token/解包/401）
     │   ├── base.ts               # 认证端点（登录/重置密码/用户信息）
-    │   └── data.ts               # 用户 CRUD 端点
+    │   ├── user.ts               # 用户 CRUD 端点（dataAPI）
+    │   ├── role.ts               # 角色管理端点（roleAPI）
+    │   ├── right.ts              # 权限管理端点（rightAPI）
+    │   ├── roleUser.ts           # 用户-角色关联端点（roleUserAPI）
+    │   ├── roleRight.ts          # 角色-权限关联端点（roleRightAPI）
+    │   └── constValue.ts         # 常量值管理端点（constValueAPI）
     ├── config/
     │   └── menu.json             # 侧边菜单配置
     ├── router/

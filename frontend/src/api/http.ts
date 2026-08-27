@@ -7,12 +7,12 @@ import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig 
 export interface ApiResponse<T = unknown> {
   code: number
   data: T
-  msg: string
+  message: string
 }
 
 const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/',
-  timeout: 30000,
+  timeout: 300000,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -34,7 +34,7 @@ http.interceptors.response.use(
     const res = response.data
     // 按后端约定判断业务码，此处以 code === 200 为例
     if (res && res.code !== undefined && res.code !== 200) {
-      return Promise.reject(new Error(res.msg || '业务处理失败'))
+      return Promise.reject(new Error(res.message || '业务处理失败'))
     }
     return res as unknown as AxiosResponse
   },
@@ -46,11 +46,12 @@ http.interceptors.response.use(
         window.location.href = '/'
       }
     }
+
     // HTTP 非 2xx 时解包后端业务错误信息（body 为 { code, msg }），
     // 使调用处能通过 err.message 拿到「验证信息错误」等业务提示
     const res = error.response?.data as ApiResponse | undefined
     if (res && typeof res.code === 'number' && res.code !== 200) {
-      return Promise.reject(new Error(res.msg || '请求失败'))
+      return Promise.reject(new Error(res.message || '请求失败'))
     }
     return Promise.reject(error)
   }

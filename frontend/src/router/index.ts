@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { restoreCurrentUserRights, hasRight } from '../components/hcs/sys/permission'
+import { restoreCurrentUserRights, hasRight } from '../components/sys/permission'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -29,55 +29,90 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../components/data/data1.vue'),
       },
       {
-        path: 'hcs/flow/closed',
-        name: 'Closed',
-        component: () => import('../components/hcs/flow/closed.vue'),
+        path: 'bluePrint/list',
+        name: 'BluePrintList',
+        component: () => import('../components/bluePrint/list.vue'),
       },
       {
-        path: 'hcs/tech/board',
+        path: 'approval/send',
+        name: 'Send',
+        component: () => import('../components/approval/send.vue'),
+      },
+      {
+        path: 'approval/todo',
+        name: 'Todo',
+        component: () => import('../components/approval/todo.vue'),
+      },
+      {
+        path: 'approval/done',
+        name: 'Done',
+        component: () => import('../components/approval/done.vue'),
+      },
+      {
+        path: 'tech/board',
         name: 'Board',
-        component: () => import('../components/hcs/tech/board.vue'),
+        component: () => import('../components/tech/board.vue'),
       },
       {
-        path: 'hcs/info/file',
+        path: 'info/file',
         name: 'File',
-        component: () => import('../components/hcs/info/file.vue'),
+        component: () => import('../components/info/file.vue'),
       },
       {
-        path: 'hcs/process/job',
-        name: 'ProcessJob',
-        component: () => import('../components/hcs/process/job.vue'),
+        path: 'process/task',
+        name: 'Task',
+        component: () => import('../components/process/task.vue'),
+      },
+      {
+        path: 'process/flow',
+        name: 'ProcessFlow',
+        component: () => import('../components/process/process.vue'),
+      },
+      {
+        path: 'process/flow-h',
+        name: 'ProcessFlowH',
+        component: () => import('../components/process/process_h.vue'),
+      },
+      {
+        path: 'product/transfer',
+        name: 'Transfer',
+        component: () => import('../components/product/transfer.vue'),
+      },
+      {
+        path: 'product/state',
+        name: 'State',
+        component: () => import('../components/product/state.vue'),
       },
       // 系统管理：用户/角色/权限
       {
-        path: 'hcs/sys/user',
+        path: 'sys/user',
         name: 'SysUser',
-        component: () => import('../components/hcs/sys/user.vue'),
-        meta: { right: 'page:user' },
+        component: () => import('../components/sys/user.vue'),
       },
       {
-        path: 'hcs/sys/role',
+        path: 'sys/role',
         name: 'SysRole',
-        component: () => import('../components/hcs/sys/role.vue'),
-        meta: { right: 'page:role' },
+        component: () => import('../components/sys/role.vue'),
       },
       {
-        path: 'hcs/sys/right',
+        path: 'sys/right',
         name: 'SysRight',
-        component: () => import('../components/hcs/sys/right.vue'),
-        meta: { right: 'page:right' },
+        component: () => import('../components/sys/right.vue'),
       },
       {
-        path: 'hcs/sys/roleUser',
+        path: 'sys/roleUser',
         name: 'SysRoleUser',
-        component: () => import('../components/hcs/sys/roleUser.vue'),
-        meta: { right: 'page:roleUser' },
+        component: () => import('../components/sys/roleUser.vue'),
       },
       {
-        path: 'hcs/sys/roleRight',
+        path: 'sys/roleRight',
         name: 'SysRoleRight',
-        component: () => import('../components/hcs/sys/roleRright.vue'),
-        meta: { right: 'page:roleRight' },
+        component: () => import('../components/sys/roleRright.vue'),
+      },
+      {
+        path: 'sys/constValue',
+        name: 'SysConstValue',
+        component: () => import('../components/sys/constValue.vue')
       },
     ],
   },

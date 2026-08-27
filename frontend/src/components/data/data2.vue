@@ -3,8 +3,8 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, type FormInstance, type UploadFile } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import * as XLSX from 'xlsx'
-import { dataAPI } from '../../api/data'
-import type { UserRow, UserListParams, UserSaveParams } from '../../api/data'
+import { dataAPI } from '../../api/user'
+import type { UserRow, UserListParams, UserSaveParams } from '../../api/user'
 
 defineOptions({ name: 'Data2' })
 
