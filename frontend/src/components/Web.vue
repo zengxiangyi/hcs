@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus'
 import MenuBar from './MenuBar.vue'
+import { restoreCurrentUserRights } from './sys/permission'
 
 defineOptions({ name: 'Web' })
 
@@ -40,6 +41,8 @@ async function handleLogout() {
   try {
     // await baseAPI.logout()
     localStorage.removeItem('token')
+    localStorage.removeItem('rights')
+    restoreCurrentUserRights()
     ElMessage.success('已退出登录')
     router.push('/login')
   } catch {

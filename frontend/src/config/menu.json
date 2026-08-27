@@ -4,11 +4,13 @@
       "name": "蓝本工艺",
       "path": "/technology",
       "icon": "Cpu",
+      "right": "page:technology",
       "children": [
         {
           "name": "蓝本创建",
           "path": "/web/tech/board",
-          "icon": "Cpu"
+          "icon": "Cpu",
+          "right": "page:tech:board"
         }
       ]
     },
@@ -16,69 +18,82 @@
       "name": "蓝本管理",
       "path": "/bluePrint",
       "icon": "Document",
+      "right": "page:blueprint",
       "children": [
         {
           "name": "蓝本查看",
           "path": "/web/bluePrint/list",
-          "icon": "Files"
+          "icon": "Files",
+          "right": "page:blueprint:list"
         }]
     },
     {
       "name": "审批流程",
       "path": "/approval",
       "icon": "Tickets",
+      "right": "page:approval",
       "children": [
         {
           "name": "我发起的",
           "path": "/web/approval/send",
-          "icon": "Promotion"
+          "icon": "Promotion",
+          "right": "page:approval:send"
         },
         {
           "name": "我的待办",
           "path": "/web/approval/todo",
-          "icon": "Bell"
+          "icon": "Bell",
+          "right": "page:approval:todo"
         },
         {
           "name": "我的已办",
           "path": "/web/approval/done",
-          "icon": "Select"
+          "icon": "Select",
+          "right": "page:approval:done"
         }
       ]
     },
     {
       "name": "产品工艺",
       "path": "/web/product/transfer",
-      "icon": "Connection"
+      "icon": "Connection",
+      "right": "page:product"
     },
     {
       "name": "产品流程",
       "path": "/web/process/task",
-      "icon": "Share"
+      "icon": "Share",
+      "right": "page:process"
     },
     {
       "name": "工艺执行",
       "path": "/web/process/flow",
-      "icon": "Operation"
+      "icon": "Operation",
+      "right": "page:process-flow"
     },
     {
       "name": "工艺执行(水平)",
       "path": "/web/process/flow-h",
-      "icon": "Operation"
+      "icon": "Operation",
+      "right": "page:process-flow-h"
     },
     {
       "name": "成文信息",
       "path": "/info",
       "icon": "Folder",
+      "right": "page:info",
       "children": [
         {
           "name": "附件上传",
           "path": "/web/info/file",
-          "icon": "UploadFilled"
+          "icon": "UploadFilled",
+          "right": "page:info:file"
         },
         {
           "name": "常量值管理",
           "path": "/web/sys/constValue",
-          "icon": "Collection"
+          "icon": "Collection",
+          "right": "page:info:constValue"
         }
     ]
     },
@@ -86,31 +101,37 @@
       "name": "系统管理",
       "path": "/system",
       "icon": "Setting",
+      "right": "page:system",
       "children": [
         {
           "name": "用户管理",
           "path": "/web/sys/user",
-          "icon": "UserFilled"
+          "icon": "UserFilled",
+          "right": "page:system:user"
         },
         {
           "name": "角色管理",
           "path": "/web/sys/role",
-          "icon": "Avatar"
+          "icon": "Avatar",
+          "right": "page:system:role"
         },
         {
           "name": "权限管理",
           "path": "/web/sys/right",
-          "icon": "Key"
+          "icon": "Key",
+          "right": "page:system:right"
         },
         {
           "name": "角色用户关联",
           "path": "/web/sys/roleUser",
-          "icon": "Connection"
+          "icon": "Connection",
+          "right": "page:system:roleUser"
         },
         {
           "name": "角色权限关联",
           "path": "/web/sys/roleRight",
-          "icon": "Link"
+          "icon": "Link",
+          "right": "page:system:roleRight"
         }
       ]
     }

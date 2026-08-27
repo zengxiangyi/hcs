@@ -24,18 +24,23 @@ interface MenuItem {
 }
 
 /**
- * 递归过滤菜单：移除当前用户无权限的页面菜单项；
- * 父级菜单若所有子项都被过滤掉，则父级本身也不再展示。
+ * 递归过滤菜单：移除当前用户无权限的页面菜单项。
+ * 父级菜单自身的 right 与子级的 right 独立控制：
+ * - 叶子项：仅当拥有自身 right 才显示（无 right 则始终显示）。
+ * - 父级项：拥有自身 right 即显示；若自身无 right 或无权，只要存在任一可见子项也显示。
  */
 function filterMenu(items: MenuItem[]): MenuItem[] {
   return items
-    .filter((item) => !item.right || hasRight(item.right))
     .map((item) => {
       if (item.children && item.children.length) {
         const children = filterMenu(item.children)
-        return children.length ? { ...item, children } : null
+        // 父级自身有权限，或存在可见子项时，父级才展示
+        if (children.length || !item.right || hasRight(item.right)) {
+          return children.length ? { ...item, children } : item
+        }
+        return null
       }
-      return item
+      return !item.right || hasRight(item.right) ? item : null
     })
     .filter((x): x is MenuItem => x !== null)
 }
@@ -51,7 +56,9 @@ const props = withDefaults(
 )
 
 // 最终渲染的菜单（已按权限过滤）
+debugger;
 const visibleItems = computed(() => filterMenu(props.items))
+debugger;
 
 defineOptions({ name: 'MenuBar' })
 

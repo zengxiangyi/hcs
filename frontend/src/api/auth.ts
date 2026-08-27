@@ -18,6 +18,9 @@ export interface LoginParams {
 export interface LoginResult {
   token: string
   user: UserInfo
+  /** 当前用户权限编码集合（如 'page:user' / 'btn:user:add'），用于前端菜单过滤与页面级拦截 */
+  rights: string[]
+  roles: string[]
 }
 
 /** 重置密码：身份验证入参（手机号 + 邮箱） */

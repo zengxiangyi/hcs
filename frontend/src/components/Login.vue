@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { baseAPI } from '../api/auth'
 import { md5 } from '../utils/md5'
+import { setCurrentUser } from './sys/permission'
 defineOptions({ name: 'Login' })
 
 const router = useRouter()
@@ -30,6 +31,8 @@ async function handleLogin() {
     
     localStorage.setItem('token', data.token)
     localStorage.setItem('user', JSON.stringify(data.user))
+    // 登录后把后端下发的权限列表持久化到 localStorage，供路由守卫/菜单过滤恢复使用
+    setCurrentUser(data.rights)
     ElMessage.success('登录成功')
     router.push('/web')
   } catch (err: any) {
@@ -350,7 +353,7 @@ async function handleRegister() {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: #EEF4FF;
 }
 
 .login-card {
