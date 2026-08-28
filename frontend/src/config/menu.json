@@ -72,12 +72,6 @@
       "right": "page:process-flow"
     },
     {
-      "name": "工艺执行(水平)",
-      "path": "/web/process/flow-h",
-      "icon": "Operation",
-      "right": "page:process-flow-h"
-    },
-    {
       "name": "成文信息",
       "path": "/info",
       "icon": "Folder",
@@ -86,6 +80,18 @@
         {
           "name": "附件上传",
           "path": "/web/info/file",
+          "icon": "UploadFilled",
+          "right": "page:info:file"
+        },
+        {
+          "name": "流程图查看",
+          "path": "/web/workflow/flow",
+          "icon": "UploadFilled",
+          "right": "page:info:file"
+        },
+        {
+          "name": "流程图设计",
+          "path": "/web/workflow/draw",
           "icon": "UploadFilled",
           "right": "page:info:file"
         },

@@ -65,6 +65,10 @@ export const techAPI = {
   save: (data: TechBoardSaveDTO): Promise<ApiResponse<TechBoardSaveDTO>> =>
     http.post<TechBoardSaveDTO>('/api/blueprint/save', data) as Promise<ApiResponse<TechBoardSaveDTO>>,
 
+    /** 保存工艺看板 */
+  submit: (data: TechBoardSaveDTO): Promise<ApiResponse<TechBoardSaveDTO>> =>
+    http.post<TechBoardSaveDTO>('/api/blueprint/submit', data) as Promise<ApiResponse<TechBoardSaveDTO>>,
+
   /** 获取工艺看板（按 id） */
   get: (id: number): Promise<ApiResponse<TechBoardSaveDTO>> =>
     http.get<TechBoardSaveDTO>(`/api/blueprint/${id}`) as Promise<ApiResponse<TechBoardSaveDTO>>,

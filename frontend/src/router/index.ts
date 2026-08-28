@@ -83,12 +83,6 @@ const routes: RouteRecordRaw[] = [
         meta: { right: 'page:process-flow' },
       },
       {
-        path: 'process/flow-h',
-        name: 'ProcessFlowH',
-        component: () => import('../components/process/process_h.vue'),
-        meta: { right: 'page:process-flow-h' },
-      },
-      {
         path: 'product/transfer',
         name: 'Transfer',
         component: () => import('../components/product/transfer.vue'),
@@ -135,6 +129,18 @@ const routes: RouteRecordRaw[] = [
         path: 'sys/constValue',
         name: 'SysConstValue',
         component: () => import('../components/sys/constValue.vue'),
+        meta: { right: 'page:info:constValue' },
+      },
+      {
+        path: 'workflow/flow',
+        name: 'Flow',
+        component: () => import('../components/workflow/flow.vue'),
+        meta: { right: 'page:info:constValue' },
+      },
+      {
+        path: 'workflow/draw',
+        name: 'Draw',
+        component: () => import('../components/workflow/draw.vue'),
         meta: { right: 'page:info:constValue' },
       },
     ],

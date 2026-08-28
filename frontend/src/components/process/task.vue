@@ -1,85 +1,50 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ref, reactive, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { taskProcessAPI, type TaskRow, type TaskListParams } from '../../api/taskProcess'
 
 defineOptions({ name: 'Task' })
 
-/** 工序任务行 */
-interface JobRow {
-  id: number
-  jobName: string
-  productName: string
-  processName: string
-  status: string
-  createTime: string
-}
-
-/** 查询表单 */
-interface QueryForm {
-  jobName: string
-  productName: string
-  status: string
-}
-
-// 状态选项
-const statusOptions = ['待处理', '进行中', '已完成', '已取消']
-
-// 模拟数据（实际接入后端时替换为接口返回）
-function mockJobs(): JobRow[] {
-  const list: JobRow[] = []
-  const products = ['手机外壳', '电路板', '电池模组', '摄像头组件']
-  const processes = ['注塑', '焊接', '组装', '检测']
-  const statuses = statusOptions
-  for (let i = 1; i <= 86; i++) {
-    list.push({
-      id: i,
-      jobName: `工序任务-${String(i).padStart(3, '0')}`,
-      productName: products[i % products.length],
-      processName: processes[i % processes.length],
-      status: statuses[i % statuses.length],
-      createTime: `2026-08-${String((i % 28) + 1).padStart(2, '0')} 10:${String(i % 60).padStart(2, '0')}:00`,
-    })
-  }
-  return list
-}
-
-const allJobs = ref<JobRow[]>(mockJobs())
+/** 审批状态选项 */
+const auditStateOptions = ['待审批', '已通过', '已驳回']
+/** 状态选项 */
+const stateOptions = ['待处理', '进行中', '已完成', '已取消']
 
 // 查询条件
-const query = ref<QueryForm>({
-  jobName: '',
-  productName: '',
-  status: '',
+const query = reactive<TaskListParams>({
+  transfer: '',
+  blueprint: '',
+  auditState: '',
+  step: '',
+  state: '',
 })
 
-// 服务端分页（此处为前端模拟分页）
-const tableData = ref<JobRow[]>([])
+// 表格数据
+const tableData = ref<TaskRow[]>([])
 const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(10)
 const loading = ref(false)
 
-// 过滤 + 分页
 function fetchData() {
   loading.value = true
-  try {
-    const keyword = query.value.jobName.trim()
-    const product = query.value.productName.trim()
-    const status = query.value.status
-
-    const filtered = allJobs.value.filter((row) => {
-      const matchName = !keyword || row.jobName.includes(keyword)
-      const matchProduct = !product || row.productName.includes(product)
-      const matchStatus = !status || row.status === status
-      return matchName && matchProduct && matchStatus
-    })
-
-    total.value = filtered.length
-    const start = (currentPage.value - 1) * pageSize.value
-    tableData.value = filtered.slice(start, start + pageSize.value)
-  } finally {
-    loading.value = false
+  const params: TaskListParams = {
+    ...query,
+    page: currentPage.value,
+    pageSize: pageSize.value,
   }
+  taskProcessAPI
+    .search(params)
+    .then((res) => {
+      tableData.value = res.data.content
+      total.value = res.data.total
+    })
+    .catch((err) => {
+      ElMessage.error(err.message || '加载失败')
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 function handleSearch() {
@@ -88,7 +53,11 @@ function handleSearch() {
 }
 
 function handleReset() {
-  query.value = { jobName: '', productName: '', status: '' }
+  query.transfer = ''
+  query.blueprint = ''
+  query.auditState = ''
+  query.step = ''
+  query.state = ''
   currentPage.value = 1
   fetchData()
 }
@@ -102,8 +71,19 @@ function handleSizeChange() {
   fetchData()
 }
 
-function statusTagType(status: string): 'info' | 'warning' | 'success' | 'danger' {
-  switch (status) {
+function auditTagType(v: string): 'info' | 'success' | 'danger' {
+  switch (v) {
+    case '已通过':
+      return 'success'
+    case '已驳回':
+      return 'danger'
+    default:
+      return 'info'
+  }
+}
+
+function stateTagType(v: string): 'info' | 'warning' | 'success' | 'danger' {
+  switch (v) {
     case '待处理':
       return 'info'
     case '进行中':
@@ -117,48 +97,51 @@ function statusTagType(status: string): 'info' | 'warning' | 'success' | 'danger
   }
 }
 
-function handleEdit(row: JobRow) {
-  ElMessage.info(`编辑：${row.jobName}`)
-}
-
-function handleDelete(row: JobRow) {
-  const idx = allJobs.value.findIndex((j) => j.id === row.id)
-  if (idx > -1) allJobs.value.splice(idx, 1)
-  if (tableData.value.length === 1 && currentPage.value > 1) {
-    currentPage.value -= 1
-  }
-  ElMessage.success(`已删除：${row.jobName}`)
-  fetchData()
+function handleDelete(row: TaskRow) {
+  ElMessageBox.confirm(`确认删除该任务（ID: ${row.id}）？`, '提示', {
+    type: 'warning',
+  })
+    .then(() => {
+      taskProcessAPI
+        .remove(row.id)
+        .then(() => {
+          ElMessage.success('删除成功')
+          if (tableData.value.length === 1 && currentPage.value > 1) {
+            currentPage.value -= 1
+          }
+          fetchData()
+        })
+        .catch((err) => ElMessage.error(err.message || '删除失败'))
+    })
+    .catch(() => {})
 }
 
 onMounted(fetchData)
 </script>
 
 <template>
-  <div class="job-page">
-    <h3 class="page-title">工序任务管理</h3>
+  <div class="task-page">
+    <h3 class="page-title">产品流程</h3>
 
     <!-- 查询区 -->
     <el-form :inline="true" class="query-form" @submit.prevent>
-      <el-form-item label="任务名称">
-        <el-input
-          v-model="query.jobName"
-          placeholder="任务名称"
-          clearable
-          style="width: 180px"
-        />
+      <el-form-item label="调拨单">
+        <el-input v-model="query.transfer" placeholder="调拨单" clearable style="width: 160px" />
       </el-form-item>
-      <el-form-item label="产品">
-        <el-input
-          v-model="query.productName"
-          placeholder="产品名称"
-          clearable
-          style="width: 180px"
-        />
+      <el-form-item label="蓝本工艺编号">
+        <el-input v-model="query.blueprint" placeholder="蓝本工艺编号" clearable style="width: 160px" />
+      </el-form-item>
+      <el-form-item label="工序">
+        <el-input v-model="query.step" placeholder="工序" clearable style="width: 140px" />
+      </el-form-item>
+      <el-form-item label="审批状态">
+        <el-select v-model="query.auditState" placeholder="全部" clearable style="width: 130px">
+          <el-option v-for="s in auditStateOptions" :key="s" :label="s" :value="s" />
+        </el-select>
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="query.status" placeholder="全部状态" clearable style="width: 140px">
-          <el-option v-for="s in statusOptions" :key="s" :label="s" :value="s" />
+        <el-select v-model="query.state" placeholder="全部" clearable style="width: 130px">
+          <el-option v-for="s in stateOptions" :key="s" :label="s" :value="s" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -170,18 +153,24 @@ onMounted(fetchData)
     <!-- 表格 -->
     <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
       <el-table-column type="index" label="序号" width="70" />
-      <el-table-column prop="jobName" label="任务名称" min-width="160" />
-      <el-table-column prop="productName" label="产品" min-width="120" />
-      <el-table-column prop="processName" label="工序" min-width="120" />
-      <el-table-column prop="status" label="状态" min-width="100">
+      <el-table-column prop="id" label="ID" width="100" />
+      <el-table-column prop="transfer" label="调拨单" min-width="140" />
+      <el-table-column prop="blueprint" label="蓝本工艺编号" min-width="160" />
+      <el-table-column prop="auditState" label="审批状态" min-width="110">
         <template #default="{ row }">
-          <el-tag :type="statusTagType(row.status)">{{ row.status }}</el-tag>
+          <el-tag :type="auditTagType(row.auditState)">{{ row.auditState || '-' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" min-width="180" />
-      <el-table-column label="操作" width="160" fixed="right">
+      <el-table-column prop="step" label="工序" min-width="120" />
+      <el-table-column prop="state" label="状态" min-width="100">
         <template #default="{ row }">
-          <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
+          <el-tag :type="stateTagType(row.state)">{{ row.state || '-' }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createUser" label="创建人" min-width="120" />
+      <el-table-column prop="createTime" label="创建时间" min-width="180" />
+      <el-table-column label="操作" width="120" fixed="right">
+        <template #default="{ row }">
           <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
@@ -202,8 +191,20 @@ onMounted(fetchData)
 </template>
 
 <style scoped>
-.job-page {
+.task-page {
   padding: 20px;
   color: #333;
+}
+.page-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.query-form {
+  margin-bottom: 16px;
+}
+.pagination {
+  margin-top: 16px;
+  justify-content: flex-end;
 }
 </style>

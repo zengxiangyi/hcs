@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-defineOptions({ name: 'ProcessFlow' })
+defineOptions({ name: 'ProcessFlowHorizontal' })
 
 // 16 个步骤节点
 interface StepNode {
@@ -49,70 +49,68 @@ function next() {
   <div class="process-flow">
     <h3 class="page-title">工艺执行流程</h3>
 
-    <div class="flow-body">
-      <!-- 左侧 16 节点页签 -->
-      <aside class="step-tabs">
-        <div
-          v-for="(step, idx) in steps"
-          :key="step.key"
-          class="step-tab"
-          :class="{ active: idx === activeIndex, done: idx < activeIndex }"
-          @click="selectStep(idx)"
-        >
-          <span class="step-no">{{ String(idx + 1).padStart(2, '0') }}</span>
-          <span class="step-text">
-            <span class="step-title">{{ step.title }}</span>
-            <span class="step-desc">{{ step.desc }}</span>
-          </span>
-        </div>
-      </aside>
-
-      <!-- 右侧编辑窗口 -->
-      <section class="editor-panel">
-        <div class="editor-header">
-          <div>
-            <span class="editor-tag">步骤 {{ activeIndex + 1 }}/{{ steps.length }}</span>
-            <h4 class="editor-title">{{ activeStep.title }}</h4>
-          </div>
-          <span class="editor-desc">{{ activeStep.desc }}</span>
-        </div>
-
-        <!-- 占位编辑表单：演示切换效果 -->
-        <div class="editor-form">
-          <el-form label-width="100px">
-            <el-row :gutter="16">
-              <el-col :span="12">
-                <el-form-item :label="activeStep.title + '编号'">
-                  <el-input :placeholder="`请输入${activeStep.title}编号`" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item :label="activeStep.title + '名称'">
-                  <el-input :placeholder="`请输入${activeStep.title}名称`" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-form-item label="说明">
-              <el-input type="textarea" :rows="4" :placeholder="`请填写${activeStep.title}相关说明`" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary">保存当前步骤</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-
-        <div class="editor-footer">
-          <el-button :disabled="activeIndex === 0" @click="prev">上一步</el-button>
-          <el-button
-            type="primary"
-            :disabled="activeIndex === steps.length - 1"
-            @click="next"
-          >
-            下一步
-          </el-button>
-        </div>
-      </section>
+    <!-- 顶部水平页签 -->
+    <div class="step-tabs">
+      <div
+        v-for="(step, idx) in steps"
+        :key="step.key"
+        class="step-tab"
+        :class="{ active: idx === activeIndex, done: idx < activeIndex }"
+        @click="selectStep(idx)"
+      >
+        <span class="step-no">{{ String(idx + 1).padStart(2, '0') }}</span>
+        <span class="step-text">
+          <span class="step-title">{{ step.title }}</span>
+          <span class="step-desc">{{ step.desc }}</span>
+        </span>
+      </div>
     </div>
+
+    <!-- 下方编辑窗口 -->
+    <section class="editor-panel">
+      <div class="editor-header">
+        <div>
+          <span class="editor-tag">步骤 {{ activeIndex + 1 }}/{{ steps.length }}</span>
+          <h4 class="editor-title">{{ activeStep.title }}</h4>
+        </div>
+        <span class="editor-desc">{{ activeStep.desc }}</span>
+      </div>
+
+      <!-- 占位编辑表单：演示切换效果 -->
+      <div class="editor-form">
+        <el-form label-width="100px">
+          <el-row :gutter="16">
+            <el-col :span="12">
+              <el-form-item :label="activeStep.title + '编号'">
+                <el-input :placeholder="`请输入${activeStep.title}编号`" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label="activeStep.title + '名称'">
+                <el-input :placeholder="`请输入${activeStep.title}名称`" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="说明">
+            <el-input type="textarea" :rows="4" :placeholder="`请填写${activeStep.title}相关说明`" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary">保存当前步骤</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <div class="editor-footer">
+        <el-button :disabled="activeIndex === 0" @click="prev">上一步</el-button>
+        <el-button
+          type="primary"
+          :disabled="activeIndex === steps.length - 1"
+          @click="next"
+        >
+          下一步
+        </el-button>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -122,31 +120,28 @@ function next() {
   color: #333;
 }
 
-.flow-body {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-}
-
-/* 左侧页签 */
+/* 顶部水平页签 */
 .step-tabs {
-  width: 240px;
-  flex: 0 0 240px;
-  max-height: 70vh;
-  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   border: 1px solid #ebeef5;
   border-radius: 8px;
   background: #fafafa;
+  padding: 12px;
+  margin-bottom: 16px;
 }
 
 .step-tab {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   cursor: pointer;
-  border-left: 3px solid transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
   transition: all 0.2s;
+  background: #fff;
 }
 
 .step-tab:hover {
@@ -155,7 +150,7 @@ function next() {
 
 .step-tab.active {
   background: #ecf5ff;
-  border-left-color: #409eff;
+  border-color: #409eff;
 }
 
 .step-tab.done .step-no {
@@ -200,10 +195,8 @@ function next() {
   text-overflow: ellipsis;
 }
 
-/* 右侧编辑窗口 */
+/* 下方编辑窗口 */
 .editor-panel {
-  flex: 1 1 auto;
-  min-width: 0;
   border: 1px solid #ebeef5;
   border-radius: 8px;
   padding: 16px 20px;

@@ -199,6 +199,51 @@ function onCancel() {
   planModel.value = createEmptyPlan()
   ElMessage.info('已取消')
 }
+
+async function onSubmit(){
+  debugger;
+  // 数据校验
+  // 组装数据
+    const payload = {
+    basic: basicForm.value,
+    requirement: requirementForm.value,
+    template: tempRows.value,
+    plan: planModel.value,
+  }
+  try {
+    // 组装数据
+    const bluePrint: TechBoardSaveDTO = {
+      code: basicForm.value.code,
+      name: basicForm.value.name,
+      graph: basicForm.value.graph,
+      firstLevel: basicForm.value.firstLevel,
+      secondLevel: basicForm.value.secondLevel,
+      materialName: basicForm.value.materialName,
+      materialCode: basicForm.value.materialCode,
+      weight: basicForm.value.weight,
+      model: basicForm.value.model,
+      specs: basicForm.value.specs,
+      customer: basicForm.value.customer,
+      remark: basicForm.value.remark,
+      isFirstCheck: requirementForm.value.isFirstCheck,
+      testNum: requirementForm.value.testNum,
+      coolTime: requirementForm.value.coolTime,
+      busbarNum: requirementForm.value.busbarNum,
+      fallHead: requirementForm.value.fallHead,
+      quenching: requirementForm.value.quenching,
+      attention: requirementForm.value.attention,
+      chamfer: requirementForm.value.chamfer,
+      lastHardness: requirementForm.value.lastHardness,
+      firstHardness: requirementForm.value.firstHardness,
+      hardnessDepth: requirementForm.value.hardnessDepth
+    }
+    await techAPI.submit(bluePrint)
+    ElMessage.success('保存成功')
+  } catch (err) {
+    ElMessage.error((err as Error).message || '保存失败')
+  }
+}
+
 </script>
 
 <template>
@@ -352,8 +397,9 @@ function onCancel() {
   </div>
   <!-- 底部按钮-->
    <div class="bottom-btn">
-    <el-button type="primary" @click="onSave">保存</el-button>
+    <el-button type="primary" @click="onSave">存草稿</el-button>
     <el-button @click="onCancel">取消</el-button>
+    <el-button type="primary" @click="onSubmit">提交</el-button>
   </div>
 </template>
 
