@@ -23,6 +23,8 @@ interface FlowNode {
   text: string
   color: string
   log: string
+  /** 'T' 表示当前节点，需闪烁提醒 */
+  current?: string
 }
 
 interface FlowEdge {
@@ -33,7 +35,7 @@ interface FlowEdge {
 
 const nodes: FlowNode[] = [
   { id: 'start', x: 50, y: 100, width: 150, height: 60, text: '开始', color: '#4CAF50', log: '处理时间:2026-08-16 90:00:00' },
-  { id: 'process', x: 350, y: 100, width: 150, height: 60, text: '处理数据', color: '#2196F3', log: '处理时间:2026-08-17 90:00:00' },
+  { id: 'process', x: 350, y: 100, width: 150, height: 60, text: '处理数据', color: '#2196F3', log: '处理时间:2026-08-17 90:00:00', current: 'T' },
   { id: 'end', x: 650, y: 100, width: 150, height: 60, text: '结束', color: '#F44336', log: '' },
 ]
 
@@ -55,6 +57,34 @@ let offsetX = 0
 let offsetY = 0
 let dragMoved = false
 let logTarget: FlowNode | null = null
+
+/* ============================ 当前节点闪烁提醒 ============================ */
+/** 闪烁相位（弧度），每帧递增，驱动呼吸式明暗变化 */
+let blinkPhase = 0
+let blinkAnimId: number | null = null
+/** 高亮边框颜色（RGB 分量，便于拼接 alpha） */
+const BLINK_RGB = '255, 193, 7'
+
+function hasCurrentNode(): boolean {
+  return nodes.some((n) => n.current === 'T')
+}
+
+function startBlink() {
+  if (blinkAnimId !== null) return
+  const step = () => {
+    blinkPhase = (blinkPhase + 0.09) % (Math.PI * 2)
+    render()
+    blinkAnimId = requestAnimationFrame(step)
+  }
+  blinkAnimId = requestAnimationFrame(step)
+}
+
+function stopBlink() {
+  if (blinkAnimId !== null) {
+    cancelAnimationFrame(blinkAnimId)
+    blinkAnimId = null
+  }
+}
 
 function render() {
   if (!ctx) return
@@ -84,6 +114,24 @@ function renderNode(node: FlowNode) {
   ctx.textBaseline = 'middle'
   ctx.fillText(node.text, node.x + node.width / 2, node.y + node.height / 2)
   ctx.restore()
+
+  // 当前节点提醒：整个矩形闪烁（高亮边框 + 明暗呼吸蒙层）
+  if (node.current === 'T') {
+    const alpha = 0.25 + 0.75 * Math.abs(Math.sin(blinkPhase))
+    ctx.save()
+    const pad = 5
+    ctx.beginPath()
+    ctx.roundRect(node.x - pad, node.y - pad, node.width + pad * 2, node.height + pad * 2, 12)
+    ctx.strokeStyle = `rgba(${BLINK_RGB}, ${alpha.toFixed(3)})`
+    ctx.lineWidth = 3
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.roundRect(node.x, node.y, node.width, node.height, 8)
+    ctx.fillStyle = `rgba(255, 255, 255, ${(alpha * 0.28).toFixed(3)})`
+    ctx.fill()
+    ctx.restore()
+  }
 }
 
 function renderEdge(edge: FlowEdge) {
@@ -230,9 +278,11 @@ onMounted(() => {
     ctx.lineJoin = 'round'
   }
   render()
+  if (hasCurrentNode()) startBlink()
 })
 
 onBeforeUnmount(() => {
+  stopBlink()
   ctx = null
   canvasRef.value = null
 })

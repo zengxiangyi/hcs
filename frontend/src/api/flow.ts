@@ -4,7 +4,7 @@ import type { ApiResponse } from './http'
 /** 流程节点 */
 export interface FlowNode {
   /** 节点唯一标识 */
-  id: string
+  id: number
   /** 所属流程图编码 */
   flowGraph: string
   /** 节点编码 */
@@ -16,7 +16,10 @@ export interface FlowNode {
   /** 节点形状：rect/round/diamond/circle */
   shape: string
   /** 坐标，格式 "x,y" */
-  axis: string
+  X: string
+  Y: string
+  W: string
+  H: string
   /** 节点颜色 */
   color: string
   /** 操作人 */
@@ -30,7 +33,7 @@ export interface FlowNode {
 /** 流程连线 */
 export interface FlowEdge {
   /** 连线唯一标识 */
-  id: string
+  id: number
   /** 所属流程图编码 */
   flowGraph: string
   /** 连线编码 */
@@ -49,7 +52,7 @@ export interface FlowEdge {
   remark: string
   /** 连线颜色 */
   color: string
-  /** 连线坐标（可选，用于弯曲/标签定位） */
+  /** 连线坐标点数组（可选，用于弯曲/标签定位） */
   axis: string
 }
 
