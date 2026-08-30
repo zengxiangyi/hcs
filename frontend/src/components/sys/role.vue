@@ -22,7 +22,6 @@ const pageSize = ref(10)
 const total = ref(0)
 
 async function refresh() {
-  debugger;
   loading.value = true
   try {
     const res = await roleAPI.search({

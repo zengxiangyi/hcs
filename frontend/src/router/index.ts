@@ -143,6 +143,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../components/workflow/draw.vue'),
         meta: { right: 'page:info:constValue' },
       },
+      {
+        path: 'workflow/instance',
+        name: 'Instance',
+        component: () => import('../components/workflow/instance.vue'),
+        meta: { right: 'page:info:file' },
+      },
     ],
   },
 ]

@@ -54,6 +54,7 @@ declare module 'vue' {
     File: typeof import('./src/components/info/file.vue')['default']
     Flow: typeof import('./src/components/workflow/flow.vue')['default']
     Graph: typeof import('./src/components/approval/graph.vue')['default']
+    Instance: typeof import('./src/components/workflow/instance.vue')['default']
     Job: typeof import('./src/components/hcs/process/job.vue')['default']
     List: typeof import('./src/components/bluePrint/list.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
