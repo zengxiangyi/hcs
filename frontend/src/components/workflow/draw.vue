@@ -146,6 +146,8 @@ function submitNode() {
     }
     nodeDialogVisible.value = false
     renderCanvas()
+    // TODO: 保存到后端
+    flowNodeAPI.update(form)
   })
 }
 
@@ -185,6 +187,8 @@ function submitEdge() {
     }
     edgeDialogVisible.value = false
     renderCanvas()
+    // TODO: 保存到后端
+    flowEdgeAPI.update(form)
   })
 }
 
@@ -437,7 +441,7 @@ watch(flowGraph, load)
   <div class="flow-design">
     <div class="flow-head">
       <h3 class="flow-title">流程图设计</h3>
-      <span class="flow-tag" v-if="flowGraph">flowGraph：{{ flowGraph }}</span>
+      <span class="flow-tag" v-if="flowGraph">{{ flowGraph }}</span>
       <span class="flow-tag flow-tag--warn" v-else>未传入 flowGraph 参数</span>
       <span class="flow-back" @click="goBack">返回</span>
     </div>
@@ -450,8 +454,8 @@ watch(flowGraph, load)
       </div>
 
       <el-table :data="nodes" border size="small" class="flow-table">
-        <el-table-column prop="flowGraph" label="流程图编号" width="80" show-overflow-tooltip />
-        <el-table-column prop="code" label="节点编号" width="80" show-overflow-tooltip />
+        <el-table-column prop="flowGraph" label="流程图编号" readonly width="80" show-overflow-tooltip />
+        <el-table-column prop="code" label="节点编号" readonly width="80" show-overflow-tooltip />
         <el-table-column prop="name" label="节点名称" width="80" show-overflow-tooltip />
         <el-table-column label="分类" width="100">
           <template #default="{ row }">{{ optionLabel(categoryOptions, row.category) }}</template>
@@ -460,7 +464,9 @@ watch(flowGraph, load)
         <el-table-column prop="Y" label="Y坐标" width="60" show-overflow-tooltip />
         <el-table-column prop="W" label="宽度" width="60" show-overflow-tooltip />
         <el-table-column prop="H" label="高度" width="60" show-overflow-tooltip />
-        <el-table-column prop="shape" label="图形" width="80" show-overflow-tooltip />
+        <el-table-column label="图形" width="80">
+          <template #default="{ row }">{{ optionLabel(shapeOptions, row.shape) }}</template>
+        </el-table-column>
         <el-table-column label="操作人分类" width="80">
           <template #default="{ row }">{{ optionLabel(operatorOptions, row.operator) }}</template>
         </el-table-column>
@@ -482,8 +488,8 @@ watch(flowGraph, load)
       </div>
 
       <el-table :data="edges" border size="small" class="flow-table">
-        <el-table-column prop="flowGraph" label="流程图编号" width="80" show-overflow-tooltip />
-        <el-table-column prop="code" label="代码" width="80" show-overflow-tooltip />
+        <el-table-column prop="flowGraph" readonly label="流程图编号" width="80" show-overflow-tooltip />
+        <el-table-column prop="code" label="代码" readonly width="80" show-overflow-tooltip />
         <el-table-column prop="name" label="名称" width="80" show-overflow-tooltip />
         <el-table-column label="执行分类" width="80">
           <template #default="{ row }">{{ optionLabel(edgeCategoryOptions, row.category) }}</template>
@@ -522,7 +528,7 @@ watch(flowGraph, load)
     <el-dialog v-model="nodeDialogVisible" :title="nodeDialogTitle" width="520px" append-to-body>
       <el-form ref="nodeFormRef" :model="nodeForm" :rules="nodeRules" label-width="100px">
         <el-form-item label="节点编号" prop="code">
-          <el-input v-model="nodeForm.code" placeholder="请输入节点编号" clearable />
+          <el-input v-model="nodeForm.code"  readonly />
         </el-form-item>
         <el-form-item label="节点名称" prop="name">
           <el-input v-model="nodeForm.name" placeholder="请输入节点名称" clearable />
@@ -574,7 +580,7 @@ watch(flowGraph, load)
     <el-dialog v-model="edgeDialogVisible" :title="edgeDialogTitle" width="520px" append-to-body>
       <el-form ref="edgeFormRef" :model="edgeForm" :rules="edgeRules" label-width="100px">
         <el-form-item label="代码" prop="code">
-          <el-input v-model="edgeForm.code" placeholder="请输入连线代码" clearable />
+          <el-input v-model="edgeForm.code" readonly clearable />
         </el-form-item>
         <el-form-item label="名称">
           <el-input v-model="edgeForm.name" placeholder="请输入连线名称" clearable />

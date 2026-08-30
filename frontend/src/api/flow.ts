@@ -96,10 +96,10 @@ export interface GraphSearchResult {
 }
 
 /** 节点新增/编辑入参（新增时 id 可省略） */
-export type FlowNodeSaveDTO = Omit<FlowNode, 'id'> & { id?: string }
+export type FlowNodeSaveDTO = Omit<FlowNode, 'id'> & { id?: number}
 
 /** 连线新增/编辑入参（新增时 id 可省略） */
-export type FlowEdgeSaveDTO = Omit<FlowEdge, 'id'> & { id?: string }
+export type FlowEdgeSaveDTO = Omit<FlowEdge, 'id'> & { id?: number }
 
 /**
  * 流程节点接口
