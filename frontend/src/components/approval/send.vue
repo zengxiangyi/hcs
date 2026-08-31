@@ -4,8 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api/http'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
 
-defineOptions({ name: 'ApprovalSend' })
-
+defineOptions({ name: 'Send' })
 /** workflow 行信息 */
 interface WorkFlowRow {
   id: number
@@ -81,10 +80,7 @@ const formatCategory = createTextFormatter(categoryMap)
  */
 const stateMap: Record<string, { label: string; type: TagType }> = {
   A: { label: '待处理', type: 'warning' },
-  pending: { label: '待审批', type: 'warning' },
-  approving: { label: '审批中', type: 'warning' },
-  completed: { label: '已完成', type: 'success' },
-  rejected: { label: '已驳回', type: 'danger' },
+  B: { label: '已结束', type: 'success' }
 }
 
 /** 根据状态 key 取展示文本 / tag 类型，未匹配时文本回退原值、类型回退 warning（公共方法生成） */
@@ -104,9 +100,7 @@ function buildQueryParams(overrides: Partial<WorkFlowListParams> = {}): WorkFlow
 async function fetchData() {
   loading.value = true
   try {
-    const res = await http.get<WorkFlowListResult>('/api/workflow/list', {
-      params: buildQueryParams({ page: currentPage.value, pageSize: pageSize.value }),
-    })
+    const res = await http.get<WorkFlowListResult>('/api/workflow/sender')
     tableData.value = res.data.content
     total.value = res.data.total
   } catch (err) {
@@ -185,14 +179,6 @@ onMounted(fetchData)
 
     <!-- 查询区 -->
     <el-form :inline="true" class="query-form" @submit.prevent>
-      <el-form-item label="目标编号">
-        <el-input
-          v-model="query.targetCode"
-          placeholder="请输入目标编号"
-          clearable
-          style="width: 180px"
-        />
-      </el-form-item>
       <el-form-item label="发起开始时间">
         <el-date-picker
           v-model="query.startTimeStart"
@@ -202,7 +188,7 @@ onMounted(fetchData)
           style="width: 200px"
         />
       </el-form-item>
-      <el-form-item label="发起结束时间">
+      <el-form-item label="发起截止时间">
         <el-date-picker
           v-model="query.startTimeEnd"
           type="datetime"
@@ -219,8 +205,7 @@ onMounted(fetchData)
 
     <!-- 表格 -->
     <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
-      <el-table-column type="index" label="序号" width="70" />
-      <el-table-column prop="id" label="ID" width="80" />
+      <el-table-column prop="id" label="ID" v-if="false" width="80" />
       <el-table-column prop="code" label="任务编号" min-width="140" />
       <el-table-column prop="name" label="任务名称" min-width="160" />
       <el-table-column prop="category" label="分类" min-width="120">
@@ -228,7 +213,7 @@ onMounted(fetchData)
           {{ formatCategory(row.category) }}
         </template>
       </el-table-column>
-      <el-table-column prop="targetCode" label="目标编号" min-width="140" />
+      <el-table-column prop="targetCode" label="目标编号" v-if="false" min-width="140" />
       <el-table-column prop="sender" label="发起人" min-width="120" />
       <el-table-column prop="startTime" label="发起时间" min-width="180" />
       <el-table-column prop="state" label="状态" min-width="100">
@@ -236,13 +221,13 @@ onMounted(fetchData)
           <el-tag :type="formatStateType(row.state)">{{ formatStateLabel(row.state) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="flowGraph" label="流程图编号" min-width="140" />
+      <el-table-column prop="flowGraph" v-if="false" label="流程图编号" min-width="140" />
       <el-table-column prop="endTime" label="结束时间" min-width="180" />
       <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="warning" @click="handleApprove(row)">退回</el-button>
           <el-button size="small" type="success" @click="handleReject(row)">查看</el-button>
+          <el-button size="small" v-if="row.state==='A'" type="warning" @click="handleApprove(row)">退回</el-button>
         </template>
       </el-table-column>
     </el-table>

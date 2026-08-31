@@ -19,16 +19,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/Web.vue'),
     children: [
       {
-        path: 'data/data2',
-        name: 'Data2',
-        component: () => import('../components/data/data2.vue'),
-      },
-      {
-        path: 'data/data1',
-        name: 'Data1',
-        component: () => import('../components/data/data1.vue'),
-      },
-      {
         path: 'bluePrint/list',
         name: 'BluePrintList',
         component: () => import('../components/bluePrint/list.vue'),
