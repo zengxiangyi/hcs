@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { flowNodeAPI, flowEdgeAPI, type FlowNode, type FlowEdge } from '../../api/flow'
@@ -53,8 +53,8 @@ function createNode(): FlowNode {
     flowGraph: flowGraph.value,
     code: '',
     name: '',
-    category: 'task',
-    shape: 'rect',
+    category: 'T',
+    shape: 'RECT',
     X: "0",
     Y: "0",
     W: "100",
@@ -73,7 +73,7 @@ function createEdge(): FlowEdge {
     flowGraph: flowGraph.value,
     code: '',
     name: '',
-    category: 'normal',
+    category: 'A',
     fromNode: '',
     toNode: '',
     cond: '',
@@ -116,39 +116,66 @@ const nodeFormRef = ref()
 /** 用工厂函数初始化，保证表单对象始终存在，模板中 v-model 不会出现“可能为未定义” */
 const nodeForm = ref<FlowNode>(createNode())
 /** 正在编辑的行下标，null 表示新增 */
-let editingNodeIndex: number | null = null
+const editingNodeIndex = ref<number | null>(null)
 
 const nodeRules = {
-  code: [{ required: true, message: '请输入节点编号', trigger: 'blur' }],
+  code: [
+    { required: true, message: '请输入节点编号', trigger: 'blur' },
+    {
+      // code 是节点互连的 key，重复会让连线指向错乱，新增/改名时必须唯一
+      validator: (_rule: unknown, value: string, cb: (e?: Error) => void) => {
+        if (!value) return cb()
+        const dup = nodes.value.some((n, i) => n.code === value && i !== editingNodeIndex.value)
+        dup ? cb(new Error('节点编号已存在')) : cb()
+      },
+      trigger: 'blur',
+    },
+  ],
   name: [{ required: true, message: '请输入节点名称', trigger: 'blur' }],
 }
 
-function openNodeEdit(index: number) {
-  const row = nodes.value[index]
-  if (!row) return
-  editingNodeIndex = index
-  nodeDialogTitle.value = '编辑节点'
-  nodeForm.value = { ...row }
+/** 打开节点弹窗：index 为 null 表示新增，否则为编辑 */
+function openNodeDialog(index: number | null) {
+  editingNodeIndex.value = index
+  nodeDialogTitle.value = index === null ? '新增节点' : '编辑节点'
+  nodeForm.value = index === null ? createNode() : { ...nodes.value[index] }
   nodeDialogVisible.value = true
+  // 弹窗打开后表单实例才挂载，需等一帧再清掉上一次残留的校验提示
+  nextTick(() => nodeFormRef.value?.clearValidate())
 }
 
-function submitNode() {
-  if (!nodeFormRef.value || !nodeForm.value) return
+function openNodeEdit(index: number) {
+  if (!nodes.value[index]) return
+  openNodeDialog(index)
+}
+
+/** 新增节点：复用编辑弹窗，仅把表单重置为空白行 */
+function addNode() {
+  openNodeDialog(null)
+}
+
+async function submitNode() {
+  if (!nodeFormRef.value) return
+  const valid = await nodeFormRef.value.validate().catch(() => false)
+  if (!valid) return
   const form = { ...nodeForm.value }
-  nodeFormRef.value.validate((valid: boolean) => {
-    if (!valid) return
-    const idx = editingNodeIndex
-    // 下标合法时覆盖原行，否则按新增处理，避免越界下标把数组撑大产生空洞
-    if (idx !== null && idx >= 0 && idx < nodes.value.length) {
-      nodes.value[idx] = form
-    } else {
-      nodes.value.push(form)
-    }
-    nodeDialogVisible.value = false
-    renderCanvas()
-    // TODO: 保存到后端
-    flowNodeAPI.update(form)
-  })
+  const idx = editingNodeIndex.value
+  // 下标合法时覆盖原行，否则按新增处理，避免越界下标把数组撑大产生空洞
+  if (idx !== null && idx >= 0 && idx < nodes.value.length) {
+    nodes.value[idx] = form
+  } else {
+    nodes.value.push(form)
+  }
+  nodeDialogVisible.value = false
+  renderCanvas()
+  try {
+    // 新增走 save，编辑走 update；成功后重新加载以取回后端生成的 id
+    if (idx === null) await flowNodeAPI.save(form)
+    else await flowNodeAPI.update(form)
+    await load()
+  } catch (err) {
+    ElMessage.error((err as Error).message || '保存失败')
+  }
 }
 
 /* ============================ 连线弹窗 ============================ */
@@ -157,39 +184,72 @@ const edgeDialogTitle = ref('新增连线')
 const edgeFormRef = ref()
 const edgeForm = ref<FlowEdge>(createEdge())
 /** 正在编辑的行下标，null 表示新增 */
-let editingEdgeIndex: number | null = null
+const editingEdgeIndex = ref<number | null>(null)
 
 const edgeRules = {
-  code: [{ required: true, message: '请输入连线代码', trigger: 'blur' }],
+  code: [
+    { required: true, message: '请输入连线代码', trigger: 'blur' },
+    {
+      validator: (_rule: unknown, value: string, cb: (e?: Error) => void) => {
+        if (!value) return cb()
+        const dup = edges.value.some((e, i) => e.code === value && i !== editingEdgeIndex.value)
+        dup ? cb(new Error('连线代码已存在')) : cb()
+      },
+      trigger: 'blur',
+    },
+  ],
   fromNode: [{ required: true, message: '请选择开始节点', trigger: 'change' }],
-  toNode: [{ required: true, message: '请选择目标节点', trigger: 'change' }],
+  toNode: [
+    { required: true, message: '请选择目标节点', trigger: 'change' },
+    {
+      // 自环连线在渲染时箭头方向退化为一个点，直接禁止
+      validator: (_rule: unknown, value: string, cb: (e?: Error) => void) => {
+        value && value === edgeForm.value.fromNode ? cb(new Error('目标节点不能与开始节点相同')) : cb()
+      },
+      trigger: 'change',
+    },
+  ],
+}
+
+/** 打开连线弹窗：index 为 null 表示新增，否则为编辑 */
+function openEdgeDialog(index: number | null) {
+  editingEdgeIndex.value = index
+  edgeDialogTitle.value = index === null ? '新增连线' : '编辑连线'
+  edgeForm.value = index === null ? createEdge() : { ...edges.value[index] }
+  edgeDialogVisible.value = true
+  nextTick(() => edgeFormRef.value?.clearValidate())
 }
 
 function openEdgeEdit(index: number) {
-  const row = edges.value[index]
-  if (!row) return
-  editingEdgeIndex = index
-  edgeDialogTitle.value = '编辑连线'
-  edgeForm.value = { ...row }
-  edgeDialogVisible.value = true
+  if (!edges.value[index]) return
+  openEdgeDialog(index)
 }
 
-function submitEdge() {
-  if (!edgeFormRef.value || !edgeForm.value) return
+/** 新增连线：复用编辑弹窗，仅把表单重置为空白行 */
+function addEdge() {
+  openEdgeDialog(null)
+}
+
+async function submitEdge() {
+  if (!edgeFormRef.value) return
+  const valid = await edgeFormRef.value.validate().catch(() => false)
+  if (!valid) return
   const form = { ...edgeForm.value }
-  edgeFormRef.value.validate((valid: boolean) => {
-    if (!valid) return
-    const idx = editingEdgeIndex
-    if (idx !== null && idx >= 0 && idx < edges.value.length) {
-      edges.value[idx] = form
-    } else {
-      edges.value.push(form)
-    }
-    edgeDialogVisible.value = false
-    renderCanvas()
-    // TODO: 保存到后端
-    flowEdgeAPI.update(form)
-  })
+  const idx = editingEdgeIndex.value
+  if (idx !== null && idx >= 0 && idx < edges.value.length) {
+    edges.value[idx] = form
+  } else {
+    edges.value.push(form)
+  }
+  edgeDialogVisible.value = false
+  renderCanvas()
+  try {
+    if (idx === null) await flowEdgeAPI.save(form)
+    else await flowEdgeAPI.update(form)
+    await load()
+  } catch (err) {
+    ElMessage.error((err as Error).message || '保存失败')
+  }
 }
 
 /* ============================ 加载 ============================ */
@@ -333,6 +393,40 @@ function renderNode(ctx: CanvasRenderingContext2D, node: FlowNode, DEFAULT_W: nu
   ctx.restore()
 }
 
+/** 模板按行下标调用，行不存在时静默返回，避免下标越界误删 */
+async function removeNode(index: number){
+  const row = nodes.value[index]
+  if (!row) return
+  // 先按对象引用收集待级联删除的连线，避免按 code 过滤时误删其它节点的连线
+  const related = new Set(edges.value.filter(e => e.fromNode === row.code || e.toNode === row.code))
+  try {
+    // 本地新增行 id = -1 尚未落库，跳过后端请求
+    if (row.id > 0) await flowNodeAPI.remove(String(row.id))
+    for (const e of related) {
+      if (e.id > 0) await flowEdgeAPI.remove(String(e.id))
+    }
+  } catch (err) {
+    // 后端删除失败时不改本地数据，保证界面与库一致
+    ElMessage.error((err as Error).message || '删除失败')
+    return
+  }
+  nodes.value.splice(index, 1)
+  edges.value = edges.value.filter(e => !related.has(e))
+  renderCanvas()
+}
+
+async function removeEdge(index: number){
+  const row = edges.value[index]
+  if (!row) return
+  try {
+    if (row.id > 0) await flowEdgeAPI.remove(String(row.id))
+  } catch (err) {
+    ElMessage.error((err as Error).message || '删除失败')
+    return
+  }
+  edges.value.splice(index, 1)
+  renderCanvas()
+}
 
 type AxisPoint = { x: number; y: number }
 
@@ -443,7 +537,7 @@ watch(flowGraph, load)
       <h3 class="flow-title">流程图设计</h3>
       <span class="flow-tag" v-if="flowGraph">{{ flowGraph }}</span>
       <span class="flow-tag flow-tag--warn" v-else>未传入 flowGraph 参数</span>
-      <span class="flow-back" @click="goBack">返回</span>
+      <span><el-button size="primary" type="success" @click="goBack">返回</el-button></span>
     </div>
 
     <!-- 节点定义（只读，编辑走弹窗） -->
@@ -452,7 +546,9 @@ watch(flowGraph, load)
         <span class="flow-section__title">节点定义</span>
         <span class="tip">共 {{ nodes.length }} 个节点（表格只读，新增/编辑请点击操作按钮）</span>
       </div>
-
+      <div>
+        <el-button type="primary" size="small" @click="addNode()">新增</el-button>
+      </div>
       <el-table :data="nodes" border size="small" class="flow-table">
         <el-table-column prop="flowGraph" label="流程图编号" readonly width="80" show-overflow-tooltip />
         <el-table-column prop="code" label="节点编号" readonly width="80" show-overflow-tooltip />
@@ -472,9 +568,10 @@ watch(flowGraph, load)
         </el-table-column>
         <el-table-column prop="roleList" label="角色" width="80" show-overflow-tooltip />
         <el-table-column prop="userList" label="执行人" width="80" show-overflow-tooltip />
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ $index }">
-            <el-button type="primary" link size="small" @click="openNodeEdit($index)">编辑</el-button>
+            <el-button type="primary" size="small" @click="openNodeEdit($index)">编辑</el-button>
+            <el-button type="danger" size="small" @click="removeNode($index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -486,7 +583,9 @@ watch(flowGraph, load)
         <span class="flow-section__title">连线定义</span>
         <span class="tip">共 {{ edges.length }} 条连线（表格只读，编辑请点击操作按钮）</span>
       </div>
-
+      <div>
+        <el-button type="primary" size="small" @click="addEdge()">新增</el-button>
+      </div>
       <el-table :data="edges" border size="small" class="flow-table">
         <el-table-column prop="flowGraph" readonly label="流程图编号" width="80" show-overflow-tooltip />
         <el-table-column prop="code" label="代码" readonly width="80" show-overflow-tooltip />
@@ -507,9 +606,10 @@ watch(flowGraph, load)
             <span class="color-dot" :style="{ background: row.color }" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ $index }">
-            <el-button type="primary" link size="small" @click="openEdgeEdit($index)">编辑</el-button>
+            <el-button type="primary" size="small" @click="openEdgeEdit($index)">编辑</el-button>
+            <el-button type="danger" size="small" @click="removeEdge($index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -528,7 +628,8 @@ watch(flowGraph, load)
     <el-dialog v-model="nodeDialogVisible" :title="nodeDialogTitle" width="520px" append-to-body>
       <el-form ref="nodeFormRef" :model="nodeForm" :rules="nodeRules" label-width="100px">
         <el-form-item label="节点编号" prop="code">
-          <el-input v-model="nodeForm.code"  readonly />
+          <!-- 编号是节点互连的 key，编辑时不允许改，仅新增可录入 -->
+          <el-input v-model="nodeForm.code" :readonly="editingNodeIndex !== null" placeholder="请输入节点编号" clearable />
         </el-form-item>
         <el-form-item label="节点名称" prop="name">
           <el-input v-model="nodeForm.name" placeholder="请输入节点名称" clearable />
@@ -580,7 +681,7 @@ watch(flowGraph, load)
     <el-dialog v-model="edgeDialogVisible" :title="edgeDialogTitle" width="520px" append-to-body>
       <el-form ref="edgeFormRef" :model="edgeForm" :rules="edgeRules" label-width="100px">
         <el-form-item label="代码" prop="code">
-          <el-input v-model="edgeForm.code" readonly clearable />
+          <el-input v-model="edgeForm.code" :readonly="editingEdgeIndex !== null" placeholder="请输入连线代码" clearable />
         </el-form-item>
         <el-form-item label="名称">
           <el-input v-model="edgeForm.name" placeholder="请输入连线名称" clearable />
@@ -592,12 +693,12 @@ watch(flowGraph, load)
         </el-form-item>
         <el-form-item label="开始节点" prop="fromNode">
           <el-select v-model="edgeForm.fromNode" filterable placeholder="请选择源节点" style="width: 100%">
-            <el-option v-for="n in nodes" :key="n.code" :label="n.name" :value="n.code" />
+            <el-option v-for="n in nodes" :key="n.code" :label="nodeLabel(n.code)" :value="n.code" />
           </el-select>
         </el-form-item>
         <el-form-item label="目标节点" prop="toNode">
           <el-select v-model="edgeForm.toNode" filterable placeholder="请选择目标节点" style="width: 100%">
-            <el-option v-for="n in nodes" :key="n.code" :label="n.name" :value="n.code" />
+            <el-option v-for="n in nodes" :key="n.code" :label="nodeLabel(n.code)" :value="n.code" />
           </el-select>
         </el-form-item>
         <el-form-item label="条件">
@@ -683,6 +784,17 @@ watch(flowGraph, load)
 .flow-section__title {
   font-size: 14px;
   font-weight: 600;
+}
+
+.flow-section__body {
+  padding: 12px 0;
+  display: block;
+  position: relative;
+  margin: 0 auto;
+  max-width: 100%;
+  background: #fafafa;
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
 }
 
 .tip {

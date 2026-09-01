@@ -56,5 +56,5 @@ export const blueprintAPI = {
     http.post<BluePrintListResult>('/api/blueprint/search', { params }),
 
   /** 删除蓝本 */
-  delete: (code: string, edition: string) => http.delete<null>(`/api/blueprint/${code}/${edition}`),
+  delete: (code: string, edition: string) => http.delete<null>(`/api/blueprint/code/${code}/${edition}`),
 }

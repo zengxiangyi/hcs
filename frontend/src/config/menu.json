@@ -1,13 +1,13 @@
 {
   "menu": [
     {
-      "name": "蓝本工艺",
+      "name": "工艺配置",
       "path": "/technology",
       "icon": "Cpu",
       "right": "page:technology",
       "children": [
         {
-          "name": "蓝本创建",
+          "name": "工艺创建",
           "path": "/web/tech/board",
           "icon": "Cpu",
           "right": "page:tech:board"
@@ -86,12 +86,6 @@
         {
           "name": "流程图查看",
           "path": "/web/workflow/flow",
-          "icon": "UploadFilled",
-          "right": "page:info:file"
-        },
-        {
-          "name": "流程图设计",
-          "path": "/web/workflow/draw",
           "icon": "UploadFilled",
           "right": "page:info:file"
         },

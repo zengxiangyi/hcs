@@ -113,12 +113,18 @@ watch(() => basicForm.value.secondLevel, () => {
   planModel.value = createEmptyPlan()
 })
 
-/** 技术要求表单：11 个独立输入项 */
+/** 是否首检下拉选项 */
+const firstCheckOptions = [
+  { value: '1', label: '是' },
+  { value: '0', label: '否' },
+]
+
+/** 技术要求表单：11 个独立输入项（数量类为数字输入，未填写为 null） */
 const requirementForm = ref({
   isFirstCheck: '',
-  testNum: '',
+  testNum: null as number | null,
   coolTime: '',
-  busbarNum: '',
+  busbarNum: null as number | null,
   fallHead: '',
   quenching: '',
   attention: '',
@@ -127,6 +133,11 @@ const requirementForm = ref({
   firstHardness: '',
   hardnessDepth: ''
 })
+
+/** 数字输入值转为提交用的字符串，未填写统一为空串 */
+function numToStr(v: number | null): string {
+  return v == null ? '' : String(v)
+}
 
 /** 编制模板动态表格：段号 / 温度 / 时间 / 备注，每行可编辑 */
 interface TempRow {
@@ -165,9 +176,9 @@ async function onSave() {
       customer: basicForm.value.customer,
       remark: basicForm.value.remark,
       isFirstCheck: requirementForm.value.isFirstCheck,
-      testNum: requirementForm.value.testNum,
+      testNum: numToStr(requirementForm.value.testNum),
       coolTime: requirementForm.value.coolTime,
-      busbarNum: requirementForm.value.busbarNum,
+      busbarNum: numToStr(requirementForm.value.busbarNum),
       fallHead: requirementForm.value.fallHead,
       quenching: requirementForm.value.quenching,
       attention: requirementForm.value.attention,
@@ -191,7 +202,7 @@ function onCancel() {
     specs:'',remark: ''
   }
   requirementForm.value = {
-  isFirstCheck: '',testNum: '',coolTime: '',busbarNum: '',
+  isFirstCheck: '',testNum: null,coolTime: '',busbarNum: null,
   fallHead: '',quenching: '',attention: '',chamfer: '',
   lastHardness: '',firstHardness: '',hardnessDepth: ''
   }
@@ -226,9 +237,9 @@ async function onSubmit(){
       customer: basicForm.value.customer,
       remark: basicForm.value.remark,
       isFirstCheck: requirementForm.value.isFirstCheck,
-      testNum: requirementForm.value.testNum,
+      testNum: numToStr(requirementForm.value.testNum),
       coolTime: requirementForm.value.coolTime,
-      busbarNum: requirementForm.value.busbarNum,
+      busbarNum: numToStr(requirementForm.value.busbarNum),
       fallHead: requirementForm.value.fallHead,
       quenching: requirementForm.value.quenching,
       attention: requirementForm.value.attention,
@@ -341,7 +352,14 @@ async function onSubmit(){
         <div class="basic-grid">
           <div class="basic-item">
             <label class="basic-label">是否首检</label>
-            <el-input v-model="requirementForm.isFirstCheck" placeholder="请输入" clearable />
+            <el-select v-model="requirementForm.isFirstCheck" placeholder="请选择" clearable>
+              <el-option
+                v-for="opt in firstCheckOptions"
+                :key="opt.value"
+                :label="opt.label"
+                :value="opt.value"
+              />
+            </el-select>
           </div>
           <div class="basic-item">
             <label class="basic-label">首检硬度要求</label>
@@ -353,11 +371,25 @@ async function onSubmit(){
           </div>
           <div class="basic-item">
             <label class="basic-label">母线数量</label>
-            <el-input v-model="requirementForm.busbarNum" placeholder="请输入" clearable />
+            <el-input-number
+              v-model="requirementForm.busbarNum"
+              :min="0"
+              :precision="0"
+              controls-position="right"
+              style="width: 100%"
+              placeholder="请输入"
+            />
           </div>
           <div class="basic-item">
             <label class="basic-label">测点数量</label>
-            <el-input v-model="requirementForm.testNum" placeholder="请输入" clearable />
+            <el-input-number
+              v-model="requirementForm.testNum"
+              :min="0"
+              :precision="0"
+              controls-position="right"
+              style="width: 100%"
+              placeholder="请输入"
+            />
           </div>
           <div class="basic-item">
             <label class="basic-label">冷却时间 (min)</label>
@@ -505,9 +537,15 @@ async function onSubmit(){
   color: var(--color-text-aux);
 }
 
-.basic-item :deep(.el-input) {
+.basic-item :deep(.el-input),
+.basic-item :deep(.el-select),
+.basic-item :deep(.el-input-number) {
   flex: 1 1 auto;
   width: auto;
+}
+
+.basic-item :deep(.el-input-number .el-input__inner) {
+  text-align: left;
 }
 
 .basic-item :deep(.el-input__wrapper) {

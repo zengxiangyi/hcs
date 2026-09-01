@@ -116,12 +116,18 @@ watch(() => basicForm.value.secondLevel, () => {
   planModel.value = createEmptyPlan()
 })
 
-/** 技术要求表单：11 个独立输入项 */
+/** 是否首检下拉选项 */
+const firstCheckOptions = [
+  { value: '1', label: '是' },
+  { value: '0', label: '否' },
+]
+
+/** 技术要求表单：11 个独立输入项（数量类为数字输入，未填写为 null） */
 const requirementForm = ref({
   isFirstCheck: '',
-  testNum: '',
+  testNum: null as number | null,
   coolTime: '',
-  busbarNum: '',
+  busbarNum: null as number | null,
   fallHead: '',
   quenching: '',
   attention: '',
@@ -130,6 +136,18 @@ const requirementForm = ref({
   firstHardness: '',
   hardnessDepth: ''
 })
+
+/** 数字输入值转为提交用的字符串，未填写统一为空串 */
+function numToStr(v: number | null): string {
+  return v == null ? '' : String(v)
+}
+
+/** 接口返回的字符串转为数字输入的取值，空值/非数字统一为 null */
+function strToNum(v: string | undefined): number | null {
+  if (v == null || v === '') return null
+  const n = Number(v)
+  return Number.isNaN(n) ? null : n
+}
 
 /** 编制模板动态表格：段号 / 温度 / 时间 / 备注，每行可编辑 */
 interface TempRow {
@@ -168,9 +186,9 @@ async function onSave() {
       customer: basicForm.value.customer,
       remark: basicForm.value.remark,
       isFirstCheck: requirementForm.value.isFirstCheck,
-      testNum: requirementForm.value.testNum,
+      testNum: numToStr(requirementForm.value.testNum),
       coolTime: requirementForm.value.coolTime,
-      busbarNum: requirementForm.value.busbarNum,
+      busbarNum: numToStr(requirementForm.value.busbarNum),
       fallHead: requirementForm.value.fallHead,
       quenching: requirementForm.value.quenching,
       attention: requirementForm.value.attention,
@@ -194,7 +212,7 @@ function onCancel() {
     specs:'',remark: ''
   }
   requirementForm.value = {
-  isFirstCheck: '',testNum: '',coolTime: '',busbarNum: '',
+  isFirstCheck: '',testNum: null,coolTime: '',busbarNum: null,
   fallHead: '',quenching: '',attention: '',chamfer: '',
   lastHardness: '',firstHardness: '',hardnessDepth: ''
   }
@@ -228,9 +246,9 @@ async function loadByCode(code: string,edition: string) {
     }
     requirementForm.value = {
       isFirstCheck: data.isFirstCheck || '',
-      testNum: data.testNum || '',
+      testNum: strToNum(data.testNum),
       coolTime: data.coolTime || '',
-      busbarNum: data.busbarNum || '',
+      busbarNum: strToNum(data.busbarNum),
       fallHead: data.fallHead || '',
       quenching: data.quenching || '',
       attention: data.attention || '',
@@ -348,7 +366,14 @@ onMounted(() => {
         <div class="basic-grid">
           <div class="basic-item">
             <label class="basic-label">是否首检</label>
-            <el-input v-model="requirementForm.isFirstCheck" placeholder="请输入" clearable />
+            <el-select v-model="requirementForm.isFirstCheck" placeholder="请选择" clearable>
+              <el-option
+                v-for="opt in firstCheckOptions"
+                :key="opt.value"
+                :label="opt.label"
+                :value="opt.value"
+              />
+            </el-select>
           </div>
           <div class="basic-item">
             <label class="basic-label">首检硬度要求</label>
@@ -360,11 +385,25 @@ onMounted(() => {
           </div>
           <div class="basic-item">
             <label class="basic-label">母线数量</label>
-            <el-input v-model="requirementForm.busbarNum" placeholder="请输入" clearable />
+            <el-input-number
+              v-model="requirementForm.busbarNum"
+              :min="0"
+              :precision="0"
+              controls-position="right"
+              style="width: 100%"
+              placeholder="请输入"
+            />
           </div>
           <div class="basic-item">
             <label class="basic-label">测点数量</label>
-            <el-input v-model="requirementForm.testNum" placeholder="请输入" clearable />
+            <el-input-number
+              v-model="requirementForm.testNum"
+              :min="0"
+              :precision="0"
+              controls-position="right"
+              style="width: 100%"
+              placeholder="请输入"
+            />
           </div>
           <div class="basic-item">
             <label class="basic-label">冷却时间 (min)</label>
@@ -410,15 +449,34 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* 布局思路：
+   - 父级 .layout-right 为滚动容器（overflow:auto），board 内容由它整体滚动
+   - 底部按钮 .bottom-btn 使用 sticky 贴底，且覆盖父级 min-height:100%
+     从根本上修复“底部区域被无限拉长”的问题 */
 .tech-board {
-  padding: 16px;
-  color: #303133;
+  min-height: 0;
+  color: var(--color-text-main);
   margin-left: 20px;
-  margin-top:20px;
+  margin-top: 20px;
+  margin-right: 20px;
+  padding-bottom: 16px; /* 为贴底按钮留出呼吸空间 */
+  box-sizing: border-box;
 }
 
+/* 区块卡片：更精致圆角与阴影，hover 轻微浮起，提升表单整体质感 */
 .board-section {
-  margin-bottom: 24px;
+  margin-bottom: 18px;
+  background: #fff;
+  border: 1px solid #ebeef5;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(31, 56, 88, 0.06);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.board-section:hover {
+  border-color: #d9ecff;
+  box-shadow: 0 4px 16px rgba(64, 158, 255, 0.12);
 }
 
 .board-section:last-child {
@@ -426,44 +484,91 @@ onMounted(() => {
 }
 
 .section-title {
-  margin: 0 0 16px;
-  font-size: 16px;
+  position: relative;
+  margin: 0 0 18px;
+  font-size: 15px;
   font-weight: 600;
-  color: #303133;
-  padding-left: 10px;
-  border-left: 4px solid #409eff;
+  color: var(--color-text-main);
+  letter-spacing: 0.5px;
+  padding-left: 12px;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #409eff, #66b1ff);
 }
 
 .basic-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width:900px;
+  width: 100%;
 }
 
 .basic-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: 24px;
   row-gap: 16px;
 }
 
+/* 表单单元格：卡片化容器，输入更聚焦，hover 高亮 */
 .basic-item {
   display: flex;
   flex-direction: row;
-  align-items: left;
+  align-items: center;
   gap: 8px;
+  padding: 4px 5px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.basic-item:hover {
+  border-color: #c6e2ff;
+  background: #fff;
+  box-shadow: 0 1px 6px rgba(64, 158, 255, 0.1);
 }
 
 .basic-label {
-  flex: 0 0 120px;
-  font-size: 14px;
+  flex: 0 0 110px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-main);
   white-space: nowrap;
   text-align: right;
 }
 
-.basic-item :deep(.el-input) {
-  width: 200px;
+.basic-label::after {
+  content: '：';
+  color: var(--color-text-aux);
+}
+
+.basic-item :deep(.el-input),
+.basic-item :deep(.el-select),
+.basic-item :deep(.el-input-number) {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+.basic-item :deep(.el-input-number .el-input__inner) {
+  text-align: left;
+}
+
+.basic-item :deep(.el-input__wrapper) {
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px #dfe3ea inset;
+  transition: box-shadow 0.2s ease;
+}
+
+.basic-item :deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 1px #409eff inset, 0 0 6px rgba(64, 158, 255, 0.15);
 }
 
 .basic-textarea {
@@ -474,16 +579,44 @@ onMounted(() => {
 }
 
 .basic-textarea :deep(.el-textarea) {
-  width: 660px;
+  flex: 1 1 auto;
+  width: auto;
 }
 
+.basic-textarea :deep(.el-textarea__inner) {
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px #dfe3ea inset;
+  transition: box-shadow 0.2s ease;
+}
+
+.basic-textarea :deep(.el-textarea__inner:focus) {
+  box-shadow: 0 0 0 1px #409eff inset, 0 0 6px rgba(64, 158, 255, 0.15);
+}
+
+/* 底部按钮区：
+   - min-height:auto 覆盖父级 .layout-right > * 的 min-height:100%，解决无限拉长
+   - sticky bottom 让按钮在内容滚动时始终贴底可见 */
 .bottom-btn {
+  min-height: auto;        /* 关键修复点 */
+  height: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 16px;
-  margin-top: 16px;
-  margin-left: 20px;
-  margin-bottom:40px;
+  padding: 14px 0;
+  margin: 0 20px;
+  background: #fff;
+  border-top: 1px solid #ebeef5;
+  border-radius: 12px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.bottom-btn :deep(.el-button) {
+  min-width: 96px;
+  border-radius: 6px;
 }
 
 .temp-table__toolbar {
@@ -494,20 +627,40 @@ onMounted(() => {
   display: flex;
   flex-direction: row;
   gap: 24px;
+  flex-wrap: wrap;
 }
 
+/* 工艺选择项：与表单单元格一致的卡片化风格 */
 .tech-item {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
+  padding: 8px 10px;
+  background: #fafbfd;
+  border: 1px solid #eef1f6;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.tech-item:hover {
+  border-color: #c6e2ff;
+  background: #fff;
+  box-shadow: 0 1px 6px rgba(64, 158, 255, 0.1);
 }
 
 .tech-label {
   flex: 0 0 72px;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-main);
   white-space: nowrap;
   text-align: right;
+}
+
+.tech-label::after {
+  content: '：';
+  color: var(--color-text-aux);
 }
 
 .tech-item :deep(.el-select) {

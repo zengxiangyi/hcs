@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
+import { ElMessage } from 'element-plus'
+import { stepFormMap } from './steps'
+import type { StepForm, StepFormExpose } from './steps/shared'
 
 defineOptions({ name: 'ProcessFlowHorizontal' })
 
@@ -11,26 +14,40 @@ interface StepNode {
 }
 
 const steps: StepNode[] = [
-  { key: 's01', title: '工序定义', desc: '定义工序基础信息' },
-  { key: 's02', title: '设备配置', desc: '关联加工设备' },
-  { key: 's03', title: '工装夹具', desc: '配置工装与夹具' },
-  { key: 's04', title: '刀具参数', desc: '设置刀具参数' },
-  { key: 's05', title: '切削参数', desc: '设定切削用量' },
-  { key: 's06', title: '工艺路线', desc: '编排工艺路线' },
-  { key: 's07', title: '质检节点', desc: '设置检验工序' },
-  { key: 's08', title: '首检要求', desc: '定义首检规则' },
-  { key: 's09', title: '冷却工艺', desc: '配置冷却参数' },
-  { key: 's10', title: '淬火工艺', desc: '设定淬火规范' },
-  { key: 's11', title: '热处理', desc: '热处理参数' },
-  { key: 's12', title: '表面处理', desc: '表面处理要求' },
-  { key: 's13', title: '装配要求', desc: '装配工艺说明' },
+  { key: 's01', title: '工艺制定', desc: '定义工序基础信息' },
+  { key: 's02', title: '辊颈硬度检测', desc: '关联加工设备' },
+  { key: 's03', title: '箱炉预热', desc: '配置工装与夹具' },
+  { key: 's04', title: '机床淬火', desc: '设置刀具参数' },
+  { key: 's05', title: '续冷', desc: '设定切削用量' },
+  { key: 's06', title: '首检', desc: '编排工艺路线' },
+  { key: 's07', title: '测变形', desc: '设置检验工序' },
+  { key: 's08', title: '暂焖', desc: '定义首检规则' },
+  { key: 's09', title: '冷处理', desc: '配置冷却参数' },
+  { key: 's10', title: '一次回火(辊身回火）', desc: '设定淬火规范' },
+  { key: 's11', title: '测变形', desc: '热处理参数' },
+  { key: 's12', title: '矫直', desc: '表面处理要求' },
+  { key: 's13', title: '除应力', desc: '装配工艺说明' },
   { key: 's14', title: '包装规范', desc: '包装与标识' },
-  { key: 's15', title: '注意事项', desc: '安全与注意项' },
-  { key: 's16', title: '审核发布', desc: '复核并发布' },
+  { key: 's15', title: '硬度叫检', desc: '安全与注意项' },
+  { key: 's16', title: '检硬度', desc: '复核并发布' }
 ]
 
 const activeIndex = ref(0)
 const activeStep = computed(() => steps[activeIndex.value])
+
+// 每个步骤各自持有一份表单数据，由父级持有引用，切换步骤时不丢失已填内容
+const formData = reactive<Record<string, StepForm>>(
+  Object.fromEntries(steps.map((s) => [s.key, {}]))
+)
+
+// 当前步骤对应的表单组件
+const currentForm = computed(() => stepFormMap[activeStep.value.key])
+
+// 动态组件的模板引用，统一收口为 StepFormExpose 后使用
+const stepRef = ref<any>(null)
+function currentStepForm(): StepFormExpose | null {
+  return (stepRef.value ?? null) as StepFormExpose | null
+}
 
 function selectStep(index: number) {
   activeIndex.value = index
@@ -43,11 +60,26 @@ function prev() {
 function next() {
   if (activeIndex.value < steps.length - 1) activeIndex.value += 1
 }
+
+async function saveCurrentStep() {
+  const ok = await currentStepForm()?.validate()
+  if (!ok) {
+    ElMessage.warning(`「${activeStep.value.title}」必填项未填写完整`)
+    return
+  }
+  // TODO: 对接后端保存接口
+  ElMessage.success(`「${activeStep.value.title}」保存成功`)
+  console.log('step data', activeStep.value.key, formData[activeStep.value.key])
+}
+
+function resetCurrentStep() {
+  currentStepForm()?.reset()
+}
 </script>
 
 <template>
   <div class="process-flow">
-    <h3 class="page-title">工艺执行流程</h3>
+    <h3 class="page-title">工序流程</h3>
 
     <!-- 顶部水平页签 -->
     <div class="step-tabs">
@@ -76,32 +108,20 @@ function next() {
         <span class="editor-desc">{{ activeStep.desc }}</span>
       </div>
 
-      <!-- 占位编辑表单：演示切换效果 -->
+      <!-- 按 activeIndex 切换，只渲染当前步骤的表单 -->
       <div class="editor-form">
-        <el-form label-width="100px">
-          <el-row :gutter="16">
-            <el-col :span="12">
-              <el-form-item :label="activeStep.title + '编号'">
-                <el-input :placeholder="`请输入${activeStep.title}编号`" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item :label="activeStep.title + '名称'">
-                <el-input :placeholder="`请输入${activeStep.title}名称`" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-form-item label="说明">
-            <el-input type="textarea" :rows="4" :placeholder="`请填写${activeStep.title}相关说明`" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary">保存当前步骤</el-button>
-          </el-form-item>
-        </el-form>
+        <component
+          :is="currentForm"
+          :key="activeStep.key"
+          ref="stepRef"
+          v-model="formData[activeStep.key]"
+        />
       </div>
 
       <div class="editor-footer">
         <el-button :disabled="activeIndex === 0" @click="prev">上一步</el-button>
+        <el-button @click="resetCurrentStep">重置本步</el-button>
+        <el-button type="primary" @click="saveCurrentStep">保存当前步骤</el-button>
         <el-button
           type="primary"
           :disabled="activeIndex === steps.length - 1"
@@ -237,7 +257,8 @@ function next() {
 
 .editor-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   gap: 12px;
   border-top: 1px solid #ebeef5;
   padding-top: 12px;

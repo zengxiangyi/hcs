@@ -6,6 +6,7 @@ import { constValueAPI, type ConstValueRow, type ConstValueSaveParams } from '..
 defineOptions({ name: 'ConstValue' })
 
 interface ConstValueForm {
+  id: number
   code: string
   name: string
   category: string
@@ -64,10 +65,10 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const formRef = ref<FormInstance>()
 const editId = ref(0)
-const form = ref<ConstValueForm>({ code: '', name: '', category: '', mark: '', remark: '' })
+const form = ref<ConstValueForm>({id:0, code: '', name: '', category: '', mark: '', remark: '' })
 
 function resetForm() {
-  form.value = { code: '', name: '', category: '', mark: '', remark: '' }
+  form.value = { id:0,code: '', name: '', category: '', mark: '', remark: '' }
   editId.value = 0
   formRef.value?.clearValidate()
 }
@@ -81,7 +82,7 @@ function handleAdd() {
 function handleEdit(row: ConstValueRow) {
   dialogTitle.value = '编辑常量值'
   editId.value = row.id
-  form.value = { code: row.code, name: row.name, category: row.category, mark: row.mark, remark: row.remark }
+  form.value = { id:row.id,code: row.code, name: row.name, category: row.category, mark: row.mark, remark: row.remark }
   dialogVisible.value = true
 }
 
@@ -153,7 +154,7 @@ onMounted(() => {
     </div>
 
     <el-table :data="tableData" border stripe style="width: 100%">
-      <el-table-column type="index" label="序号" width="70" />
+      <el-table-column prop="id" label="id" v-if="false" width="80" />
       <el-table-column prop="code" label="编码" min-width="120" />
       <el-table-column prop="name" label="名称" min-width="140" />
       <el-table-column prop="category" label="分类" min-width="100" />
@@ -181,7 +182,7 @@ onMounted(() => {
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="520px" @closed="resetForm()">
       <el-form ref="formRef" :model="form" label-width="80px">
         <el-form-item label="编码" prop="code" :rules="[{ required: true, message: '请输入编码', trigger: 'blur' }]">
-          <el-input v-model="form.code" placeholder="如 SEX / STATE" />
+          <el-input v-model="form.code" placeholder="如 SEX / STATE" :readonly="form.id>0"/>
         </el-form-item>
         <el-form-item label="名称" prop="name" :rules="[{ required: true, message: '请输入名称', trigger: 'blur' }]">
           <el-input v-model="form.name" placeholder="请输入名称" />

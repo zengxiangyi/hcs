@@ -26,8 +26,6 @@ const query = ref<QueryForm>({
   secondLevel: '',
 })
 
-
-
 /** 一级工艺 → 二级工艺 层级关系 */
 interface CraftNode {
   value: string
@@ -115,11 +113,8 @@ watch(
   },
 )
 
-
 // 状态选项
 const stateOptions = ['草稿', '已发布', '已归档', '作废']
-
-
 
 // 服务端分页数据
 const tableData = ref<BluePrintRow[]>([])
@@ -187,6 +182,10 @@ function stateTagType(state: string): 'info' | 'warning' | 'success' | 'danger' 
 
 function handleEdit(row: BluePrintRow) {
   // 跳转到蓝本草稿页，通过 code 参数加载编辑信息
+  router.push({ name: 'Draft', query: { code: row.code, edition: row.edition} })
+}
+
+function handleCopy(row: BluePrintRow){
   router.push({ name: 'Draft', query: { code: row.code, edition: row.edition} })
 }
 
@@ -311,8 +310,9 @@ onMounted(fetchData)
       <el-table-column prop="remark" label="备注" min-width="140" show-overflow-tooltip />
       <el-table-column prop="createUser" label="创建人" width="100" />
       <el-table-column prop="createTime" label="创建时间" width="180" />
-      <el-table-column label="操作" width="160" fixed="right">
+      <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
+          <el-button size="small" type="warning" @click="handleCopy(row)">复制</el-button>
           <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
           <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
         </template>

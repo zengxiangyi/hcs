@@ -189,7 +189,7 @@ onMounted(loadList)
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="480px">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="流程图编号" prop="flowGraph">
-          <el-input v-model="form.flowGraph" placeholder="请输入流程图编号" clearable />
+          <el-input v-model="form.flowGraph" placeholder="请输入流程图编号" :readonly="form.id > 0" :clearable="form.id === 0" />
         </el-form-item>
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题" clearable />
