@@ -310,10 +310,6 @@ async function onSubmit(){
           <div class="basic-item">
             <label class="basic-label">物料编码</label>
             <el-input v-model="basicForm.materialCode" placeholder="请输入" clearable />
-          </div>         
-          <div class="basic-item">
-            <label class="basic-label">物料名称</label>
-            <el-input v-model="basicForm.materialName" placeholder="请输入" clearable />
           </div>
           <div class="basic-item">
             <label class="basic-label">客户名称</label>
@@ -456,7 +452,7 @@ async function onSubmit(){
   background: #fff;
   border: 1px solid #ebeef5;
   border-radius: 12px;
-  padding: 20px 24px;
+  padding: 10px 12px;
   box-shadow: 0 2px 8px rgba(31, 56, 88, 0.06);
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
@@ -495,7 +491,7 @@ async function onSubmit(){
 .basic-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   width: 100%;
 }
 
@@ -511,8 +507,8 @@ async function onSubmit(){
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
-  padding: 4px 5px;
+  gap: 5px;
+  padding: 3px 3px;
   border-radius: 8px;
   transition: all 0.2s ease;
 }
