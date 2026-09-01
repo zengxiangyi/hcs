@@ -137,26 +137,6 @@ function handleSizeChange() {
   fetchData()
 }
 
-// 通过
-async function handleApprove(row: WorkFlowRow) {
-  try {
-    await ElMessageBox.confirm(`确认通过任务「${row.name}」？`, '审批', {
-      type: 'warning',
-      confirmButtonText: '通过',
-      cancelButtonText: '取消',
-    })
-  } catch {
-    return
-  }
-  try {
-    await http.post<null>(`/api/workflow/${row.id}/approve`)
-    ElMessage.success('已通过')
-    fetchData()
-  } catch (err) {
-    ElMessage.error(getErrorMessage(err, '操作失败'))
-  }
-}
-
 // 查看：携带流程编号跳转到 instance.vue
 function seeProcess(row: WorkFlowRow) {
   router.push({ name: 'Instance', query: { workflow: row.code } })

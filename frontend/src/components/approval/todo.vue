@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, computed, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import http from '../../api/http'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
 
@@ -45,11 +45,9 @@ function getErrorMessage(err: unknown, fallback: string): string {
 
 // 查询条件
 const query = ref<{
-  targetCode: string
   startTimeStart: string
   startTimeEnd: string
 }>({
-  targetCode: '',
   startTimeStart: '',
   startTimeEnd: '',
 })
@@ -93,7 +91,6 @@ const { label: formatStateLabel, type: formatStateType } = createStateFormatter(
 // 构建查询参数（列表与后续导出共用）
 function buildQueryParams(overrides: Partial<WorkFlowListParams> = {}): WorkFlowListParams {
   return {
-    targetCode: query.value.targetCode.trim(),
     startTimeStart: query.value.startTimeStart || undefined,
     startTimeEnd: query.value.startTimeEnd || undefined,
     ...overrides,
@@ -120,7 +117,7 @@ function handleSearch() {
 }
 
 function handleReset() {
-  query.value = { targetCode: '', startTimeStart: '', startTimeEnd: '' }
+  query.value = {startTimeStart: '', startTimeEnd: '' }
   currentPage.value = 1
   fetchData()
 }
@@ -134,43 +131,51 @@ function handleSizeChange() {
   fetchData()
 }
 
-// 通过
-async function handleApprove(row: WorkFlowRow) {
-  try {
-    await ElMessageBox.confirm(`确认通过任务「${row.name}」？`, '审批', {
-      type: 'warning',
-      confirmButtonText: '通过',
-      cancelButtonText: '取消',
-    })
-  } catch {
-    return
-  }
-  try {
-    await http.post<null>(`/api/workflow/${row.id}/approve`)
-    ElMessage.success('已通过')
-    fetchData()
-  } catch (err) {
-    ElMessage.error(getErrorMessage(err, '操作失败'))
-  }
+/** 审批动作：通过 / 驳回 */
+type ApproveMode = 'approve' | 'reject'
+
+// 审批对话框状态
+const dialogVisible = ref(false)
+const dialogMode = ref<ApproveMode>('approve')
+const currentRow = ref<WorkFlowRow | null>(null)
+const approveNote = ref('')
+const submitting = ref(false)
+
+const dialogTitle = computed(() => (dialogMode.value === 'approve' ? '通过任务' : '驳回任务'))
+
+/** 打开审批对话框：先填写审批描述，确认后才发起请求 */
+function openApproveDialog(row: WorkFlowRow, mode: ApproveMode) {
+  currentRow.value = row
+  dialogMode.value = mode
+  approveNote.value = ''
+  dialogVisible.value = true
 }
 
-// 驳回
-async function handleReject(row: WorkFlowRow) {
-  try {
-    await ElMessageBox.confirm(`确认驳回任务「${row.name}」？`, '审批', {
-      type: 'warning',
-      confirmButtonText: '驳回',
-      cancelButtonText: '取消',
-    })
-  } catch {
+/**
+ * 提交审批：通过 -> /approve，驳回 -> /reject
+ * 审批描述以 note 字段提交（对应 flowHistory.note，若后端字段名不同在此调整）
+ */
+async function submitApprove() {
+  const row = currentRow.value
+  if (!row) return
+  const isApprove = dialogMode.value === 'approve'
+  // 驳回必须填写审批描述，通过时选填
+  if (!isApprove && !approveNote.value.trim()) {
+    ElMessage.warning('请填写审批描述')
     return
   }
+  submitting.value = true
   try {
-    await http.post<null>(`/api/workflow/${row.id}/reject`)
-    ElMessage.success('已驳回')
+    await http.post<null>(`/api/workflow/${row.id}/${isApprove ? 'approve' : 'reject'}`, {
+      note: approveNote.value.trim(),
+    })
+    ElMessage.success(isApprove ? '已通过' : '已驳回')
+    dialogVisible.value = false
     fetchData()
   } catch (err) {
     ElMessage.error(getErrorMessage(err, '操作失败'))
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -228,8 +233,8 @@ onMounted(fetchData)
       <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="warning" @click="handleApprove(row)">驳回</el-button>
-          <el-button size="small" type="success" @click="handleReject(row)">同意</el-button>
+          <el-button size="small" type="success" @click="openApproveDialog(row, 'approve')">同意</el-button>
+          <el-button size="small" type="danger" @click="openApproveDialog(row, 'reject')">驳回</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -245,6 +250,41 @@ onMounted(fetchData)
       @current-change="handlePageChange"
       @size-change="handleSizeChange"
     />
+
+    <!-- 审批对话框：填写审批描述后再提交 -->
+    <el-dialog
+      v-model="dialogVisible"
+      :title="dialogTitle"
+      width="480px"
+      :close-on-click-modal="false"
+      @closed="currentRow = null"
+    >
+      <el-form label-width="90px">
+        <el-form-item label="任务名称">
+          <el-input :model-value="currentRow?.name" disabled />
+        </el-form-item>
+        <el-form-item label="审批描述" :required="dialogMode === 'reject'">
+          <el-input
+            v-model="approveNote"
+            type="textarea"
+            :rows="4"
+            maxlength="200"
+            show-word-limit
+            :placeholder="dialogMode === 'reject' ? '请填写驳回原因' : '请输入审批描述（选填）'"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button
+          :type="dialogMode === 'approve' ? 'success' : 'danger'"
+          :loading="submitting"
+          @click="submitApprove"
+        >
+          {{ dialogMode === 'approve' ? '同意' : '驳回' }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 

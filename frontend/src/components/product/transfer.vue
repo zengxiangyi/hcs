@@ -2,54 +2,13 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { transferAPI } from '../../api/transfer'
-import type { TransferCreateParams } from '../../api/transfer'
+import type { TransferRow, TransferCreateParams } from '../../api/transfer'
 import { blueprintAPI } from '../../api/blueprint'
 
 defineOptions({ name: 'Transfer' })
 
 // ===================== 调拨单（上方表格） =====================
-// 调拨单查询条件（与后端表结构对齐）
-interface TransferQuery {
-  code: string      // 调拨单号
-  name: string      // 名称（产品名称）
-  state: string     // 状态
-}
-
-// 调拨单行数据（与后端表结构对齐）
-interface TransferRow {
-  id: number
-  code: string           // 编码（调拨单号）
-  name: string           // 名称（产品名称）
-  category: string       // 调拨类型
-  datetime: string       // 调拨时间
-  materialCode: string   // 物料编码
-  num: number            // 数量
-  weight: number         // 单重
-  material: string       // 材质
-  rollNum: string        // 辊号
-  outProcess: string     // 调出工序组
-  inProcess: string      // 调入工序组
-  outRoom: string        // 调出仓库
-  inRoom: string         // 调入仓库
-  remark: string         // 急件说明
-  prompt: string         // 质量提示
-  quenching: string      // 淬火设备
-  supplier: string       // 供应商
-  createUser: string     // 创建人
-  createTime: string     // 创建时间
-  receiveUser: string    // 接收人
-  receiveTime: string    // 接收时间
-  state: string          // 状态
-  // 兼容别名，供下方蓝本绑定逻辑使用（不入库）
-  transferNo: string
-  productName: string
-  sourceWarehouse: string
-  targetWarehouse: string
-  quantity: number
-  status: string
-}
-
-const transferQuery = ref<TransferQuery>({
+const transferQuery = ref({
   code: '',
   name: '',
   state: '',
@@ -82,16 +41,7 @@ async function fetchTransferData() {
     const res = await transferAPI.search(
       buildTransferParams({ page: transferPage.value, pageSize: transferPageSize.value })
     )
-    const list = res.data?.content ?? []
-    transferData.value = list.map((r) => ({
-      ...r,
-      transferNo: r.code,
-      productName: r.name,
-      sourceWarehouse: r.outRoom,
-      targetWarehouse: r.inRoom,
-      quantity: r.num,
-      status: r.state,
-    }))
+    transferData.value = res.data?.content ?? []
     transferTotal.value = res.data?.total ?? 0
   } catch (err) {
     const msg = err instanceof Error && err.message ? err.message : '获取调拨单失败'
@@ -109,10 +59,6 @@ function handleTransferSearch() {
 function handleTransferReset() {
   transferQuery.value = { code: '', name: '', state: '' }
   transferPage.value = 1
-  fetchTransferData()
-}
-
-function handleTransferPageChange() {
   fetchTransferData()
 }
 
@@ -163,34 +109,10 @@ function handleAdd() {
   dialogVisible.value = true
 }
 
-// 编辑：根据调拨单号回填表单，复用新增对话框
-function handleEdit(code: string) {
-  const row = transferData.value.find((r) => r.code === code)
-  if (!row) return
+// 编辑：回填表单，复用新增对话框
+function handleEdit(row: TransferRow) {
   editId.value = row.id
-  form.value = {
-    id: row.id,
-    code: row.code,
-    name: row.name,
-    category: row.category,
-    transferDate: row.datetime,
-    materialCode: row.materialCode,
-    num: row.num,
-    weight: row.weight,
-    material: row.material,
-    rollNum: row.rollNum,
-    outProcess: row.outProcess,
-    inProcess: row.inProcess,
-    outRoom: row.outRoom,
-    inRoom: row.inRoom,
-    remark: row.remark,
-    prompt: row.prompt,
-    quenching: row.quenching,
-    supplier: row.supplier,
-    createUser: row.createUser,
-    createTime: row.createTime,
-    state: row.state,
-  }
+  form.value = { ...emptyForm, ...row }
   dialogVisible.value = true
 }
 
@@ -212,7 +134,7 @@ async function handleSave() {
     }
     dialogVisible.value = false
     fetchTransferData()
-  } catch (  err) {
+  } catch (err) {
     const msg = err instanceof Error && err.message ? err.message : '保存失败'
     ElMessage.error(msg)
   } finally {
@@ -220,9 +142,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(code: string) {
-  const row = transferData.value.find((r) => r.code === code)
-  if (!row) return
+async function handleDelete(row: TransferRow) {
   try {
     await ElMessageBox.confirm(
       `确定删除调拨单「${row.code}」吗？`,
@@ -244,10 +164,6 @@ async function handleDelete(code: string) {
     const msg = err instanceof Error && err.message ? err.message : '删除失败'
     ElMessage.error(msg)
   }
-}
-
-function handleCancel() {
-  dialogVisible.value = false
 }
 
 // ===================== 蓝本信息（下方表格） =====================
@@ -280,7 +196,7 @@ async function fetchBlueprintData() {
       material: b.specs,
       version: b.edition,
       bound: b.state === '已绑定',
-      boundTransferNo: (b as unknown as Record<string, unknown>).transferNo as string ?? '',
+      boundTransferNo: (b as { transferNo?: string }).transferNo ?? '',
     }))
   } catch (err) {
     const msg = err instanceof Error && err.message ? err.message : '获取蓝本信息失败'
@@ -306,8 +222,8 @@ async function handleBindBlueprint(row: BlueprintRow) {
       blueprintId: row.id,
     })
     row.bound = true
-    row.boundTransferNo = selectedTransfer.value.transferNo
-    ElMessage.success(`已将蓝本「${row.blueprintName}」绑定至调拨单 ${selectedTransfer.value.transferNo}`)
+    row.boundTransferNo = selectedTransfer.value.code
+    ElMessage.success(`已将蓝本「${row.blueprintName}」绑定至调拨单 ${selectedTransfer.value.code}`)
   } catch (err) {
     const msg = err instanceof Error && err.message ? err.message : '绑定失败'
     ElMessage.error(msg)
@@ -345,16 +261,16 @@ onMounted(() => {
         </el-form-item>
       </el-form>
 
-    <div class="toolbar">
-      <el-button type="primary" @click="handleAdd">新增</el-button>
-    </div>
+      <div class="toolbar">
+        <el-button type="primary" @click="handleAdd">新增</el-button>
+      </div>
       <!-- 新增调拨单对话框 -->
       <el-dialog v-model="dialogVisible" :title="editId != null ? '编辑调拨单' : '新增调拨单'" width="60%" :close-on-click-modal="false">
         <el-form ref="formRef" :model="form" label-width="100px" class="add-form">
           <el-row :gutter="16">
             <el-col :span="8">
               <el-form-item label="调拨单号" prop="code" :rules="[{ required: true, message: '请输入调拨单号', trigger: 'blur' }]">
-                <el-input v-model="form.code" placeholder="调拨单号" />
+                <el-input v-model="form.code" readonly placeholder="调拨单号" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -371,7 +287,7 @@ onMounted(() => {
 
           <el-row :gutter="16">
             <el-col :span="8">
-              <el-form-item label="调拨时间" prop="transferDate">
+              <el-form-item label="调拨日期" prop="transferDate">
                 <el-date-picker v-model="form.transferDate" type="date" placeholder="调拨日期" style="width: 100%" value-format="YYYY-MM-DD" />
               </el-form-item>
             </el-col>
@@ -389,7 +305,7 @@ onMounted(() => {
 
           <el-row :gutter="16">
             <el-col :span="8">
-              <el-form-item label="创建日期" prop="createTime">
+              <el-form-item label="创建时间" prop="createTime">
                 <el-date-picker v-model="form.createTime" type="date" placeholder="创建日期" style="width: 100%" value-format="YYYY-MM-DD" />
               </el-form-item>
             </el-col>
@@ -462,7 +378,7 @@ onMounted(() => {
 
         <template #footer>
           <div class="dialog-footer">
-            <el-button @click="handleCancel">取消</el-button>
+            <el-button @click="dialogVisible = false">取消</el-button>
             <el-button type="primary" :loading="submitting" @click="handleSave">保存</el-button>
           </div>
         </template>
@@ -506,8 +422,8 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" type="primary" @click="handleEdit(row.code)">编辑</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(row.code)">删除</el-button>
+            <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
+            <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -520,15 +436,15 @@ onMounted(() => {
         :page-sizes="[5, 10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
         class="pagination"
-        @current-change="handleTransferPageChange"
+        @current-change="fetchTransferData"
         @size-change="handleTransferSizeChange"
       />
     </section>
-      <!-- 当前选中调拨单提示 -->
-      <div class="selected-tip" v-if="selectedTransfer">
-        当前选中调拨单：<strong>{{ selectedTransfer.code }}</strong>
-        （{{ selectedTransfer.name }}）
-      </div>
+    <!-- 当前选中调拨单提示 -->
+    <div class="selected-tip" v-if="selectedTransfer">
+      当前选中调拨单：<strong>{{ selectedTransfer.code }}</strong>
+      （{{ selectedTransfer.name }}）
+    </div>
 
     <!-- 下方：蓝本信息 -->
     <section class="block">
