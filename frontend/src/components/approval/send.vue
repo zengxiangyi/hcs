@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api/http'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
 
 defineOptions({ name: 'Send' })
+
+const router = useRouter()
 /** workflow 行信息 */
 interface WorkFlowRow {
   id: number
@@ -44,11 +47,9 @@ function getErrorMessage(err: unknown, fallback: string): string {
 
 // 查询条件
 const query = ref<{
-  targetCode: string
   startTimeStart: string
   startTimeEnd: string
 }>({
-  targetCode: '',
   startTimeStart: '',
   startTimeEnd: '',
 })
@@ -89,13 +90,11 @@ const { label: formatStateLabel, type: formatStateType } = createStateFormatter(
 // 构建查询参数（列表与后续导出共用）
 function buildQueryParams(overrides: Partial<WorkFlowListParams> = {}): WorkFlowListParams {
   return {
-    targetCode: query.value.targetCode.trim(),
     startTimeStart: query.value.startTimeStart || undefined,
     startTimeEnd: query.value.startTimeEnd || undefined,
     ...overrides,
   }
 }
-
 // 拉取列表
 async function fetchData() {
   loading.value = true
@@ -116,7 +115,7 @@ function handleSearch() {
 }
 
 function handleReset() {
-  query.value = { targetCode: '', startTimeStart: '', startTimeEnd: '' }
+  query.value = {startTimeStart: '', startTimeEnd: '' }
   currentPage.value = 1
   fetchData()
 }
@@ -150,24 +149,9 @@ async function handleApprove(row: WorkFlowRow) {
   }
 }
 
-// 驳回
-async function handleReject(row: WorkFlowRow) {
-  try {
-    await ElMessageBox.confirm(`确认驳回任务「${row.name}」？`, '审批', {
-      type: 'warning',
-      confirmButtonText: '驳回',
-      cancelButtonText: '取消',
-    })
-  } catch {
-    return
-  }
-  try {
-    await http.post<null>(`/api/workflow/${row.id}/reject`)
-    ElMessage.success('已驳回')
-    fetchData()
-  } catch (err) {
-    ElMessage.error(getErrorMessage(err, '操作失败'))
-  }
+// 查看：携带流程编号跳转到 instance.vue
+function seeProcess(row: WorkFlowRow) {
+  router.push({ name: 'Instance', query: { workflow: row.code } })
 }
 
 onMounted(fetchData)
@@ -226,7 +210,7 @@ onMounted(fetchData)
       <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="success" @click="handleReject(row)">查看</el-button>
+          <el-button size="small" type="success" @click="seeProcess(row)">查看</el-button>
           <el-button size="small" v-if="row.state==='A'" type="warning" @click="handleApprove(row)">退回</el-button>
         </template>
       </el-table-column>

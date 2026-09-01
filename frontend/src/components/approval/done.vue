@@ -3,8 +3,12 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api/http'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
+import { useRouter } from 'vue-router'
 
 defineOptions({ name: 'Done' })
+
+const router = useRouter()
+
 
 /** workflow 行信息 */
 interface WorkFlowRow {
@@ -153,24 +157,9 @@ async function handleApprove(row: WorkFlowRow) {
   }
 }
 
-// 驳回
-async function handleReject(row: WorkFlowRow) {
-  try {
-    await ElMessageBox.confirm(`确认驳回任务「${row.name}」？`, '审批', {
-      type: 'warning',
-      confirmButtonText: '驳回',
-      cancelButtonText: '取消',
-    })
-  } catch {
-    return
-  }
-  try {
-    await http.post<null>(`/api/workflow/${row.id}/reject`)
-    ElMessage.success('已驳回')
-    fetchData()
-  } catch (err) {
-    ElMessage.error(getErrorMessage(err, '操作失败'))
-  }
+// 查看：携带流程编号跳转到 instance.vue
+function seeProcess(row: WorkFlowRow) {
+  router.push({ name: 'Instance', query: { workflow: row.code } })
 }
 
 onMounted(fetchData)
@@ -229,7 +218,7 @@ onMounted(fetchData)
       <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="success" @click="handleReject(row)">查看</el-button>
+          <el-button size="small" type="success" @click="seeProcess(row)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>

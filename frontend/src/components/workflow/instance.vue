@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { instanceAPI, type InstanceRow, type FlowHistoryRow } from '../../api/instance'
 import { flowEdgeAPI, flowNodeAPI, type FlowEdge, type FlowNode } from '../../api/flow'
@@ -8,6 +8,7 @@ import { flowEdgeAPI, flowNodeAPI, type FlowEdge, type FlowNode } from '../../ap
 defineOptions({ name: 'Instance' })
 
 const route = useRoute()
+const router = useRouter()
 
 /** 从 catch 的错误对象中提取用户可读信息 */
 function getErrorMessage(err: unknown, fallback: string): string {
@@ -332,6 +333,9 @@ function loadAll() {
   loadFlowGraph()
 }
 
+function goBack() {
+  router.back()
+}
 onMounted(loadAll)
 
 // 地址栏 workflow 参数变化时（如从其它页面跳转过来）重新加载
@@ -345,30 +349,43 @@ watch(workflow, () => {
     <h3 class="page-title">
       流程实例信息查看
       <span v-if="workflow" class="workflow-no">流程编号：{{ workflow }}</span>
+      <span><el-button size="primary" type="success" @click="goBack">返回</el-button></span>
     </h3>
-
     <el-empty v-if="!workflow" description="缺少流程编号参数（workflow），请从流程列表页进入" />
-
     <template v-else>
       <!-- 当前节点信息（并行处理时可能有多条） -->
       <div class="section-title">
         当前节点信息
         <span class="section-tip">共 {{ current.length }} 个待处理节点</span>
       </div>
-      <el-table :data="current" v-loading="currentLoading" border stripe style="width: 100%">
+      <el-table
+        :data="current"
+        v-loading="currentLoading"
+        border
+        stripe
+        style="width: 100%"
+        :class="{ 'is-compact': !currentLoading && current.length < 3 }"
+      >
         <el-table-column type="index" label="#" width="60" />
         <el-table-column prop="flowGraph" label="流程图" min-width="140" show-overflow-tooltip />
         <el-table-column prop="flowNode" label="当前节点" min-width="140" show-overflow-tooltip />
         <el-table-column prop="startTime" label="开始时间" min-width="180" show-overflow-tooltip />
         <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip />
         <template #empty>
-          <el-empty description="暂无当前节点信息" />
+          <el-empty :image-size="64" description="暂无当前节点信息" />
         </template>
       </el-table>
 
       <!-- 历史操作记录 -->
       <div class="section-title">历史操作记录</div>
-      <el-table :data="history" v-loading="historyLoading" border stripe style="width: 100%">
+      <el-table
+        :data="history"
+        v-loading="historyLoading"
+        border
+        stripe
+        style="width: 100%"
+        :class="{ 'is-compact': !historyLoading && history.length < 3 }"
+      >
         <el-table-column type="index" label="#" width="60" />
         <el-table-column prop="flowGraph" label="流程图" min-width="140" show-overflow-tooltip />
         <el-table-column prop="flowNode" label="节点" min-width="140" show-overflow-tooltip />
@@ -379,7 +396,7 @@ watch(workflow, () => {
         <el-table-column prop="note" label="处理说明" min-width="200" show-overflow-tooltip />
         <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
         <template #empty>
-          <el-empty description="暂无历史操作记录" />
+          <el-empty :image-size="64" description="暂无历史操作记录" />
         </template>
       </el-table>
 
@@ -417,5 +434,45 @@ watch(workflow, () => {
   font-size: 12px;
   font-weight: 400;
   color: #909399;
+}
+
+/* 表格：限定默认高度区间，超出后表体内部滚动，表头固定 */
+.instance-page :deep(.el-table__body-wrapper) {
+  min-height: 96px;
+  max-height: 300px;
+}
+.instance-page :deep(.el-scrollbar__wrap) {
+  max-height: 300px;
+}
+
+/* 数据为空或少于 3 条时压缩表体高度，避免留出大片空白 */
+.instance-page :deep(.el-table.is-compact .el-table__body-wrapper) {
+  min-height: 0;
+}
+.instance-page :deep(.el-table.is-compact .el-scrollbar__wrap) {
+  max-height: none;
+}
+.instance-page :deep(.el-table.is-compact .el-table__empty-block) {
+  min-height: 0;
+}
+.instance-page :deep(.el-table.is-compact .el-table__empty-text) {
+  width: 100%;
+  line-height: normal;
+}
+/* 紧凑模式下收窄空状态插画与内边距 */
+.instance-page :deep(.el-table.is-compact .el-empty) {
+  --el-empty-padding: 12px 0;
+  --el-empty-description-margin-top: 8px;
+}
+
+/* 底部流程图画布：块级居中展示 */
+#flowmap {
+  display: block;
+  position: relative;
+  margin: 0 auto;
+  max-width: 100%;
+  background: #fafafa;
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
 }
 </style>

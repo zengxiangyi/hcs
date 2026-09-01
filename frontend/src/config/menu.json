@@ -96,12 +96,6 @@
           "right": "page:info:file"
         },
         {
-          "name": "流程实例查看",
-          "path": "/web/workflow/instance",
-          "icon": "UploadFilled",
-          "right": "page:info:file"
-        },
-        {
           "name": "常量值管理",
           "path": "/web/sys/constValue",
           "icon": "Collection",
