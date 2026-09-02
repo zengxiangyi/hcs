@@ -4,6 +4,24 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createEmptyPlan, type PlanModel } from './plan/types'
 import TZ01 from './plan/TZ01.vue'
+import TZ02 from './plan/TZ02.vue'
+import TZ03 from './plan/TZ03.vue'
+import CH01 from './plan/CH01.vue'
+import CH02 from './plan/CH02.vue'
+import CH03 from './plan/CH03.vue'
+import CH04 from './plan/CH04.vue'
+import CH05 from './plan/CH05.vue'
+import CH06 from './plan/CH06.vue'
+import TH01 from './plan/TH01.vue'
+import TH02 from './plan/TH02.vue'
+import ZH01 from './plan/ZH01.vue'
+import TP01 from './plan/TP01.vue'
+import TP02 from './plan/TP02.vue'
+import TP03 from './plan/TP03.vue'
+import TP04 from './plan/TP04.vue'
+import TP05 from './plan/TP05.vue'
+import TP06 from './plan/TP06.vue'
+import TP07 from './plan/TP07.vue'
 import { techAPI, type TechBoardSaveDTO } from '../../api/tech'
 
 defineOptions({ name: 'Draft' })
@@ -96,7 +114,24 @@ const secondOptions = computed(() => {
 /** 二级工艺 → 编制方案组件 映射表（每种方案独立组件） */
 const planComponentMap: Record<string, Component> = {
   TZ01: TZ01,
-  // investment / die / free / die-forge / roll / ... 后续在此注册
+  TZ02: TZ02,
+  TZ03: TZ03,
+  CH01: CH01,
+  CH02: CH02,
+  CH03: CH03,
+  CH04: CH04,
+  CH05: CH05,
+  CH06: CH06,
+  TH01: TH01,
+  TH02: TH02,
+  ZH01: ZH01,
+  TP01: TP01,
+  TP02: TP02,
+  TP03: TP03,
+  TP04: TP04,
+  TP05: TP05,
+  TP06: TP06,
+  TP07: TP07,
 }
 
 /** 当前选中的编制方案组件（无则留空） */
@@ -164,12 +199,6 @@ function createTempRow(): TempRow {
 
 /** 保存：校验必填项后提交当前表单数据 */
 async function onSave() {
-  const payload = {
-    basic: basicForm.value,
-    requirement: requirementForm.value,
-    template: tempRows.value,
-    plan: planModel.value,
-  }
   try {
     // 组装数据
     const bluePrint: TechBoardSaveDTO = {

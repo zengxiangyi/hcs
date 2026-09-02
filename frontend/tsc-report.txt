@@ -1,0 +1,70 @@
+﻿node.exe : npm notice run page@0.0.0 npx
+At C:\Users\zengx\AppData\Roaming\npm\npx.ps1:24 char:5
++     & "node$exe"  "$basedir/node_modules/npm/bin/npx-cli.js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm notice run page@0.0.0 npx:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+npm notice run vue-tsc -b --force
+src/components/approval/done.vue(195,20): error TS2322: Type 'TagType' is not assignable to type '"primary" | "success" | "warning" | "info" | "danger" | undefined'.
+  Type '""' is not assignable to type '"primary" | "success" | "warning" | "info" | "danger" | undefined'.
+src/components/approval/done.vue(203,69): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'WorkFlowRow'.
+  Type 'DefaultRow' is missing the following properties from type 'WorkFlowRow': id, code, name, category, and 7 more.
+src/components/approval/send.vue(207,20): error TS2322: Type 'TagType' is not assignable to type '"primary" | "success" | "warning" | "info" | "danger" | undefined'.
+  Type '""' is not assignable to type '"primary" | "success" | "warning" | "info" | "danger" | undefined'.
+src/components/approval/send.vue(215,69): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'WorkFlowRow'.
+  Type 'DefaultRow' is missing the following properties from type 'WorkFlowRow': id, code, name, category, and 7 more.
+src/components/approval/send.vue(216,95): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'WorkFlowRow'.
+  Type 'DefaultRow' is missing the following properties from type 'WorkFlowRow': id, code, name, category, and 7 more.
+src/components/approval/todo.vue(231,20): error TS2322: Type 'TagType' is not assignable to type '"primary" | "success" | "warning" | "info" | "danger" | undefined'.
+  Type '""' is not assignable to type '"primary" | "success" | "warning" | "info" | "danger" | undefined'.
+src/components/approval/todo.vue(238,76): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'WorkFlowRow'.
+  Type 'DefaultRow' is missing the following properties from type 'WorkFlowRow': id, code, name, category, and 7 more.
+src/components/approval/todo.vue(239,75): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'WorkFlowRow'.
+  Type 'DefaultRow' is missing the following properties from type 'WorkFlowRow': id, code, name, category, and 7 more.
+src/components/bluePrint/list.vue(315,69): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'BluePrintRow'.
+  Type 'DefaultRow' is missing the following properties from type 'BluePrintRow': id, code, name, graph, and 23 more.
+src/components/bluePrint/list.vue(316,69): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'BluePrintRow'.
+  Type 'DefaultRow' is missing the following properties from type 'BluePrintRow': id, code, name, graph, and 23 more.
+src/components/bluePrint/list.vue(317,70): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'BluePrintRow'.
+  Type 'DefaultRow' is missing the following properties from type 'BluePrintRow': id, code, name, graph, and 23 more.
+src/components/info/file.vue(244,72): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'FileRow'.
+  Type 'DefaultRow' is missing the following properties from type 'FileRow': id, fileName, fileSize, category, and 2 more.
+src/components/info/file.vue(245,70): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'FileRow'.
+  Type 'DefaultRow' is missing the following properties from type 'FileRow': id, fileName, fileSize, category, and 2 more.
+src/components/process/steps/StepS13.vue(133,34): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'SegRow'.
+  Type 'DefaultRow' is missing the following properties from type 'SegRow': segNo, temp, time, snapshot
+src/components/process/steps/StepS13.vue(134,24): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'SegRow'.
+  Type 'DefaultRow' is missing the following properties from type 'SegRow': segNo, temp, time, snapshot
+src/components/process/task.vue(174,70): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'TaskRow'.
+  Type 'DefaultRow' is missing the following properties from type 'TaskRow': id, transfer, blueprint, auditState, and 4 more.
+src/components/product/transfer.vue(425,71): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'TransferRow'.
+  Type 'DefaultRow' is missing the following properties from type 'TransferRow': id, receiveUser, receiveTime, code, and 19 more.
+src/components/product/transfer.vue(426,72): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'TransferRow'.
+  Type 'DefaultRow' is missing the following properties from type 'TransferRow': id, receiveUser, receiveTime, code, and 19 more.
+src/components/product/transfer.vue(468,80): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'BlueprintRow'.
+  Type 'DefaultRow' is missing the following properties from type 'BlueprintRow': id, blueprintNo, blueprintName, spec, and 4 more.
+src/components/sys/constValue.vue(165,69): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'ConstValueRow'.
+  Type 'DefaultRow' is missing the following properties from type 'ConstValueRow': id, code, name, category, and 2 more.
+src/components/sys/constValue.vue(166,70): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'ConstValueRow'.
+  Type 'DefaultRow' is missing the following properties from type 'ConstValueRow': id, code, name, category, and 2 more.
+src/components/sys/right.vue(174,69): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'RightRow'.
+  Type 'DefaultRow' is missing the following properties from type 'RightRow': id, code, name, category, and 2 more.
+src/components/sys/right.vue(175,70): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'RightRow'.
+  Type 'DefaultRow' is missing the following properties from type 'RightRow': id, code, name, category, and 2 more.
+src/components/sys/role.vue(152,69): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'RoleRow'.
+  Type 'DefaultRow' is missing the following properties from type 'RoleRow': id, name, code, category, remark
+src/components/sys/role.vue(153,70): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'RoleRow'.
+  Type 'DefaultRow' is missing the following properties from type 'RoleRow': id, name, code, category, remark
+src/components/sys/roleRright.vue(141,15): error TS2322: Type 'string[]' is not assignable to type 'string | number | boolean | undefined'.
+src/components/sys/roleUser.vue(121,28): error TS2322: Type 'string[]' is not assignable to type 'string | number | boolean | undefined'.
+src/components/sys/user.vue(182,69): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'SysUserRow'.
+  Type 'DefaultRow' is missing the following properties from type 'SysUserRow': id, code, name, department, state
+src/components/sys/user.vue(183,70): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'SysUserRow'.
+  Type 'DefaultRow' is missing the following properties from type 'SysUserRow': id, code, name, department, state
+src/components/workflow/draw.vue(540,24): error TS2322: Type '"primary"' is not assignable to type '"" | "default" | "small" | "large" | undefined'.
+src/components/workflow/flow.vue(169,67): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'GraphRow'.
+  Type 'DefaultRow' is missing the following properties from type 'GraphRow': id, flowGraph, title, width, and 2 more.
+src/components/workflow/flow.vue(170,66): error TS2345: Argument of type 'DefaultRow' is not assignable to parameter of type 'GraphRow'.
+  Type 'DefaultRow' is missing the following properties from type 'GraphRow': id, flowGraph, title, width, and 2 more.
+src/components/workflow/instance.vue(352,24): error TS2322: Type '"primary"' is not assignable to type '"" | "default" | "small" | "large" | undefined'.

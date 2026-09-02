@@ -349,7 +349,7 @@ watch(workflow, () => {
     <h3 class="page-title">
       流程实例信息查看
       <span v-if="workflow" class="workflow-no">流程编号：{{ workflow }}</span>
-      <span><el-button size="primary" type="success" @click="goBack">返回</el-button></span>
+      <span><el-button type="success" @click="goBack">返回</el-button></span>
     </h3>
     <el-empty v-if="!workflow" description="缺少流程编号参数（workflow），请从流程列表页进入" />
     <template v-else>

@@ -166,8 +166,8 @@ onMounted(loadList)
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button size="small" type="success" @click="openShow(row.flowGraph)">查看</el-button>
-          <el-button size="small" type="primary" @click="openEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="onRemove(row)">删除</el-button>
+          <el-button size="small" type="primary" @click="openEdit(row as GraphRow)">编辑</el-button>
+          <el-button size="small" type="danger" @click="onRemove(row as GraphRow)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

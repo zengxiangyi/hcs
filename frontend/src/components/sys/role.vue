@@ -149,8 +149,8 @@ onMounted(refresh)
       <el-table-column prop="remark" label="备注" min-width="300" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
+          <el-button size="small" type="primary" @click="handleEdit(row as RoleRow)">编辑</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(row as RoleRow)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

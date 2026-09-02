@@ -101,7 +101,9 @@ function buildQueryParams(overrides: Partial<WorkFlowListParams> = {}): WorkFlow
 async function fetchData() {
   loading.value = true
   try {
-    const res = await http.get<WorkFlowListResult>('/api/workflow/todo')
+    const res = await http.get<WorkFlowListResult>('/api/workflow/todo', {
+      params: buildQueryParams({ page: currentPage.value, pageSize: pageSize.value }),
+    })
     tableData.value = res.data.content
     total.value = res.data.total
   } catch (err) {
@@ -233,8 +235,8 @@ onMounted(fetchData)
       <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="success" @click="openApproveDialog(row, 'approve')">同意</el-button>
-          <el-button size="small" type="danger" @click="openApproveDialog(row, 'reject')">驳回</el-button>
+          <el-button size="small" type="success" @click="openApproveDialog(row as WorkFlowRow, 'approve')">同意</el-button>
+          <el-button size="small" type="danger" @click="openApproveDialog(row as WorkFlowRow, 'reject')">驳回</el-button>
         </template>
       </el-table-column>
     </el-table>

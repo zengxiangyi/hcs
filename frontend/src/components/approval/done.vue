@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import http from '../../api/http'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
 import { useRouter } from 'vue-router'
@@ -107,7 +107,9 @@ function buildQueryParams(overrides: Partial<WorkFlowListParams> = {}): WorkFlow
 async function fetchData() {
   loading.value = true
   try {
-    const res = await http.get<WorkFlowListResult>('/api/workflow/done')
+    const res = await http.get<WorkFlowListResult>('/api/workflow/done', {
+      params: buildQueryParams({ page: currentPage.value, pageSize: pageSize.value }),
+    })
     tableData.value = res.data.content
     total.value = res.data.total
   } catch (err) {
@@ -198,7 +200,7 @@ onMounted(fetchData)
       <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="success" @click="seeProcess(row)">查看</el-button>
+          <el-button size="small" type="success" @click="seeProcess(row as WorkFlowRow)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>

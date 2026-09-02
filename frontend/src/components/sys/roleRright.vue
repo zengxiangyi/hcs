@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, type Ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { roleAPI, type RoleRow } from '../../api/role'
 import { rightAPI, type RightRow } from '../../api/right'
@@ -27,6 +27,13 @@ const groupedRights = computed(() => {
 
 // 当前角色勾选的权限编码
 const checkedRightCodes = ref<string[]>([])
+
+/**
+ * el-checkbox 的 modelValue 类型只声明为标量，但运行时支持数组模型
+ * （element-plus useCheckbox#addToStore 会 push/remove 数组元素）。
+ * 此处断言为标量 Ref，仍指向同一个数组实例，勾选结果写回 checkedRightCodes。
+ */
+const rightCheckModel = checkedRightCodes as unknown as Ref<string | number | boolean>
 
 async function loadRoles() {
   const res = await roleAPI.search({page:1, pageSize: 99999 })
@@ -138,7 +145,7 @@ function groupIndeterminate(group: { category: string; label: string; list: Righ
             <el-checkbox
               v-for="r in group.list"
               :key="r.code"
-              v-model="checkedRightCodes"
+              v-model="rightCheckModel"
               :value="r.code"
               class="right-item"
             >

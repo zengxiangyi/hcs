@@ -241,8 +241,8 @@ onMounted(fetchData)
       <el-table-column prop="uploadTime" label="上传时间" min-width="180" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="primary" @click="handlePreview(row)">预览</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
+          <el-button size="small" type="primary" @click="handlePreview(row as FileRow)">预览</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(row as FileRow)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

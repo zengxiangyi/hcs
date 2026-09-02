@@ -130,8 +130,8 @@ defineExpose({ validate, reset })
       </el-table-column>
       <el-table-column label="状态" width="200">
         <template #default="{ row }">
-          <el-tag :type="isSaved(row) ? 'success' : 'info'" disable-transitions>
-            {{ isSaved(row) ? '已保存' : '未保存' }}
+          <el-tag :type="isSaved(row as SegRow) ? 'success' : 'info'" disable-transitions>
+            {{ isSaved(row as SegRow) ? '已保存' : '未保存' }}
           </el-tag>
         </template>
       </el-table-column>

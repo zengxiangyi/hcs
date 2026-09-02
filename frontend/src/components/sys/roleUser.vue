@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, type Ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { roleAPI, type RoleRow } from '../../api/role'
 import { sysUserAPI, type SysUserRow } from '../../api/user'
@@ -14,6 +14,13 @@ const loading = ref(false)
 
 // 当前角色下的用户 code 集合（用于勾选）
 const checkedUserCodes = ref<string[]>([])
+
+/**
+ * el-checkbox 的 modelValue 类型只声明为标量，但运行时支持数组模型
+ * （element-plus useCheckbox#addToStore 会 push/remove 数组元素）。
+ * 此处断言为标量 Ref，仍指向同一个数组实例，勾选结果写回 checkedUserCodes。
+ */
+const userCheckModel = checkedUserCodes as unknown as Ref<string | number | boolean>
 const tableData = ref<SysUserRow[]>([])
 
 // 分页参数
@@ -118,7 +125,7 @@ async function handleSave() {
               <span>选</span>
             </template>
             <template #default="{ row }">
-              <el-checkbox v-model="checkedUserCodes" :value="row.code" />
+              <el-checkbox v-model="userCheckModel" :value="row.code" />
             </template>
           </el-table-column>
           <el-table-column prop="code" label="工号" min-width="120" />

@@ -537,7 +537,7 @@ watch(flowGraph, load)
       <h3 class="flow-title">流程图设计</h3>
       <span class="flow-tag" v-if="flowGraph">{{ flowGraph }}</span>
       <span class="flow-tag flow-tag--warn" v-else>未传入 flowGraph 参数</span>
-      <span><el-button size="primary" type="success" @click="goBack">返回</el-button></span>
+      <span><el-button type="success" @click="goBack">返回</el-button></span>
     </div>
 
     <!-- 节点定义（只读，编辑走弹窗） -->

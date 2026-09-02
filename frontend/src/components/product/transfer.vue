@@ -422,8 +422,8 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
+            <el-button size="small" type="primary" @click="handleEdit(row as TransferRow)">编辑</el-button>
+            <el-button size="small" type="danger" @click="handleDelete(row as TransferRow)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -465,7 +465,7 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="操作" width="120" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" type="primary" @click="handleBindBlueprint(row)">绑定</el-button>
+            <el-button size="small" type="primary" @click="handleBindBlueprint(row as BlueprintRow)">绑定</el-button>
           </template>
         </el-table-column>
       </el-table>

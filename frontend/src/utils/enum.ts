@@ -3,8 +3,12 @@
  * 将后端的 key（存储值）映射为前端展示文本 / 标签类型，多个页面可复用。
  */
 
-/** el-tag 可用类型 */
-export type TagType = '' | 'success' | 'warning' | 'info' | 'danger'
+/**
+ * el-tag 可用类型。
+ * 与 Element Plus 的 tag `type` 取值保持一致（含 'primary'，去掉非法的 ''——
+ * 传 '' 会被 props 校验拒绝且渲染不出预期配色）。
+ */
+export type TagType = 'primary' | 'success' | 'warning' | 'info' | 'danger'
 
 /** 状态枚举项：展示文本 + el-tag 颜色类型 */
 export interface EnumStateItem {

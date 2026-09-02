@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createEmptyPlan, type PlanModel } from './types'
 
-defineOptions({ name: 'TZ01' })
+defineOptions({ name: 'TP07' })
 
 /** 双向绑定父组件的方案数据 */
 const model = defineModel<PlanModel>({ required: true })
