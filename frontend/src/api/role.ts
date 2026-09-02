@@ -48,5 +48,5 @@ export const roleAPI = {
   /** 修改角色 */
   update: (id: number, data: RoleSaveParams) => http.put<RoleRow>(`/api/sysRole/${id}`, data),
   /** 删除角色 */
-  remove: (id: number) => http.delete<null>(`/api/sysRole/${id}`),
+  remove: (code: string) => http.delete<string>(`/api/sysRole/code/${code}`),
 }

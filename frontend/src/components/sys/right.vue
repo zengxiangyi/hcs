@@ -6,6 +6,7 @@ import { rightAPI, type RightRow, type RightSaveParams } from '../../api/right'
 defineOptions({ name: 'Right' })
 
 interface RightForm {
+  id: number
   code: string
   name: string
   category: string
@@ -70,10 +71,10 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const formRef = ref<FormInstance>()
 const editId = ref(0)
-const form = ref<RightForm>({ code: '', name: '', category: 'page', remark: '', parent: ''})
+const form = ref<RightForm>({id:0, code: '', name: '', category: 'page', remark: '', parent: ''})
 
 function resetForm() {
-  form.value = { code: '', name: '', category: 'page', remark: '', parent: ''}
+  form.value = {id:0,code: '', name: '', category: 'page', remark: '', parent: ''}
   editId.value = 0
   formRef.value?.clearValidate()
 }
@@ -87,7 +88,7 @@ function handleAdd() {
 function handleEdit(row: RightRow) {
   dialogTitle.value = '编辑权限'
   editId.value = row.id
-  form.value = { code: row.code, name: row.name, category: row.category, remark: row.remark, parent: row.parent}
+  form.value = {id:row.id, code: row.code, name: row.name, category: row.category, remark: row.remark, parent: row.parent}
   dialogVisible.value = true
 }
 
@@ -95,7 +96,7 @@ function handleDelete(row: RightRow) {
   ElMessageBox.confirm(`确认删除权限「${row.name}」？`, '提示', { type: 'warning' })
     .then(async () => {
       try {
-        await rightAPI.remove(row.id)
+        await rightAPI.remove(row.code)
         ElMessage.success('删除成功')
         refresh()
       } catch (e) {
@@ -159,7 +160,7 @@ onMounted(refresh)
     </div>
 
     <el-table :data="tableData" border stripe style="width: 100%">
-      <el-table-column type="index" label="序号" width="70" />
+      <el-table-column type="id" v-if="false" label="id" width="60" />
       <el-table-column prop="name" label="权限名称" min-width="160" />
       <el-table-column prop="code" label="权限标识" min-width="180" />
       <el-table-column prop="category" label="类型" min-width="120">
@@ -194,7 +195,7 @@ onMounted(refresh)
           <el-input v-model="form.name" placeholder="如 用户-新增" />
         </el-form-item>
         <el-form-item label="标识" prop="code" :rules="[{ required: true, message: '请输入标识', trigger: 'blur' }]">
-          <el-input v-model="form.code" placeholder="如 btn:user:add" />
+          <el-input v-model="form.code" placeholder="如 btn:user:add" :readonly="form.id > 0" />
         </el-form-item>
         <el-form-item label="类型" prop="category" :rules="[{ required: true, message: '请选择类型', trigger: 'change' }]">
           <el-select v-model="form.category" placeholder="请选择类型" style="width: 100%">

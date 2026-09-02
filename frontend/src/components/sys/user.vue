@@ -6,6 +6,7 @@ import { sysUserAPI, type SysUserRow, type SysUserSaveParams } from '../../api/u
 defineOptions({ name: 'User' })
 
 interface UserForm {
+  id: number
   code: string
   name: string
   department: string
@@ -19,7 +20,7 @@ interface UserForm {
 const deptOptions = ['技术部', '内容部', '市场部', '设计部', '人事部', '财务部']
 const statusOptions = ['启用', '禁用']
 
-const query = ref({ code: '', name: '', department: '' })
+const query = ref({ code: '', name: '', department: '',state:'' })
 
 // 服务端分页 + 过滤
 const tableData = ref<SysUserRow[]>([])
@@ -41,6 +42,7 @@ async function refresh() {
       code: query.value.code.trim() || undefined,
       name: query.value.name.trim() || undefined,
       department: query.value.department || undefined,
+      state: query.value.state || undefined,
       page: currentPage.value,
       pageSize: pageSize.value,
     })
@@ -59,7 +61,7 @@ function handleSearch() {
 }
 
 function handleReset() {
-  query.value = { code: '', name: '', department: '' }
+  query.value = { code: '', name: '', department: '',state:'' }
   currentPage.value = 1
   refresh()
 }
@@ -77,10 +79,10 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const formRef = ref<FormInstance>()
 const editId = ref(0)
-const form = ref<UserForm>({ code: '', name: '', department: '技术部', position: '', cellphone: '', email: '', remark: '', state: '启用' })
+const form = ref<UserForm>({id:0,code: '', name: '', department: '', position: '', cellphone: '', email: '', remark: '', state: '启用' })
 
 function resetForm() {
-  form.value = { code: '', name: '', department: '技术部', position: '', cellphone: '', email: '', remark: '', state: '启用' }
+  form.value = { id:0,code: '', name: '', department: '', position: '', cellphone: '', email: '', remark: '', state: '启用' }
   editId.value = 0
   formRef.value?.clearValidate()
 }
@@ -94,13 +96,13 @@ function handleAdd() {
 function handleEdit(row: SysUserRow) {
   dialogTitle.value = '编辑用户'
   editId.value = row.id
-  form.value = { code: row.code, name: row.name, department: row.department, position: row.position ?? '', cellphone: row.cellphone ?? '', email: row.email ?? '', remark: row.remark ?? '', state: row.state }
+  form.value = {id:row.id, code: row.code, name: row.name, department: row.department, position: row.position ?? '', cellphone: row.cellphone ?? '', email: row.email ?? '', remark: row.remark ?? '', state: row.state }
   dialogVisible.value = true
 }
 
 async function handleDelete(row: SysUserRow) {
   try {
-    await sysUserAPI.remove(row.id)
+    await sysUserAPI.remove(row.code)
     ElMessage.success('删除成功')
     // 删除后若当前页已空，回退一页避免空白
     if (tableData.value.length === 1 && currentPage.value > 1) {
@@ -155,6 +157,11 @@ onMounted(refresh)
           <el-option v-for="d in deptOptions" :key="d" :label="d" :value="d" />
         </el-select>
       </el-form-item>
+      <el-form-item label="状态">
+        <el-select v-model="query.state" placeholder="全部状态" clearable style="width: 140px">
+          <el-option v-for="s in statusOptions" :key="s" :label="s" :value="s" />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSearch">查询</el-button>
         <el-button @click="handleReset">重置</el-button>
@@ -166,12 +173,11 @@ onMounted(refresh)
     </div>
 
     <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
-      <el-table-column type="index" label="序号" width="70" />
+      <el-table-column prop="id" label="ID" min-width="120" v-if="false" />
       <el-table-column prop="code" label="工号" min-width="120" />
       <el-table-column prop="name" label="姓名" min-width="120" />
       <el-table-column prop="department" label="部门" min-width="120" />
       <el-table-column prop="position" label="岗位" min-width="120" />
-      <el-table-column prop="cellphone" label="手机号" min-width="140" />
       <el-table-column prop="state" label="状态" min-width="100">
         <template #default="{ row }">
           <el-tag :type="row.state === '启用' ? 'success' : 'danger'">{{ row.state }}</el-tag>
@@ -199,7 +205,7 @@ onMounted(refresh)
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="480px" @closed="resetForm()">
       <el-form ref="formRef" :model="form" label-width="80px">
         <el-form-item label="工号" prop="code" :rules="[{ required: true, message: '请输入工号', trigger: 'blur' }]">
-          <el-input v-model="form.code" placeholder="请输入工号" />
+          <el-input v-model="form.code" placeholder="请输入工号" :readonly="form.id>0" />
         </el-form-item>
         <el-form-item label="姓名" prop="name" :rules="[{ required: true, message: '请输入姓名', trigger: 'blur' }]">
           <el-input v-model="form.name" placeholder="请输入姓名" />
@@ -211,12 +217,6 @@ onMounted(refresh)
         </el-form-item>
         <el-form-item label="岗位" prop="position">
           <el-input v-model="form.position" placeholder="请输入岗位" />
-        </el-form-item>
-        <el-form-item label="手机号" prop="cellphone">
-          <el-input v-model="form.cellphone" placeholder="请输入手机号" />
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="form.email" placeholder="请输入邮箱" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" :rows="2" placeholder="备注说明" />

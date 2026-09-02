@@ -71,6 +71,7 @@ export interface SysUserListParams {
   code?: string
   name?: string
   department?: string
+  state?: string
   page?: number
   pageSize?: number
 }
@@ -103,5 +104,5 @@ export const sysUserAPI = {
   /** 修改用户 */
   update: (id: number, data: SysUserSaveParams) => http.put<SysUserRow>(`/api/sysUser/${id}`, data),
   /** 删除用户 */
-  remove: (id: number) => http.delete<null>(`/api/sysUser/${id}`),
+  remove: (code: string) => http.delete<string>(`/api/sysUser/code/${code}`),
 }

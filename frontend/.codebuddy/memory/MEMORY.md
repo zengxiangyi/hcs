@@ -40,3 +40,5 @@
 - 每次回复末尾需输出「任务状态摘要」（已完成 / 进行中 / 待处理 / 已阻止 / 备注），摘要前后各留一个空行。
 - 禁止修改 `.idea/`、`.vscode/`、`public/`、`node_modules/`（工作区规则）。
 - 前端 Element Plus 全局注册 + `unplugin-vue-components` 自动导入 `el-*`，无需手动注册（`components.d.ts` 自动生成）。
+- **JPA 派生删除的行为（2026-09-02 分析，勿再误改）**：Repository 里 `int deleteByCode(...)` 这类**派生删除**（无 `@Modifying`）在 Spring Data JPA 中由 `JpaQueryExecution.DeleteExecution` 执行——先 `select ... where code=?` 查出实体，再对每条 `em.remove()`，flush 时发出 `delete from t where id=?`。这是**框架默认行为、不是 bug**，目的是触发 `@PreRemove`/`@PostRemove`、级联删除与缓存失效；代价是 N+1 条 SQL。若要真正单条 `delete ... where code=?`，需显式写 `@Modifying(clearAutomatically=true, flushAutomatically=true) @Query("delete from X e where e.code = :code")`（副作用：不触发生命周期回调、不级联）。
+- 用户沟通偏好：当他指出某段代码「实际不是我以为的那样」时，通常是要**先分析原因**，不要直接动手改代码。

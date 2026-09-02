@@ -6,6 +6,7 @@ import { roleAPI, type RoleRow, type RoleSaveParams } from '../../api/role'
 defineOptions({ name: 'Role' })
 
 interface RoleForm {
+  id: number
   name: string
   code: string
   category: string
@@ -61,10 +62,10 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const formRef = ref<FormInstance>()
 const editId = ref(0)
-const form = ref<RoleForm>({ name: '', code: '', category: '', remark: '' })
+const form = ref<RoleForm>({ id:0,name: '', code: '', category: '', remark: '' })
 
 function resetForm() {
-  form.value = { name: '', code: '', category: '', remark: '' }
+  form.value = { id:0,name: '', code: '', category: '', remark: '' }
   editId.value = 0
   formRef.value?.clearValidate()
 }
@@ -78,7 +79,7 @@ function handleAdd() {
 function handleEdit(row: RoleRow) {
   dialogTitle.value = '编辑角色'
   editId.value = row.id
-  form.value = { name: row.name, code: row.code, category: row.category, remark: row.remark }
+  form.value = { id:row.id,name: row.name, code: row.code, category: row.category, remark: row.remark }
   dialogVisible.value = true
 }
 
@@ -86,7 +87,7 @@ function handleDelete(row: RoleRow) {
   ElMessageBox.confirm(`确认删除角色「${row.name}」？`, '提示', { type: 'warning' })
     .then(async () => {
       try {
-        await roleAPI.remove(row.id)
+        await roleAPI.remove(row.code)
         ElMessage.success('删除成功')
         refresh()
       } catch (e) {
@@ -142,7 +143,7 @@ onMounted(refresh)
     </div>
 
     <el-table :data="tableData" border stripe style="width: 100%">
-      <el-table-column type="index" label="序号" width="70" />
+      <el-table-column type="id" v-if="false" label="id" width="60" />
       <el-table-column prop="name" label="角色名称" min-width="120" />
       <el-table-column prop="code" label="角色编码" min-width="120" />
       <el-table-column prop="category" label="分类" min-width="120" />
@@ -172,7 +173,7 @@ onMounted(refresh)
           <el-input v-model="form.name" placeholder="请输入角色名称" />
         </el-form-item>
         <el-form-item label="编码" prop="code" :rules="[{ required: true, message: '请输入角色编码', trigger: 'blur' }]">
-          <el-input v-model="form.code" placeholder="如 admin / editor" />
+          <el-input v-model="form.code" placeholder="如 admin / editor" :readonly="form.id>0" />
         </el-form-item>
         <el-form-item label="分类" prop="category">
           <el-input v-model="form.category" placeholder="如 系统 / 业务" />

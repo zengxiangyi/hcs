@@ -50,5 +50,5 @@ export const rightAPI = {
   /** 修改权限 */
   update: (id: number, data: RightSaveParams) => http.put<RightRow>(`/api/sysRight/${id}`, data),
   /** 删除权限 */
-  remove: (id: number) => http.delete<null>(`/api/sysRight/${id}`),
+  remove: (code: string) => http.delete<string>(`/api/sysRight/code/${code}`),
 }
