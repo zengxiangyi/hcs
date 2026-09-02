@@ -62,6 +62,8 @@
 |------|------|
 | `docs/struct.md` | 本文件，记录项目结构与 `.gitignore` 解析。 |
 | `docs/api.md` | 前端接口文档：逐模块说明 `src/api/` 下各导出对象（`dataAPI` / `roleAPI` / `rightAPI` / `roleUserAPI` / `roleRightAPI`）的端点、入参与返回类型，以及实体关联（用户/角色/权限）。 |
+| `docs/table.md` | 数据表结构说明。 |
+| `docs/build.md` | **构建与部署手册**：部署架构、环境准备、构建前配置检查清单、`build:war` 打包铁律、前后端部署步骤、冒烟验证清单、故障排查表、context-path 变更与回滚流程。发布前必读。 |
 
 ---
 
