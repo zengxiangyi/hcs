@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
+    "build:war": "npm run build && powershell -NoProfile -Command \"Compress-Archive -Path 'dist\\*' -DestinationPath 'ROOT.zip' -Force; Remove-Item 'ROOT.war' -ErrorAction SilentlyContinue; Rename-Item 'ROOT.zip' 'ROOT.war'\"",
     "preview": "vite preview"
   },
   "dependencies": {

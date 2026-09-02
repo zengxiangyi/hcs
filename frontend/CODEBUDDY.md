@@ -12,8 +12,22 @@ The workspace `frontend/` is a **Vue 3 + Vite 8 + TypeScript** SPA for a user-ma
 npm install           # install dependencies
 npm run dev           # start Vite dev server (default http://localhost:5173), HMR enabled
 npm run build         # type-check via vue-tsc -b, then vite build -> dist/
+npm run build:war     # build, then zip dist -> ROOT.war (deployable static war)
 npm run preview       # preview the production build locally
 ```
+
+### Deployment
+
+Production is deployed as a **separate static war**, not bundled into the backend:
+
+- `ROOT.war` (context-path `/`) holds `dist/` plus `public/WEB-INF/web.xml`, whose only job is
+  `<error-page><error-code>404</error-code><location>/index.html</location></error-page>` — this is what makes
+  vue-router **history mode** survive a refresh/direct hit on `/web/xxx`. (Tomcat forwards, so the status stays 404
+  while the body is `index.html`; the browser renders it normally.)
+- `api.war` (context-path `/api`) is the Spring Boot backend, with **no** static resources.
+- Both run in the **same Tomcat** → same origin (origin ignores context-path), so `localStorage` is shared and axios
+  calls to `/api/**` never trigger CORS. No CORS config is needed in the static war.
+- Tomcat must be **10.1+ (Servlet 6.1)** to match the backend baseline.
 
 No unit-test framework is configured in `package.json`.
 
@@ -38,7 +52,9 @@ Element Plus is registered globally in `src/main.ts` with `zh-cn` locale; `unplu
 
 ### Config / env
 
-- Vite dev proxy forwards `/api` to `http://localhost:8080`; `baseURL` defaults to `/` unless `VITE_API_BASE_URL` is set.
+- Vite dev proxy forwards `/api` to `http://127.0.0.1:8090`; `baseURL` defaults to `/` unless `VITE_API_BASE_URL` is set.
+- `base` is **always `/`** (`vite.config.ts`): dev serves at `/`, production is deployed as `ROOT.war` with context-path `/`. Do **not** switch it back to `/api/` — that was only for the old "bundle dist into the backend `static/`" setup.
+- `.env.production` sets `VITE_API_BASE_URL=/api`, i.e. the backend context-path. Same-origin, so keep it relative.
 
 ## Gotchas
 
