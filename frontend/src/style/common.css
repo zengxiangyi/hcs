@@ -8,6 +8,7 @@
  *   .query-form    查询条件区（白底卡片）
  *   .toolbar       工具栏 / 操作按钮区（白底卡片）
  *   .pagination    分页区（白底卡片）
+ *   .note-row      注意事项行（label + 多行文本框同一行，上下各 10px 间距）
  *   表格直接使用 .el-table 即可获得统一样式（卡片圆角、表头渐变、hover 高亮）
  * ============================================================ */
 
@@ -137,4 +138,46 @@
 }
 .pagination .el-pagination__sizes .el-select {
   --el-select-border-radius: 6px;
+}
+
+/* ===== 注意事项行（label + 多行输入框同一行） ===== */
+.note-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0;
+  /* 备注输入框默认宽度（不占满整行），局部可通过覆盖该变量调整 */
+  --note-textarea-width: 560px;
+}
+
+.note-row .basic-label {
+  flex: 0 0 110px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-main);
+  line-height: 32px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.note-row .basic-label::after {
+  content: '：';
+  color: var(--color-text-aux);
+}
+
+.note-row .el-textarea {
+  flex: 0 1 var(--note-textarea-width);
+  width: var(--note-textarea-width);
+  max-width: 100%;
+}
+
+.note-row .el-textarea__inner {
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px #dfe3ea inset;
+  transition: box-shadow 0.2s ease;
+}
+
+.note-row .el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px #409eff inset, 0 0 6px rgba(64, 158, 255, 0.15);
 }

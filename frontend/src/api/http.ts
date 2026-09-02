@@ -42,8 +42,10 @@ http.interceptors.response.use(
     if (error.response?.status === 401) {
       // token 失效，跳转登录并清理本地凭证
       localStorage.removeItem('token')
-      if (window.location.pathname !== '/') {
-        window.location.href = '/'
+      // BASE_URL 跟随部署路径（dev 与生产均为 /）
+      const home = import.meta.env.BASE_URL || '/'
+      if (window.location.pathname !== home) {
+        window.location.href = home
       }
     }
 

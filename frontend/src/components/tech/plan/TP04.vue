@@ -54,6 +54,16 @@ async function removeRow(index: number) {
 
 <template>
   <div class="tz01-plan">
+    <div class="note-row">
+      <label class="basic-label">工艺及操作注意事项</label>
+      <el-input
+        v-model="fields.note"
+        type="textarea"
+        :rows="1"
+        placeholder="人工输入"
+        resize="vertical"
+      />
+    </div>
     <!-- 编制明细表：段号 / 温度 / 时间 / 备注 -->
     <div class="plan-table">
       <el-table :data="rows" border>
@@ -85,7 +95,7 @@ async function removeRow(index: number) {
         type="textarea"
         :rows="1"
         placeholder="请输入备注信息"
-        resize="vertical"
+        resize="both"
       />
     </div>
   </div>
@@ -96,42 +106,5 @@ async function removeRow(index: number) {
   margin-bottom: 12px;
 }
 
-/* 注意事项：label 与输入框同一行（父组件的 basic-label 为 scoped，此处需本地定义） */
-.note-row {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.note-row .basic-label {
-  flex: 0 0 110px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-main);
-  line-height: 32px;
-  white-space: nowrap;
-  text-align: right;
-}
-
-.note-row .basic-label::after {
-  content: '：';
-  color: var(--color-text-aux);
-}
-
-.note-row :deep(.el-textarea) {
-  flex: 1 1 auto;
-  width: auto;
-}
-
-.note-row :deep(.el-textarea__inner) {
-  border-radius: 6px;
-  box-shadow: 0 0 0 1px #dfe3ea inset;
-  transition: box-shadow 0.2s ease;
-}
-
-.note-row :deep(.el-textarea__inner:focus) {
-  box-shadow: 0 0 0 1px #409eff inset, 0 0 6px rgba(64, 158, 255, 0.15);
-}
+/* 注意事项行样式已抽离至 src/style/common.css，全局复用（.note-row） */
 </style>

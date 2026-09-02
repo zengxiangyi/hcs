@@ -2,10 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { restoreCurrentUserRights, hasRight } from '../components/sys/permission'
 
+// 注意：路由 name 必须唯一。重名会让 vue-router 丢失先注册记录的 name，
+// 导致守卫里 to.name === undefined，白名单判定失效、根路径被误判为未登录。
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Login',
+    name: 'Root',
     component: () => import('../components/Login.vue'),
   },
   {
@@ -143,10 +145,11 @@ const routes: RouteRecordRaw[] = [
   },
 ]
 
-const WHITE_LIST = ['Login']
+const WHITE_LIST = ['Root', 'Login']
 
 const router = createRouter({
-  history: createWebHistory(),
+  // BASE_URL 跟随 vite base：dev 与生产均为 /（生产为 ROOT.war，context-path /）
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 })
 
