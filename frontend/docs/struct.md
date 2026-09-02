@@ -41,7 +41,7 @@
 | `index.html` | 应用入口 HTML。Vite 在构建时将 `/src/main.ts` 注入此文件，挂载点是 `<div id="app">`；`<link rel="icon" href="/favicon.svg">` 定义浏览器标签图标。 |
 | `package.json` | npm 项目描述文件（name: `page`）。声明脚本（`dev` / `build` / `preview`）与依赖（Vue、Element Plus、Pinia、vue-router、axios、xlsx 等）。 |
 | `package-lock.json` | npm 自动生成的**精确依赖锁文件**，锁定依赖版本与依赖树，确保团队/CI 环境下安装一致。 |
-| `vite.config.ts` | Vite 构建配置：注册 `vue()` 与 `vueDevTools()` 插件；`unplugin-vue-components` + `ElementPlusResolver()` 按需自动导入 Element Plus 组件并生成 `components.d.ts`；开发代理 `/api` → `http://localhost:8080`。 |
+| `vite.config.ts` | Vite 构建配置：注册 `vue()` 与 `vueDevTools()` 插件；`unplugin-vue-components` + `ElementPlusResolver()` 按需自动导入 Element Plus 组件并生成 `components.d.ts`；`base: '/hcs/'`（部署到 Tomcat 的 hcs 目录，context-path `/hcs`）；开发代理 `/api` → `http://127.0.0.1:8080`。 |
 | `tsconfig.json` | TypeScript 根配置。采用 **Project References** 模式，仅作为容器，分别引用 `tsconfig.app.json` 和 `tsconfig.node.json`。 |
 | `tsconfig.app.json` | 应用源码的 TS 配置。继承 `@vue/tsconfig/tsconfig.dom.json`，启用 `vite/client` 类型、`noUnusedLocals`、`noUnusedParameters` 等严格检查；编译范围：`src/**/*.{ts,tsx,vue}`。 |
 | `tsconfig.node.json` | Node 端代码（Vite 配置）的 TS 配置。目标 `es2023`，模块 `nodenext`，启用 `verbatimModuleSyntax`；编译范围：`vite.config.ts`。 |
@@ -216,6 +216,7 @@ frontend/
 | `npm install` | 安装依赖（首次或依赖变动后） |
 | `npm run dev` | 启动 Vite 开发服务器（默认 `http://localhost:5173`），支持 HMR 热更新；`/api` 请求代理到 `http://localhost:8080` |
 | `npm run build` | 先用 `vue-tsc -b` 做 TypeScript 类型检查，再用 `vite build` 输出生产产物到 `dist/` |
+| `npm run build:war` | 先执行 `build`，再把 `dist/*`（含 `WEB-INF/web.xml`）打包为 `hcs.war`，直接丢到 Tomcat 的 `webapps/` 即为 context-path `/hcs` |
 | `npm run preview` | 本地预览生产构建产物 |
 
 ---

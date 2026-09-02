@@ -18,16 +18,30 @@ npm run preview       # preview the production build locally
 
 ### Deployment
 
-Production is deployed as a **separate static war**, not bundled into the backend:
+Production is deployed as a **separate static war** (`hcs.war`, built by `npm run build:war`), not bundled into the
+backend:
 
-- `ROOT.war` (context-path `/`) holds `dist/` plus `public/WEB-INF/web.xml`, whose only job is
-  `<error-page><error-code>404</error-code><location>/index.html</location></error-page>` — this is what makes
-  vue-router **history mode** survive a refresh/direct hit on `/web/xxx`. (Tomcat forwards, so the status stays 404
-  while the body is `index.html`; the browser renders it normally.)
-- `api.war` (context-path `/api`) is the Spring Boot backend, with **no** static resources.
-- Both run in the **same Tomcat** → same origin (origin ignores context-path), so `localStorage` is shared and axios
-  calls to `/api/**` never trigger CORS. No CORS config is needed in the static war.
-- Tomcat must be **10.1+ (Servlet 6.1)** to match the backend baseline.
+- `hcs.war` → Tomcat context-path **`/hcs`** (i.e. the `webapps/hcs/` directory) holds `dist/` plus
+  `public/WEB-INF/web.xml`, whose only job is
+  `<error-page><error-code>404</error-code><location>/index.html</location></error-page>` (context-relative, so it
+  resolves to `/hcs/index.html`). This is what makes vue-router **history mode** survive a refresh/direct hit on
+  `/hcs/web/xxx`. (Tomcat forwards, so the status stays 404 while the body is `index.html`; the browser renders it
+  normally.)
+- The backend is a **standalone Fastify** service (see `../backend`) listening on `http://127.0.0.1:8080`, with
+  routes registered at `/api/**` (`/api/auth/login`, `/api/users`, ...). It is **not** a Java war — do not put it in
+  Tomcat.
+- Because the frontend origin (Tomcat host:port) usually differs from the backend origin, `.env.production` sets an
+  **absolute** `VITE_API_BASE_URL`. CORS is enabled on the backend (`origin` reflection + credentials), so
+  cross-origin calls work; the `Authorization` header is attached by the axios request interceptor.
+- Tomcat must be **10.1+ (Servlet 6.1)** for the `jakarta` `web-app_6.0` descriptor.
+- **Packaging**: `build:war` zips `dist/` with .NET `System.IO.Compression.ZipArchive`, writing **explicit directory
+  entries** (`assets/`, `WEB-INF/`) plus file entries with **forward slashes**. Do **not** switch back to
+  `Compress-Archive` / `ZipFile::CreateFromDirectory`: they emit only file entries, and Tomcat 11 then fails while
+  unpacking with `ContextConfig.beforeStart ... FileNotFoundException: webapps\hcs\assets\foo.js`
+  (ERROR_PATH_NOT_FOUND — the `assets` directory was never created).
+  Verify an archive with `tar -tf hcs.war | Select-String '/$'` (bsdtar); expect 103 entries incl. `assets/`,
+  `WEB-INF/`. Note that .NET's `ZipArchiveEntry.FullName` rewrites `/` to `\` on Windows, so always inspect entry
+  names with bsdtar, not .NET.
 
 No unit-test framework is configured in `package.json`.
 
@@ -52,13 +66,17 @@ Element Plus is registered globally in `src/main.ts` with `zh-cn` locale; `unplu
 
 ### Config / env
 
-- Vite dev proxy forwards `/api` to `http://127.0.0.1:8090`; `baseURL` defaults to `/` unless `VITE_API_BASE_URL` is set.
-- `base` is **always `/`** (`vite.config.ts`): dev serves at `/`, production is deployed as `ROOT.war` with context-path `/`. Do **not** switch it back to `/api/` — that was only for the old "bundle dist into the backend `static/`" setup.
-- `.env.production` sets `VITE_API_BASE_URL=/api`, i.e. the backend context-path. Same-origin, so keep it relative.
+- Vite dev proxy forwards `/api` to `http://127.0.0.1:8080` (no rewrite). `baseURL` defaults to `/` unless `VITE_API_BASE_URL` is set, so dev requests go to relative `/api/...` and hit the proxy.
+- `base` is **`/hcs/`** (`vite.config.ts`): production is deployed as Tomcat context-path `/hcs`. `src/router/index.ts` uses `createWebHistory(import.meta.env.BASE_URL)`, and the 401 redirect also uses `BASE_URL`, so both follow `base` automatically — nothing else needs changing if the context-path changes.
+- `.env.production` sets `VITE_API_BASE_URL=http://127.0.0.1:8080`.
+  **Never append `/api` here.** Every module in `src/api/*.ts` already requests full paths like `/api/auth/login`, so
+  the final URL is `VITE_API_BASE_URL + '/api/...'`; adding `/api` to the base yields `/api/api/auth/login` (404).
+  If the backend is ever reverse-proxied onto the same origin, set this to `/` instead.
 
 ## Gotchas
 
 - `docs/struct.md` documents the current project structure and `.gitignore` rules — keep it in sync when structure changes.
+- **Never put `/api` into `VITE_API_BASE_URL`**: `src/api/*.ts` paths already start with `/api`, so `/api` in the base produces `/api/api/...` 404s. Symptom to watch for in devtools: `http://127.0.0.1:8080/api/api/auth/login`.
 - Template leftover files (`HelloWorld.vue`, `src/assets/*`, `public/icons.svg`, `data1.vue`) were removed; the only feature page under `src/components/data/` is `data2.vue`.
 - Passwords are MD5-hashed client-side.
 - `pageSize` for the export in `data2.vue` is hardcoded to `99999` to fetch the full list.

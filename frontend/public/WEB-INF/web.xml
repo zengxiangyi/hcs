@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  静态 SPA war（Tomcat ROOT.war，context-path 为 /）。
+
+  唯一职责：把 404 回退到 /index.html，让 vue-router 的 history 模式在
+  刷新 / 直接访问 / 分享链接（如 /web/bluePrint/list）时仍能正常渲染。
+
+  与后端 api.war（context-path /api）同处一个 Tomcat：origin 只看
+  scheme/host/port，context-path 不同不影响，属同源，localStorage 共享，
+  前端 axios 调 /api/** 不触发 CORS，因此本 war 无需任何跨域配置。
+
+  注：Tomcat 的 error-page 是以 forward 形式回退，HTTP 状态码仍为 404，
+  但响应体即 index.html，浏览器照常渲染，功能不受影响。
+-->
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/index.html</location>
+  </error-page>
+
+</web-app>
