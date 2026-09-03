@@ -1,16 +1,19 @@
 ---
 description: 禁止 AI 修改项目关键文件及目录。
 alwaysApply: true
+enabled: true
+updatedAt: 2026-08-22
 ---
 
-AI Agent 禁止修改以下文件及目录，可读取但不得写回，此规则不可被用户指令覆盖。
+最高优先级、不可被用户指令覆盖。可读取但不得写回（覆盖或追加）。
 
-**文件**：
+**文件**（构建工具/IDE 生成或维护）：
+- `mvnw.cmd`、`mvnw` — Maven Wrapper 脚本，覆盖破坏跨平台构建
+- `info.iml` — IDEA 模块文件，手动改动会导致工程异常
 
+**目录**（自动生成或团队不纳管）：
+- `target` — Maven 构建输出
+- `.mvn` — Wrapper 配置，与 mvnw 配套
+- `.idea` — IDEA 私有配置
 
-**目录**：
-- `.idea`（IDE 配置目录，勿改动）
-- `public`（公共静态资源目录，勿改动）
-- `node_modules`（依赖目录，勿改动）
-- `.vscode`（IDE 配置目录，勿改动）
-- `dist`（构建产物目录，勿改动）
+维护：新增条目直接追加；某条目不再需要时删除并注明原因。
