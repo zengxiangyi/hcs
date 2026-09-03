@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { techAPI, type TechBoardSaveDTO } from '../../api/tech'
+import { techStepAPI } from '../../api/techStep'
 
 defineOptions({ name: 'Board' })
 
@@ -150,6 +151,138 @@ function createTempRow(): TempRow {
   return { segNo: '', temp: '', time: '', remark: '' }
 }
 
+// ---------- 工艺编制：工序动态表格 ----------
+/** 工序下拉数据（与 step.vue 保持一致）：step-工序编号，stepName-工序名称 */
+const stepMap = [
+  { step: 'S01', stepName: '辊颈硬度检测' },
+  { step: 'S02', stepName: '箱炉预热' },
+  { step: 'S03', stepName: '机床淬火' },
+  { step: 'S04', stepName: '续冷' },
+  { step: 'S05', stepName: '首检' },
+  { step: 'S06', stepName: '测变形' },
+  { step: 'S07', stepName: '暂焖' },
+  { step: 'S08', stepName: '冷处理' },
+  { step: 'S09', stepName: '淬颈' },
+  { step: 'S10', stepName: '一次回火(辊身回火）' },
+  { step: 'S11', stepName: '测变形' },
+  { step: 'S12', stepName: '矫直' },
+  { step: 'S13', stepName: '除应力' },
+  { step: 'S14', stepName: '硬度叫检' },
+  { step: 'S15', stepName: '检硬度' },
+  { step: 'S16', stepName: '合格' },
+  { step: 'S17', stepName: '冷处理' },
+  { step: 'S18', stepName: '二次回火' },
+  { step: 'S19', stepName: '二次回火测变形' },
+  { step: 'S20', stepName: '矫直' },
+]
+
+/** 是否必需下拉选项：Y-是 / N-否 */
+const stepNeedOptions = [
+  { value: 'Y', label: '是' },
+  { value: 'N', label: '否' },
+]
+
+/** 编码 → 名称 映射：board 自有工艺树优先，其余回退到完整工艺树 */
+const stepFirstLabelMap = computed<Record<string, string>>(() => {
+  const map: Record<string, string> = {}
+  craftTree1.forEach((n) => (map[n.value] = n.label))
+  craftTree.forEach((n) => (map[n.value] = n.label))
+  return map
+})
+const stepSecondLabelMap = computed<Record<string, string>>(() => {
+  const map: Record<string, string> = {}
+  craftTree1.forEach((n) => n.children.forEach((c) => (map[c.value] = c.label)))
+  craftTree.forEach((n) => n.children.forEach((c) => (map[c.value] = c.label)))
+  return map
+})
+
+/** 工艺编制行：一/二级工艺 + 工序 + 工序编号 + 排序 + 是否必需 + 备注 */
+interface StepRow {
+  /** 后端工序 id，新增行为 0 */
+  id: number
+  firstLevel: string
+  secondLevel: string
+  /** 工序名称（选中工序编号后自动带出） */
+  step: string
+  /** 工序编号，如 S01 */
+  stepCode: string
+  sort: string
+  /** 是否必需：Y-是 / N-否 */
+  isNeed: string
+  remark: string
+}
+
+const stepLoading = ref(false)
+const stepRows = ref<StepRow[]>([])
+
+/** 新增一行工序：继承当前一/二级工艺，排序顺延 */
+function createStepRow(firstLevel: string, secondLevel: string): StepRow {
+  return {
+    id: 0,
+    firstLevel,
+    secondLevel,
+    step: '',
+    stepCode: '',
+    sort: String(stepRows.value.length + 1),
+    isNeed: 'Y',
+    remark: '',
+  }
+}
+
+/** 初始化工序表格：按一/二级工艺加载工序模板；无数据时给出一行空白供手工录入 */
+async function initStepRows() {
+  const { firstLevel, secondLevel } = basicForm.value
+  if (!secondLevel) {
+    stepRows.value = []
+    return
+  }
+  stepLoading.value = true
+  try {
+    const res = await techStepAPI.search({ firstLevel, secondLevel, page: 1, pageSize: 200 })
+    const list = res.data.content ?? []
+    stepRows.value = list.length
+      ? list.map((r) => ({
+          id: r.id,
+          firstLevel: r.firstLevel || firstLevel,
+          secondLevel: r.secondLevel || secondLevel,
+          step: r.stepName ?? '',
+          stepCode: r.step ?? '',
+          sort: r.sort ?? '',
+          isNeed: r.isNeed || 'Y',
+          remark: r.remark ?? '',
+        }))
+      : [createStepRow(firstLevel, secondLevel)]
+  } catch (err) {
+    ElMessage.error((err as Error).message || '工序加载失败')
+    stepRows.value = [createStepRow(firstLevel, secondLevel)]
+  } finally {
+    stepLoading.value = false
+  }
+}
+
+/** 二级工艺变更后重新初始化工序表格（一级变更会清空二级，同样会触发） */
+watch(
+  () => basicForm.value.secondLevel,
+  () => {
+    initStepRows()
+  },
+  { immediate: true },
+)
+
+/** 选择工序编号后自动带出工序名称 */
+function onStepCodeChange(row: StepRow) {
+  const matched = stepMap.find((s) => s.step === row.stepCode)
+  row.step = matched ? matched.stepName : ''
+}
+
+function handleAddStep() {
+  stepRows.value.push(createStepRow(basicForm.value.firstLevel, basicForm.value.secondLevel))
+}
+
+function handleDeleteStep(index: number) {
+  stepRows.value.splice(index, 1)
+}
+
 /** 保存：校验必填项后提交当前表单数据 */
 async function onSave() {
   try {
@@ -199,6 +332,7 @@ function onCancel() {
   lastHardness: '',firstHardness: '',hardnessDepth: ''
   }
   tempRows.value = [createTempRow()]
+  stepRows.value = []
   ElMessage.info('已取消')
 }
 
@@ -399,6 +533,86 @@ async function onSubmit(){
       </div>
     </section>
 
+    <!-- 工艺编制：按二级工艺动态初始化工序明细 -->
+    <section class="board-section">
+      <h3 class="section-title">工艺编制</h3>
+      <div class="temp-table__toolbar">
+        <el-button type="primary" size="small" :disabled="!basicForm.secondLevel" @click="handleAddStep">
+          增加工序
+        </el-button>
+        <el-button size="small" :disabled="!basicForm.secondLevel" @click="initStepRows">
+          重新初始化
+        </el-button>
+      </div>
+      <el-table v-loading="stepLoading" :data="stepRows" border stripe size="small" style="width: 100%">
+        <el-table-column type="index" label="序号" width="60" />
+        <el-table-column prop="firstLevel" label="一级工艺" min-width="110">
+          <template #default="{ row }">
+            {{ stepFirstLabelMap[row.firstLevel] || row.firstLevel }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="secondLevel" label="二级工艺" min-width="150">
+          <template #default="{ row }">
+            {{ stepSecondLabelMap[row.secondLevel] || row.secondLevel }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="step" label="工序" min-width="150">
+          <template #default="{ row }">
+            <el-input v-model="row.step" placeholder="选择工序编号后自动带出" size="small" clearable />
+          </template>
+        </el-table-column>
+        <el-table-column prop="stepCode" label="工序编号" min-width="170">
+          <template #default="{ row }">
+            <el-select
+              v-model="row.stepCode"
+              placeholder="请选择工序编号"
+              clearable
+              filterable
+              size="small"
+              @change="onStepCodeChange(row as StepRow)"
+            >
+              <el-option
+                v-for="opt in stepMap"
+                :key="opt.step"
+                :label="`${opt.step} ${opt.stepName}`"
+                :value="opt.step"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column prop="sort" label="排序" width="90">
+          <template #default="{ row }">
+            <el-input v-model="row.sort" placeholder="排序" size="small" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="isNeed" label="是否必需" width="110">
+          <template #default="{ row }">
+            <el-select v-model="row.isNeed" size="small">
+              <el-option
+                v-for="opt in stepNeedOptions"
+                :key="opt.value"
+                :label="opt.label"
+                :value="opt.value"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remark" label="备注" min-width="160">
+          <template #default="{ row }">
+            <el-input v-model="row.remark" placeholder="请输入备注" size="small" clearable />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="80" fixed="right">
+          <template #default="{ $index }">
+            <el-button size="small" type="danger" link @click="handleDeleteStep($index)">删除</el-button>
+          </template>
+        </el-table-column>
+        <template #empty>
+          <span class="step-empty">请先选择二级工艺，工序明细将自动初始化</span>
+        </template>
+      </el-table>
+    </section>
+
   </div>
   <!-- 底部按钮-->
    <div class="bottom-btn">
@@ -579,7 +793,14 @@ async function onSubmit(){
 }
 
 .temp-table__toolbar {
+  display: flex;
+  gap: 8px;
   margin-bottom: 12px;
+}
+
+.step-empty {
+  font-size: 13px;
+  color: var(--color-text-aux);
 }
 
 .tech-list {
