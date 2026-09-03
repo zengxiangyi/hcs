@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baogang.info.mapper.SysUserMapper">
+
+    <sql id="Base_Column_List">
+        id, code, name, password, remark, email, department, position, cellphone, state
+    </sql>
+
+    <sql id="Query_Where">
+        <where>
+            <if test="q.code != null and q.code != ''">AND code LIKE CONCAT('%', #{q.code}, '%')</if>
+            <if test="q.name != null and q.name != ''">AND name LIKE CONCAT('%', #{q.name}, '%')</if>
+            <if test="q.state != null and q.state != ''">AND state = #{q.state}</if>
+            <if test="q.department != null and q.department != ''">AND department = #{q.department}</if>
+            <if test="q.position != null and q.position != ''">AND position = #{q.position}</if>
+            <if test="q.cellphone != null and q.cellphone != ''">AND cellphone LIKE CONCAT('%', #{q.cellphone}, '%')</if>
+            <if test="q.email != null and q.email != ''">AND email LIKE CONCAT('%', #{q.email}, '%')</if>
+            <if test="q.remark != null and q.remark != ''">AND remark LIKE CONCAT('%', #{q.remark}, '%')</if>
+        </where>
+    </sql>
+
+    <select id="query" resultType="com.baogang.info.entity.SysUser">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sysuser
+        <include refid="Query_Where"/>
+        ORDER BY id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByQuery" resultType="long">
+        SELECT COUNT(1)
+        FROM sysuser
+        <include refid="Query_Where"/>
+    </select>
+
+</mapper>

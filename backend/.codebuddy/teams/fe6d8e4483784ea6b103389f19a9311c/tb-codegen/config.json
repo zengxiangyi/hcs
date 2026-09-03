@@ -1,0 +1,55 @@
+{
+  "name": "tb-codegen",
+  "mainConversationId": "fe6d8e4483784ea6b103389f19a9311c",
+  "workspacePath": "f:/hb/api",
+  "createdAt": "2026-08-23T06:11:33.751Z",
+  "options": {
+    "workspacePath": "f:/hb/api",
+    "isAutoTeam": false
+  },
+  "isAutoTeam": false,
+  "members": [
+    {
+      "memberId": "entity-a@tb-codegen",
+      "name": "entity-a",
+      "role": "生成前6个实体类",
+      "sessionId": "a62aa3c5364f4653b5b09bff4986b19e"
+    },
+    {
+      "memberId": "entity-b@tb-codegen",
+      "name": "entity-b",
+      "role": "生成后5个实体类",
+      "sessionId": "07bc7d5ba048460eabc18f4ad6dbd2f5"
+    },
+    {
+      "memberId": "repo-gen@tb-codegen",
+      "name": "repo-gen",
+      "role": "生成11个Repository接口",
+      "sessionId": "0d1005f51d8342c880ce876763f21e92"
+    },
+    {
+      "memberId": "svc-a@tb-codegen",
+      "name": "svc-a",
+      "role": "生成6个Service类",
+      "sessionId": "76e63155340b4c0c8931b991ec9f772a"
+    },
+    {
+      "memberId": "svc-b@tb-codegen",
+      "name": "svc-b",
+      "role": "生成5个Service类",
+      "sessionId": "671da01b7ce043c2a49ad1934fa91738"
+    },
+    {
+      "memberId": "ctrl-a@tb-codegen",
+      "name": "ctrl-a",
+      "role": "生成6个Controller类",
+      "sessionId": "0ba5331f83f744b585f70b4728754d43"
+    },
+    {
+      "memberId": "ctrl-b@tb-codegen",
+      "name": "ctrl-b",
+      "role": "生成5个Controller类",
+      "sessionId": "a5911b4e473340a2b902425c3ff3850d"
+    }
+  ]
+}

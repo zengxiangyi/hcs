@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baogang.info.mapper.TransferOrderMapper">
+
+    <sql id="Base_Column_List">
+        id, code, name, category, transferdate, materialcode, num, weight,
+        material, rollnum, outprocess, inprocess, outroom,
+        inroom, remark, prompt, quenching, supplier, createuser,
+        createtime, receiveuser, receivetime, state
+    </sql>
+
+    <resultMap id="TransferOrderResultMap" type="com.baogang.info.entity.TransferOrder">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="category" property="category"/>
+        <result column="transferdate" property="transferDate"/>
+        <result column="materialcode" property="materialCode"/>
+        <result column="num" property="num"/>
+        <result column="weight" property="weight"/>
+        <result column="material" property="material"/>
+        <result column="rollnum" property="rollNum"/>
+        <result column="outprocess" property="outProcess"/>
+        <result column="inprocess" property="inProcess"/>
+        <result column="outroom" property="outRoom"/>
+        <result column="inroom" property="inRoom"/>
+        <result column="remark" property="remark"/>
+        <result column="prompt" property="prompt"/>
+        <result column="quenching" property="quenching"/>
+        <result column="supplier" property="supplier"/>
+        <result column="createuser" property="createUser"/>
+        <result column="createtime" property="createTime"/>
+        <result column="receiveuser" property="receiveUser"/>
+        <result column="receivetime" property="receiveTime"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <sql id="Query_Where">
+        <where>
+            <if test="q.code != null and q.code != ''">AND code LIKE CONCAT('%', #{q.code}, '%')</if>
+            <if test="q.name != null and q.name != ''">AND name LIKE CONCAT('%', #{q.name}, '%')</if>
+            <if test="q.category != null and q.category != ''">AND category = #{q.category}</if>
+            <if test="q.materialCode != null and q.materialCode != ''">AND materialcode = #{q.materialCode}</if>
+            <if test="q.material != null and q.material != ''">AND material LIKE CONCAT('%', #{q.material}, '%')</if>
+            <if test="q.outProcess != null and q.outProcess != ''">AND outprocess = #{q.outProcess}</if>
+            <if test="q.inProcess != null and q.inProcess != ''">AND inprocess = #{q.inProcess}</if>
+            <if test="q.outRoom != null and q.outRoom != ''">AND outroom = #{q.outRoom}</if>
+            <if test="q.inRoom != null and q.inRoom != ''">AND inroom = #{q.inRoom}</if>
+            <if test="q.supplier != null and q.supplier != ''">AND supplier = #{q.supplier}</if>
+            <if test="q.createUser != null and q.createUser != ''">AND createuser = #{q.createUser}</if>
+            <if test="q.receiveUser != null and q.receiveUser != ''">AND receiveuser = #{q.receiveUser}</if>
+            <if test="q.state != null and q.state != ''">AND state = #{q.state}</if>
+            <if test="q.remark != null and q.remark != ''">AND remark LIKE CONCAT('%', #{q.remark}, '%')</if>
+            <if test="q.prompt != null and q.prompt != ''">AND prompt LIKE CONCAT('%', #{q.prompt}, '%')</if>
+        </where>
+    </sql>
+
+    <select id="query" resultMap="TransferOrderResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM transferorder
+        <include refid="Query_Where"/>
+        ORDER BY id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByQuery" resultType="long">
+        SELECT COUNT(1)
+        FROM transferorder
+        <include refid="Query_Where"/>
+    </select>
+
+</mapper>

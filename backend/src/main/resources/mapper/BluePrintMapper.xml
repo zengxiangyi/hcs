@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baogang.info.mapper.BluePrintMapper">
+
+    <sql id="Base_Column_List">
+        id, code, name, graph, firstlevel, secondlevel, materialcode, materialname,
+        weight, isfirstcheck, firsthardness, lasthardness, busbarnum, testnum, cooltime,
+        hardnessdepth, chamfer, fallhead, quenching, attention, model, specs, customer,
+        edition, state, remark, createuser, createtime
+    </sql>
+
+    <resultMap id="BluePrintResultMap" type="com.baogang.info.entity.BluePrint">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="graph" property="graph"/>
+        <result column="firstlevel" property="firstLevel"/>
+        <result column="secondlevel" property="secondLevel"/>
+        <result column="materialcode" property="materialCode"/>
+        <result column="materialname" property="materialName"/>
+        <result column="weight" property="weight"/>
+        <result column="isfirstcheck" property="isFirstCheck"/>
+        <result column="firsthardness" property="firstHardness"/>
+        <result column="lasthardness" property="lastHardness"/>
+        <result column="busbarnum" property="busbarNum"/>
+        <result column="testnum" property="testNum"/>
+        <result column="cooltime" property="coolTime"/>
+        <result column="hardnessdepth" property="hardnessDepth"/>
+        <result column="chamfer" property="chamfer"/>
+        <result column="fallhead" property="fallHead"/>
+        <result column="quenching" property="quenching"/>
+        <result column="attention" property="attention"/>
+        <result column="model" property="model"/>
+        <result column="specs" property="specs"/>
+        <result column="customer" property="customer"/>
+        <result column="edition" property="edition"/>
+        <result column="state" property="state"/>
+        <result column="remark" property="remark"/>
+        <result column="createuser" property="createUser"/>
+        <result column="createtime" property="createTime"/>
+    </resultMap>
+
+    <sql id="Query_Where">
+        <where>
+            <if test="q.code != null and q.code != ''">AND code LIKE CONCAT('%', #{q.code}, '%')</if>
+            <if test="q.name != null and q.name != ''">AND name LIKE CONCAT('%', #{q.name}, '%')</if>
+            <if test="q.graph != null and q.graph != ''">AND graph LIKE CONCAT('%', #{q.graph}, '%')</if>
+            <if test="q.firstLevel != null and q.firstLevel != ''">AND firstlevel = #{q.firstLevel}</if>
+            <if test="q.secondLevel != null and q.secondLevel != ''">AND secondlevel = #{q.secondLevel}</if>
+            <if test="q.materialName != null and q.materialName != ''">AND materialname LIKE CONCAT('%', #{q.materialName}, '%')</if>
+            <if test="q.materialCode != null and q.materialCode != ''">AND materialcode = #{q.materialCode}</if>
+            <if test="q.isFirstCheck != null and q.isFirstCheck != ''">AND isfirstcheck = #{q.isFirstCheck}</if>
+            <if test="q.busbarNum != null and q.busbarNum != ''">AND busbarnum = #{q.busbarNum}</if>
+            <if test="q.testNum != null and q.testNum != ''">AND testnum = #{q.testNum}</if>
+            <if test="q.coolTime != null and q.coolTime != ''">AND cooltime = #{q.coolTime}</if>
+            <if test="q.hardnessDepth != null and q.hardnessDepth != ''">AND hardnessdepth = #{q.hardnessDepth}</if>
+            <if test="q.chamfer != null and q.chamfer != ''">AND chamfer = #{q.chamfer}</if>
+            <if test="q.fallHead != null and q.fallHead != ''">AND fallhead = #{q.fallHead}</if>
+            <if test="q.quenching != null and q.quenching != ''">AND quenching = #{q.quenching}</if>
+            <if test="q.attention != null and q.attention != ''">AND attention LIKE CONCAT('%', #{q.attention}, '%')</if>
+            <if test="q.model != null and q.model != ''">AND model = #{q.model}</if>
+            <if test="q.specs != null and q.specs != ''">AND specs = #{q.specs}</if>
+            <if test="q.customer != null and q.customer != ''">AND customer = #{q.customer}</if>
+            <if test="q.edition != null and q.edition != ''">AND edition = #{q.edition}</if>
+            <if test="q.state != null and q.state != ''">AND state = #{q.state}</if>
+            <if test="q.createUser != null and q.createUser != ''">AND createuser = #{q.createUser}</if>
+            <if test="q.remark != null and q.remark != ''">AND remark LIKE CONCAT('%', #{q.remark}, '%')</if>
+            <if test="q.firstHardness != null and q.firstHardness != ''">AND firsthardness = #{q.firstHardness}</if>
+            <if test="q.lastHardness != null and q.lastHardness != ''">AND lasthardness = #{q.lastHardness}</if>
+        </where>
+    </sql>
+
+    <select id="query" resultMap="BluePrintResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM blueprint
+        <include refid="Query_Where"/>
+        ORDER BY createtime DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByQuery" resultType="long">
+        SELECT COUNT(1)
+        FROM blueprint
+        <include refid="Query_Where"/>
+    </select>
+
+</mapper>
