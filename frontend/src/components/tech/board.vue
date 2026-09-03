@@ -1,26 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, shallowRef, type Component } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { createEmptyPlan, type PlanModel } from './plan/types'
-import TZ01 from './plan/TZ01.vue'
-import TZ02 from './plan/TZ02.vue'
-import TZ03 from './plan/TZ03.vue'
-import CH01 from './plan/CH01.vue'
-import CH02 from './plan/CH02.vue'
-import CH03 from './plan/CH03.vue'
-import CH04 from './plan/CH04.vue'
-import CH05 from './plan/CH05.vue'
-import CH06 from './plan/CH06.vue'
-import TH01 from './plan/TH01.vue'
-import TH02 from './plan/TH02.vue'
-import ZH01 from './plan/ZH01.vue'
-import TP01 from './plan/TP01.vue'
-import TP02 from './plan/TP02.vue'
-import TP03 from './plan/TP03.vue'
-import TP04 from './plan/TP04.vue'
-import TP05 from './plan/TP05.vue'
-import TP06 from './plan/TP06.vue'
-import TP07 from './plan/TP07.vue'
 import { techAPI, type TechBoardSaveDTO } from '../../api/tech'
 
 defineOptions({ name: 'Board' })
@@ -126,45 +106,9 @@ const secondOptions = computed(() => {
   return node ? node.children.map((c) => ({ value: c.value, label: c.label })) : []
 })
 
-/** 二级工艺 → 编制方案组件 映射表（每种方案独立组件） */
-const planComponentMap: Record<string, Component> = {
-  TZ01: TZ01,
-  TZ02: TZ02,
-  TZ03: TZ03,
-  CH01: CH01,
-  CH02: CH02,
-  CH03: CH03,
-  CH04: CH04,
-  CH05: CH05,
-  CH06: CH06,
-  TH01: TH01,
-  TH02: TH02,
-  ZH01: ZH01,
-  TP01: TP01,
-  TP02: TP02,
-  TP03: TP03,
-  TP04: TP04,
-  TP05: TP05,
-  TP06: TP06,
-  TP07: TP07
-  // investment / die / free / die-forge / roll / ... 后续在此注册
-}
-
-/** 当前选中的编制方案组件（无则留空） */
-const currentPlan = computed(() => planComponentMap[basicForm.value.secondLevel] ?? null)
-
-/** 工艺编制数据：随二级工艺切换而重新初始化 */
-const planModel = shallowRef<PlanModel>(createEmptyPlan())
-
-/** 一级工艺变更：清空并重置二级工艺 */
+/** 一级工艺变更：清空二级工艺 */
 watch(() => basicForm.value.firstLevel, () => {
   basicForm.value.secondLevel = ''
-  planModel.value = createEmptyPlan()
-})
-
-/** 二级工艺变更：重置编制方案数据，避免脏数据残留 */
-watch(() => basicForm.value.secondLevel, () => {
-  planModel.value = createEmptyPlan()
 })
 
 /** 是否首检下拉选项 */
@@ -255,7 +199,6 @@ function onCancel() {
   lastHardness: '',firstHardness: '',hardnessDepth: ''
   }
   tempRows.value = [createTempRow()]
-  planModel.value = createEmptyPlan()
   ElMessage.info('已取消')
 }
 
@@ -454,13 +397,6 @@ async function onSubmit(){
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- 工艺编制：按二级工艺动态切换独立方案组件 -->
-    <section class="board-section">
-      <h3 class="section-title">工艺编制</h3>
-      <component :is="currentPlan" v-if="currentPlan" v-model="planModel" />
-      <el-empty v-else description="请选择二级工艺以加载对应的编制方案" />
     </section>
 
   </div>
