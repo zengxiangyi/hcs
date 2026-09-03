@@ -1,31 +1,30 @@
 {
   "menu": [
     {
-      "name": "工艺配置",
-      "path": "/technology",
-      "icon": "Cpu",
-      "right": "page:technology",
-      "children": [
-        {
-          "name": "工艺创建",
-          "path": "/web/tech/board",
-          "icon": "Cpu",
-          "right": "page:tech:board"
-        }
-      ]
-    },
-    {
       "name": "蓝本管理",
       "path": "/bluePrint",
       "icon": "Document",
       "right": "page:blueprint",
       "children": [
         {
+          "name": "工艺编制",
+          "path": "/web/tech/board",
+          "icon": "Cpu",
+          "right": "page:tech:board"
+        },
+        {
           "name": "蓝本查看",
           "path": "/web/bluePrint/list",
           "icon": "Files",
           "right": "page:blueprint:list"
-        }]
+        },
+        {
+          "name": "工序查看",
+          "path": "/web/tech/step",
+          "icon": "Sort",
+          "right": "page:tech:step"
+        }
+      ]
     },
     {
       "name": "审批流程",

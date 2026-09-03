@@ -33,6 +33,24 @@ interface CraftNode {
 }
 const craftTree: CraftNode[] = [
   {
+    value: 'CH',
+    label: '淬火',
+    children: [
+      { value: 'CH01', label: '双屏' },
+      { value: 'CH02', label: '卧式中频' }
+    ],
+  },
+  {
+    value: 'ZH',
+    label: '正火',
+    children: [
+      { value: 'ZH01', label: '正火球化' }
+    ]
+  }
+]
+
+const craftTree1: CraftNode[] = [
+  {
     value: 'TZ',
     label: '调质',
     children: [
@@ -319,7 +337,7 @@ async function onSubmit(){
       <div class="basic-form">
         <div class="basic-grid">
           <div class="basic-item">
-            <label class="basic-label">蓝本工艺编号</label>
+            <label class="basic-label">工艺编号</label>
             <el-input v-model="basicForm.code" placeholder="请输入" clearable />
           </div>
           <div class="basic-item">
@@ -449,8 +467,7 @@ async function onSubmit(){
   <!-- 底部按钮-->
    <div class="bottom-btn">
     <el-button type="primary" @click="onSave">存草稿</el-button>
-    <el-button @click="onCancel">取消</el-button>
-    <el-button type="primary" @click="onSubmit">提交</el-button>
+    <el-button type="primary" @click="onSubmit">发起审核</el-button>
   </div>
 </template>
 

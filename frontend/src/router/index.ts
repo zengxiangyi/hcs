@@ -51,6 +51,12 @@ const routes: RouteRecordRaw[] = [
         meta: { right: 'page:tech:board' },
       },
       {
+        path: 'tech/step',
+        name: 'Step',
+        component: () => import('../components/tech/step.vue'),
+        meta: { right: 'page:tech:step' },
+      },
+      {
         path: 'tech/draft',
         name: 'Draft',
         component: () => import('../components/tech/draft.vue'),

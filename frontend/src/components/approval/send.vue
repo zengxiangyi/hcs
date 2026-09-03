@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api/http'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
+import { ApprovalAPI } from '../../api/approval'
 
 defineOptions({ name: 'Send' })
 
@@ -81,7 +82,11 @@ const formatCategory = createTextFormatter(categoryMap)
  */
 const stateMap: Record<string, { label: string; type: TagType }> = {
   A: { label: '待处理', type: 'warning' },
-  B: { label: '已结束', type: 'success' }
+  B: { label: '处理中', type: 'success' },
+  C: { label: '已取消', type: 'success' },
+  D: { label: '作废', type: 'success' },
+  E: { label: '结束', type: 'success' },
+  F: { label: '驳回', type: 'success' }
 }
 
 /** 根据状态 key 取展示文本 / tag 类型，未匹配时文本回退原值、类型回退 warning（公共方法生成） */
@@ -129,6 +134,41 @@ function handlePageChange() {
 function handleSizeChange() {
   currentPage.value = 1
   fetchData()
+}
+
+async function handleCancel(row: WorkFlowRow){
+  // 发请求变更状态
+  try {
+    await http.post<null>(`/api/workflow/${row.id}/approve`)
+    ElMessage.success('已通过')
+    fetchData()
+  } catch (err) {
+    ElMessage.error(getErrorMessage(err, '操作失败'))
+  }
+  
+}
+
+async function handleClose(row: WorkFlowRow){
+  // 发请求变更状态
+  row.state='D'
+  try {
+    await ApprovalAPI.update(row)
+    ElMessage.success('完成')
+    fetchData()
+  } catch (err) {
+    ElMessage.error(getErrorMessage(err, '操作失败'))
+  }
+}
+
+async function handleDrop(row: WorkFlowRow){
+  // 发请求变更状态
+  try {
+    await http.post<null>(`/api/workflow/${row.id}/approve`)
+    ElMessage.success('已通过')
+    fetchData()
+  } catch (err) {
+    ElMessage.error(getErrorMessage(err, '操作失败'))
+  }
 }
 
 // 通过
@@ -213,7 +253,9 @@ onMounted(fetchData)
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-button size="small" type="success" @click="seeProcess(row as WorkFlowRow)">查看</el-button>
-          <el-button size="small" v-if="row.state==='A'" type="warning" @click="handleApprove(row as WorkFlowRow)">退回</el-button>
+          <el-button size="small" v-if="row.state==='A'" type="warning" @click="handleCancel(row as WorkFlowRow)">撤销</el-button>
+          <el-button size="small" v-if="row.state==='C'" type="warning" @click="handleClose(row as WorkFlowRow)">作废</el-button>
+          <el-button size="small" v-if="row.state==='D'" type="warning" @click="handleDrop(row as WorkFlowRow)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
