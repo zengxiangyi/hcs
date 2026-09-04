@@ -133,6 +133,11 @@
           "right": "page:system:roleRight"
         }
       ]
+    },
+    {
+      "name": "独立演示",
+      "path": "/web/solo",
+      "icon": "Grid"
     }
   ]
 }

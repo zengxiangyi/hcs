@@ -5,9 +5,13 @@
 > | 工程 | 路径 | 技术 | 产物 |
 > |------|------|------|------|
 > | 前端 | `f:\hb\page\frontend` | Vue 3 + Vite 8 + TypeScript | `hcs.war`（纯静态，约 0.5 MB） |
-> | 后端 | `F:\hb\api` | Spring Boot 4.0.8 + Java 25 + JPA/MyBatis（Maven，`<packaging>war</packaging>`） | `api.war`（约 66 MB，含依赖） |
+> | 后端 | `f:\hb\page\backend` | Spring Boot 4.0.8 + Java 25 + JPA/MyBatis（Maven，`<packaging>war</packaging>`） | `api.war`（约 66 MB，含依赖） |
 >
-> 最后更新：2026-09-02（对应「前端 `hcs.war` + 后端 `api.war` 同 Tomcat 部署」形态）
+> 最后更新：2026-09-03（后端主本确认为 `f:\hb\page\backend`，`f:\hb\page\backend` 已不存在）
+>
+> ⚠️ **部署形态是临时的**：当前「前端 `hcs.war` + 后端 `api.war` 同 Tomcat」只是**测试阶段的过渡方案，后期会调整**。
+> 因此本手册第四、五节的长流程仅作原理说明；**测试阶段日常发布请直接用 `f:\hb\page\deploy-test.ps1` 一键脚本**（见 5.0），
+> 部署形态变更时只需改该脚本，无需改本手册。
 
 ---
 
@@ -113,10 +117,10 @@
 
 ## 四、构建步骤
 
-### 4.1 后端（`F:\hb\api`）
+### 4.1 后端（`f:\hb\page\backend`）
 
 ```powershell
-cd F:\hb\api
+cd f:\hb\page\backend
 .\mvnw.cmd clean package -DskipTests      # 产出 target\api.war（约 66 MB）
 ```
 
@@ -127,14 +131,14 @@ cd F:\hb\api
 | `.\mvnw.cmd spring-boot:run` | 本地内嵌容器运行（`:8080/api`），仅联调用，**不是**生产部署方式 |
 | `.\mvnw.cmd test` | 跑测试 |
 
-首次构建需联网下载依赖；产物为 `F:\hb\api\target\api.war`（依赖在 `WEB-INF/lib`）。
+首次构建需联网下载依赖；产物为 `f:\hb\page\backend\target\api.war`（依赖在 `WEB-INF/lib`）。
 `spring-boot-devtools` 已被插件自动排除；`ServletInitializer` 保证可外置部署。
 
 校验：
 
 ```powershell
-Get-Item F:\hb\api\target\api.war | Select-Object Name,Length,LastWriteTime
-tar -tf F:\hb\api\target\api.war | Select-String 'WEB-INF/lib/spring-boot' -First 3   # 依赖已打进
+Get-Item f:\hb\page\backend\target\api.war | Select-Object Name,Length,LastWriteTime
+tar -tf f:\hb\page\backend\target\api.war | Select-String 'WEB-INF/lib/spring-boot' -First 3   # 依赖已打进
 ```
 
 ### 4.2 前端（`f:\hb\page\frontend`）
@@ -189,6 +193,36 @@ Select-String -Path dist\assets\*.js -Pattern '127\.0\.0\.1:8080' | Measure-Obje
 
 > 下面以实测路径为例：`<TOMCAT> = E:\software\tomcat11`。
 
+### 5.0 测试阶段：一键发布（推荐）
+
+当前「前后端 war 同 Tomcat」是**过渡形态**，后期会调整，因此把下面 5.1~5.4 固化成了脚本
+**`f:\hb\page\deploy-test.ps1`**。**日常发布只跑这一条命令**，5.1~5.4 仅作原理说明与排障参考。
+
+```powershell
+cd f:\hb\page
+.\deploy-test.ps1                 # 全量：构建前后端 → 部署 → 跟踪日志
+.\deploy-test.ps1 -Part Front     # 只重构+部署前端（后端 war 不动，最快）
+.\deploy-test.ps1 -Part Back      # 只重构+部署后端
+.\deploy-test.ps1 -NoBuild        # 跳过构建，直接部署已有 war
+.\deploy-test.ps1 -NoTail         # 部署完不跟踪日志
+.\deploy-test.ps1 -Force          # Tomcat 超时未退出时强制杀 java（测试机可用）
+.\deploy-test.ps1 -Tomcat D:\tomcat11   # 指定非默认 Tomcat 路径
+```
+
+脚本做的事（等价于 5.1~5.4 + 4.2 产物自检）：
+
+| 步骤 | 说明 |
+|------|------|
+| 1. 构建 | 后端 `mvnw.cmd package -DskipTests`（**不带 `clean`**，复用增量）；前端 `npm run build:war` |
+| 2. 自检 | `tar -tf hcs.war` 校验 `assets/` 目录条目与 `WEB-INF/web.xml` 存在（见 4.2 打包铁律） |
+| 3. 停止 | `shutdown.bat` + 等待 java 退出（30s 超时，默认**不**强杀，需 `-Force`） |
+| 4. 清理 | 仅清理本次要部署的 app：`webapps\{api,hcs}`、`work\Catalina\localhost\{api,hcs}` |
+| 5. 拷贝 | `target\api.war` → `webapps\api.war`（**文件名不可改**）、`hcs.war` → `webapps\hcs.war` |
+| 6. 启动 | `startup.bat`，随后自动跟踪最新的 `logs\catalina*.log` |
+
+> `-Part Front` 是最高频用法：改页面时不必重新打 66 MB 的后端包，十几秒即可完成发布。
+> 脚本内路径均为本工作区固定路径，部署形态后期调整时**只改这个脚本**即可。
+
 ### 5.1 停止 Tomcat
 
 ```powershell
@@ -217,7 +251,7 @@ Remove-Item -Recurse -Force "$work\api", "$work\hcs" -ErrorAction SilentlyContin
 ### 5.3 拷贝新包（先后端，后前端）
 
 ```powershell
-Copy-Item F:\hb\api\target\api.war          $webapps\     # 约 66 MB
+Copy-Item f:\hb\page\backend\target\api.war          $webapps\     # 约 66 MB
 Copy-Item f:\hb\page\frontend\hcs.war       $webapps\     # 约 0.5 MB
 ```
 
@@ -296,7 +330,7 @@ Get-Content E:\software\tomcat11\logs\catalina.out -Wait -Tail 100
 # 发布前备份
 New-Item -ItemType Directory -Force f:\hb\release-backup
 Copy-Item f:\hb\page\frontend\hcs.war "f:\hb\release-backup\hcs-<yyyyMMdd-HHmm>.war"
-Copy-Item F:\hb\api\target\api.war   "f:\hb\release-backup\api-<yyyyMMdd-HHmm>.war"
+Copy-Item f:\hb\page\backend\target\api.war   "f:\hb\release-backup\api-<yyyyMMdd-HHmm>.war"
 ```
 
 回滚流程：停 Tomcat → 按 5.2 清理 `webapps` 与 `work` 下对应目录 → 拷入备份 war（**改回原文件名** `hcs.war` / `api.war`，文件名决定 context-path）→ 启动 → 跑 5.5 冒烟清单。
@@ -314,7 +348,7 @@ Copy-Item F:\hb\api\target\api.war   "f:\hb\release-backup\api-<yyyyMMdd-HHmm>.w
 ```powershell
 # ---------- 构建 ----------
 # 后端
-cd F:\hb\api
+cd f:\hb\page\backend
 .\mvnw.cmd clean package -DskipTests        # → target\api.war
 
 # 前端
@@ -328,7 +362,7 @@ $webapps = 'E:\software\tomcat11\webapps'
 $work    = 'E:\software\tomcat11\work\Catalina\localhost'
 Remove-Item -Recurse -Force "$webapps\api","$webapps\hcs","$work\api","$work\hcs" -ErrorAction SilentlyContinue
 Remove-Item -Force "$webapps\api.war","$webapps\hcs.war" -ErrorAction SilentlyContinue
-Copy-Item F:\hb\api\target\api.war    $webapps\
+Copy-Item f:\hb\page\backend\target\api.war    $webapps\
 Copy-Item f:\hb\page\frontend\hcs.war $webapps\
 & E:\software\tomcat11\bin\startup.bat
 
@@ -344,10 +378,10 @@ Start-Process 'http://localhost:8080/api/constValue/category/test'    # 后端�
 
 | 项 | 过时内容 | 实际情况 |
 |----|----------|----------|
-| `F:\hb\build.ps1` | 把前端 `dist/*` 拷进 `F:\hb\api\src\main\resources\static\` 再由后端 war 一并分发 | 该分发方式**已废弃**（2026-09-02 起 `static/` 已删除，后端 war 只提供 REST）。前端改为独立 `hcs.war` 部署。脚本本身也因 `static/` 不存在会执行失败 |
-| `F:\hb\page\backend` | 早期 Fastify + Drizzle 的 Node 后端原型 | **不是**当前后端，不参与构建与部署。当前后端是 `F:\hb\api` |
-| `F:\hb\api\CODEBUDDY.md` | 写「端口 8090」 | `application.properties` 实际为 `server.port=8080`（外置 Tomcat 下该值被忽略，以 `conf/server.xml` 的 8080 为准） |
-| `F:\hb\api\CODEBUDDY.md` | 写「前端打成 `ROOT.war`（context-path `/`）」 | 已改为 `hcs.war`（context-path `/hcs`） |
+| `F:\hb\build.ps1` | 把前端 `dist/*` 拷进 `f:\hb\page\backend\src\main\resources\static\` 再由后端 war 一并分发 | 该分发方式**已废弃**（2026-09-02 起 `static/` 已删除，后端 war 只提供 REST）。前端改为独立 `hcs.war` 部署。脚本本身也因 `static/` 不存在会执行失败 |
+| `F:\hb\page\backend` | 早期 Fastify + Drizzle 的 Node 后端原型，不参与构建与部署 | **已过时且错误**（2026-09-03 用户确认）：该目录现为 Spring Boot 后端**主本**，`F:\hb\api` 已不存在 |
+| `f:\hb\page\backend\CODEBUDDY.md` | 写「端口 8090」 | `application.properties` 实际为 `server.port=8080`（外置 Tomcat 下该值被忽略，以 `conf/server.xml` 的 8080 为准） |
+| `f:\hb\page\backend\CODEBUDDY.md` | 写「前端打成 `ROOT.war`（context-path `/`）」 | 已改为 `hcs.war`（context-path `/hcs`） |
 | `frontend/public/WEB-INF/web.xml` 注释 | 描述为 `ROOT.war`、与后端 `api.war` 同 Tomcat 同源 | 结论（同源）对，但前端文件名表述过时；该文件在只读目录，未改 |
 | `frontend/src/router/index.ts` 注释 | 「生产为 ROOT.war，context-path /」 | 实际为 `/hcs`；代码取 `BASE_URL` 自动跟随，无需修改 |
 | `frontend/.env.example` | 示例 `VITE_API_BASE_URL=/api` | **错误示例**，会拼成 `/api/api/...`；正确写法是 `/`（同源）或后端 origin 根 |

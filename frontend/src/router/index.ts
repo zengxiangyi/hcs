@@ -147,6 +147,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../components/workflow/instance.vue'),
         meta: { right: 'page:info:file' },
       },
+      {
+        path: 'solo',
+        name: 'Solo',
+        component: () => import('../components/solo.vue'),
+      },
     ],
   },
 ]

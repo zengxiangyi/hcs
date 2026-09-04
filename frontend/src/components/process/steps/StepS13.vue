@@ -112,10 +112,10 @@ defineExpose({ validate, reset })
   <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
     <!-- 动态表格：段数 / 温度 / 时间，行支持增加、保存、删除 -->
     <el-table :data="rows" border>
-      <el-table-column type="index" label="#" width="60" />
-      <el-table-column label="段数" width="200">
+      <el-table-column type="index" v-if="false" label="#" width="60" />
+      <el-table-column label="段数" width="100">
         <template #default="{ row }">
-          <el-input v-model="row.segNo" placeholder="如：1段" />
+          <el-text class="mx-1">{{ row.segNo }}</el-text>
         </template>
       </el-table-column>
       <el-table-column label="温度" width="200">

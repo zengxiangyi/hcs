@@ -31,31 +31,16 @@ defineExpose({ validate, reset })
 </script>
 
 <template>
-  <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
+  <el-form ref="formRef" :model="form" label-width="120px">
     <el-row :gutter="16">
       <el-col :span="12">
-        <el-form-item label="测量部位" prop="part">
-          <el-input v-model="form.part" placeholder="如：辊身中部" />
+        <el-form-item label="回火后变形量" prop="part">
+          <el-input v-model="form.part" placeholder="请输入" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="变形量(mm)" prop="value">
-          <el-input v-model="form.value" placeholder="请输入实测变形量" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="允许范围(mm)" prop="allow">
-          <el-input v-model="form.allow" placeholder="如：≤0.05" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="测量工具" prop="tool">
-          <el-input v-model="form.tool" placeholder="如：百分表" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="测量人" prop="operator">
-          <el-input v-model="form.operator" placeholder="请输入测量人" />
+        <el-form-item label="矫直后变形量" prop="value">
+          <el-input v-model="form.value" placeholder="请输入" />
         </el-form-item>
       </el-col>
     </el-row>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElAlert, ElMessage, ElMessageBox } from 'element-plus'
 import { techAPI, type TechBoardSaveDTO } from '../../api/tech'
 import { techStepAPI } from '../../api/techStep'
 
@@ -138,6 +138,13 @@ function numToStr(v: number | null): string {
   return v == null ? '' : String(v)
 }
 
+/** 后端返回的字符串型数值转为数字输入框的值，空值/非法值统一为 null */
+function strToNum(v: string | undefined): number | null {
+  if (v == null || v === '') return null
+  const n = Number(v)
+  return Number.isNaN(n) ? null : n
+}
+
 /** 编制模板动态表格：段号 / 温度 / 时间 / 备注，每行可编辑 */
 interface TempRow {
   segNo: string
@@ -178,8 +185,8 @@ const stepMap = [
 
 /** 是否必需下拉选项：Y-是 / N-否 */
 const stepNeedOptions = [
-  { value: 'Y', label: '是' },
-  { value: 'N', label: '否' },
+  { value: 'Y', label: '必选' },
+  { value: 'N', label: '可选' },
 ]
 
 /** 编码 → 名称 映射：board 自有工艺树优先，其余回退到完整工艺树 */
@@ -206,14 +213,18 @@ interface StepRow {
   step: string
   /** 工序编号，如 S01 */
   stepCode: string
-  sort: string
+  sort: number | null
   /** 是否必需：Y-是 / N-否 */
   isNeed: string
   remark: string
+  /** 是否已暂存：暂存后该行单元格只读 */
+  saved: boolean
 }
 
 const stepLoading = ref(false)
 const stepRows = ref<StepRow[]>([])
+/** 暂存区：点击行内「保存」后，把该行（引用）推入此处，随提交一起上传 */
+const stepStagedRows = ref<StepRow[]>([])
 
 /** 新增一行工序：继承当前一/二级工艺，排序顺延 */
 function createStepRow(firstLevel: string, secondLevel: string): StepRow {
@@ -223,34 +234,53 @@ function createStepRow(firstLevel: string, secondLevel: string): StepRow {
     secondLevel,
     step: '',
     stepCode: '',
-    sort: String(stepRows.value.length + 1),
+    sort: stepRows.value.length + 1,
     isNeed: 'Y',
     remark: '',
+    saved: false,
   }
 }
 
-/** 初始化工序表格：按一/二级工艺加载工序模板；无数据时给出一行空白供手工录入 */
+/** 按排序号正向（升序）重排工序行；排序号为空的行排在末尾 */
+function sortStepRows(rows: StepRow[]): StepRow[] {
+  return [...rows].sort(
+    (a, b) => (a.sort ?? Number.MAX_SAFE_INTEGER) - (b.sort ?? Number.MAX_SAFE_INTEGER),
+  )
+}
+
+/** 仅对内存中已有的工序行按排序号重排：不请求后端、不清空暂存区（行对象引用保持不变） */
+function handleSortStep() {
+  stepRows.value = sortStepRows(stepRows.value)
+}
+
+/** 初始化工序表格：按一/二级工艺加载工序模板并按排序号正向排序；无数据时给出一行空白供手工录入 */
 async function initStepRows() {
   const { firstLevel, secondLevel } = basicForm.value
   if (!secondLevel) {
     stepRows.value = []
+    stepStagedRows.value = []
     return
   }
   stepLoading.value = true
   try {
     const res = await techStepAPI.search({ firstLevel, secondLevel, page: 1, pageSize: 200 })
     const list = res.data.content ?? []
+    // 重新初始化即清空暂存区
+    stepStagedRows.value = []
     stepRows.value = list.length
-      ? list.map((r) => ({
-          id: r.id,
-          firstLevel: r.firstLevel || firstLevel,
-          secondLevel: r.secondLevel || secondLevel,
-          step: r.stepName ?? '',
-          stepCode: r.step ?? '',
-          sort: r.sort ?? '',
-          isNeed: r.isNeed || 'Y',
-          remark: r.remark ?? '',
-        }))
+      ? sortStepRows(
+          list.map((r) => ({
+            id: r.id,
+            firstLevel: r.firstLevel || firstLevel,
+            secondLevel: r.secondLevel || secondLevel,
+            step: r.stepName ?? '',
+            stepCode: r.step ?? '',
+            sort: strToNum(r.sort),
+            isNeed: r.isNeed || 'Y',
+            remark: r.remark ?? '',
+            saved: false,
+          })),
+        )
       : [createStepRow(firstLevel, secondLevel)]
   } catch (err) {
     ElMessage.error((err as Error).message || '工序加载失败')
@@ -276,10 +306,37 @@ function onStepCodeChange(row: StepRow) {
 }
 
 function handleAddStep() {
-  stepRows.value.push(createStepRow(basicForm.value.firstLevel, basicForm.value.secondLevel))
+  stepRows.value = sortStepRows([
+    ...stepRows.value,
+    createStepRow(basicForm.value.firstLevel, basicForm.value.secondLevel),
+  ])
+}
+
+/** 行内保存（暂存）：把当前行推入暂存区，并将该行置为只读 */
+function handleSaveStep(row: StepRow) {
+  if (row.saved) return
+  if (!row.stepCode) {
+    ElMessageBox.alert('排序:'+row.sort+' 请先选择工序')
+    return
+  }
+  if (!stepStagedRows.value.includes(row)) {
+    stepStagedRows.value.push(row)
+  }
+  row.saved = true
+  ElMessage.success('已暂存')
+}
+
+/** 取消暂存：从暂存区移除该行，恢复可编辑 */
+function handleEditStep(row: StepRow) {
+  stepStagedRows.value = stepStagedRows.value.filter((r) => r !== row)
+  row.saved = false
 }
 
 function handleDeleteStep(index: number) {
+  const row = stepRows.value[index]
+  if (row) {
+    stepStagedRows.value = stepStagedRows.value.filter((r) => r !== row)
+  }
   stepRows.value.splice(index, 1)
 }
 
@@ -333,6 +390,7 @@ function onCancel() {
   }
   tempRows.value = [createTempRow()]
   stepRows.value = []
+  stepStagedRows.value = []
   ElMessage.info('已取消')
 }
 
@@ -540,8 +598,8 @@ async function onSubmit(){
         <el-button type="primary" size="small" :disabled="!basicForm.secondLevel" @click="handleAddStep">
           增加工序
         </el-button>
-        <el-button size="small" :disabled="!basicForm.secondLevel" @click="initStepRows">
-          重新初始化
+        <el-button size="small" :disabled="!basicForm.secondLevel" @click="handleSortStep">
+          排序
         </el-button>
       </div>
       <el-table v-loading="stepLoading" :data="stepRows" border stripe size="small" style="width: 100%">
@@ -556,12 +614,32 @@ async function onSubmit(){
             {{ stepSecondLabelMap[row.secondLevel] || row.secondLevel }}
           </template>
         </el-table-column>
-        <el-table-column prop="step" label="工序" min-width="150">
+        <el-table-column prop="sort" label="排序" width="110">
           <template #default="{ row }">
-            <el-input v-model="row.step" placeholder="选择工序编号后自动带出" size="small" clearable />
+            <el-input-number
+              v-model="row.sort"
+              :min="1"
+              :precision="0"
+              :disabled="row.saved"
+              size="small"
+              controls-position="right"
+              style="width: 100%"
+              placeholder="排序"
+            />
           </template>
         </el-table-column>
-        <el-table-column prop="stepCode" label="工序编号" min-width="170">
+        <el-table-column prop="step" label="工序" v-if="false" min-width="150">
+          <template #default="{ row }">
+            <el-input
+              v-model="row.step"
+              placeholder="选择工序编号后自动带出"
+              size="small"
+              clearable
+              :disabled="row.saved"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column prop="stepCode" label="工序" min-width="170">
           <template #default="{ row }">
             <el-select
               v-model="row.stepCode"
@@ -574,20 +652,17 @@ async function onSubmit(){
               <el-option
                 v-for="opt in stepMap"
                 :key="opt.step"
-                :label="`${opt.step} ${opt.stepName}`"
+                :label="`${opt.step} - ${opt.stepName}`"
                 :value="opt.step"
               />
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="sort" label="排序" width="90">
+        <!-- 工序类型：主干|分支-->
+         
+        <el-table-column prop="isNeed" label="选择类型" width="110">
           <template #default="{ row }">
-            <el-input v-model="row.sort" placeholder="排序" size="small" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="isNeed" label="是否必需" width="110">
-          <template #default="{ row }">
-            <el-select v-model="row.isNeed" size="small">
+            <el-select v-model="row.isNeed" size="small" :disabled="row.saved">
               <el-option
                 v-for="opt in stepNeedOptions"
                 :key="opt.value"
@@ -599,12 +674,34 @@ async function onSubmit(){
         </el-table-column>
         <el-table-column prop="remark" label="备注" min-width="160">
           <template #default="{ row }">
-            <el-input v-model="row.remark" placeholder="请输入备注" size="small" clearable />
+            <el-input
+              v-model="row.remark"
+              placeholder="请输入备注"
+              size="small"
+              clearable
+              :disabled="row.saved"
+            />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="80" fixed="right">
-          <template #default="{ $index }">
-            <el-button size="small" type="danger" link @click="handleDeleteStep($index)">删除</el-button>
+        <el-table-column label="操作" width="140" fixed="right">
+          <template #default="{ row, $index }">
+            <el-button
+              v-if="!row.saved"
+              size="small"
+              type="primary"
+              @click="handleSaveStep(row as StepRow)"
+            >
+              保存
+            </el-button>
+            <el-button
+              v-else
+              size="small"
+              type="primary"
+              @click="handleEditStep(row as StepRow)"
+            >
+              编辑
+            </el-button>
+            <el-button size="small" type="danger" @click="handleDeleteStep($index)">删除</el-button>
           </template>
         </el-table-column>
         <template #empty>
@@ -616,7 +713,7 @@ async function onSubmit(){
   </div>
   <!-- 底部按钮-->
    <div class="bottom-btn">
-    <el-button type="primary" @click="onSave">存草稿</el-button>
+    <el-button type="primary" @click="onSave">预览</el-button>
     <el-button type="primary" @click="onSubmit">发起审核</el-button>
   </div>
 </template>
