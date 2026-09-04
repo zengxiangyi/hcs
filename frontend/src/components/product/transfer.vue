@@ -4,6 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { transferAPI } from '../../api/transfer'
 import type { TransferRow, TransferCreateParams } from '../../api/transfer'
 import { blueprintAPI } from '../../api/blueprint'
+import { taskProcessAPI } from '../../api/taskProcess'
 
 defineOptions({ name: 'Transfer' })
 
@@ -188,16 +189,7 @@ async function fetchBlueprintData() {
   try {
     const res = await blueprintAPI.search({ page: 1, pageSize: 99999 })
     const list = res.data?.content ?? []
-    blueprintData.value = list.map((b) => ({
-      id: b.id,
-      blueprintNo: b.code,
-      blueprintName: b.name,
-      spec: b.model,
-      material: b.specs,
-      version: b.edition,
-      bound: b.state === '已绑定',
-      boundTransferNo: (b as { transferNo?: string }).transferNo ?? '',
-    }))
+    blueprintData.value = list
   } catch (err) {
     const msg = err instanceof Error && err.message ? err.message : '获取蓝本信息失败'
     ElMessage.error(msg)
@@ -217,9 +209,10 @@ async function handleBindBlueprint(row: BlueprintRow) {
     return
   }
   try {
-    await transferAPI.bindBlueprint({
-      transferId: selectedTransfer.value.id,
-      blueprintId: row.id,
+
+    await taskProcessAPI.bind({
+      transfer: selectedTransfer.value.code,
+      blueprint: row.code,
     })
     row.bound = true
     row.boundTransferNo = selectedTransfer.value.code

@@ -6,8 +6,20 @@
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
       <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-04.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-04.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.codebuddy/memory/MEMORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/MEMORY.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TransferOrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TransferOrderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/tool/JsonTool.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/tool/JsonTool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/taskProcess.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/taskProcess.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/transfer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/transfer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/process/process.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/process/process.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/process/task.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/process/task.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/product/transfer.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/product/transfer.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/config/menu.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/config/menu.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/router/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,5 +111,18 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="更新项目" />
     <option name="LAST_COMMIT_MESSAGE" value="更新项目" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java</url>
+          <line>60</line>
+          <log-expression expression="        one.setBlueprint(bindMap.get(&quot;blueprint&quot;));&#10;" language="JAVA" mode="CODE_FRAGMENT" />
+          <placement>INTER_LINE</placement>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

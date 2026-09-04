@@ -75,10 +75,16 @@ const routes: RouteRecordRaw[] = [
         meta: { right: 'page:process' },
       },
       {
-        path: 'process/flow',
-        name: 'ProcessFlow',
+        path: 'process/work',
+        name: 'Work',
+        component: () => import('../components/process/work.vue'),
+        meta: { right: 'page:process' },
+      },
+      {
+        path: 'process/process',
+        name: 'Process',
         component: () => import('../components/process/process.vue'),
-        meta: { right: 'page:process-flow' },
+        meta: { right: 'page:process' },
       },
       {
         path: 'product/transfer',

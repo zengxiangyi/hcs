@@ -31,6 +31,34 @@ http.interceptors.request.use(
   (error: AxiosError) => Promise.reject(error)
 )
 
+/** 401 跳转登录页的去重标记：并发请求同时 401 时只跳转一次 */
+let loginRedirecting = false
+
+/**
+ * token 失效时**无刷新**跳登录页。
+ *
+ * 不能再用 window.location.href 整页跳转：那会让浏览器重新下载并执行整个应用，
+ * dev 模式下是几百个未打包的 ES module 逐个请求，期间页面全白，
+ * 表现就是「打开页面后一片空白、等几秒才出登录页」。
+ *
+ * 这里动态引入 router：避免 http.ts 与 router 模块形成静态循环依赖
+ * （router 的子页面会反向 import api/*.ts → http.ts）。
+ */
+function redirectToLogin(): void {
+  if (loginRedirecting) return
+  loginRedirecting = true
+  void import('../router')
+    .then(({ default: router }) => {
+      const current = router.currentRoute.value
+      if (current.name === 'Login') return
+      return router.replace({ name: 'Login', query: { redirect: current.fullPath } })
+    })
+    .catch(() => {})
+    .finally(() => {
+      loginRedirecting = false
+    })
+}
+
 // 响应拦截：统一解包 + 错误处理
 http.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
@@ -43,13 +71,9 @@ http.interceptors.response.use(
   },
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // token 失效，跳转登录并清理本地凭证
+      // token 失效，清理本地凭证并跳登录页（无刷新跳转，见 redirectToLogin 注释）
       localStorage.removeItem('token')
-      // BASE_URL 跟随部署路径（dev 与生产均为 /）
-      const home = import.meta.env.BASE_URL || '/'
-      if (window.location.pathname !== home) {
-        window.location.href = home
-      }
+      redirectToLogin()
     }
 
     // HTTP 非 2xx 时解包后端业务错误信息（body 为 { code, msg }），

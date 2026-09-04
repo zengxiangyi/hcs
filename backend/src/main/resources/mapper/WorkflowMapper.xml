@@ -32,9 +32,9 @@
     <sql id="Query_Todo">
         <where>
             <if test="q.roleCode != null and q.roleCode != ''">
-                code in (select distinct a.workflow from flowcurrent a,flowNode n
-                where a.flowGraph=n.flowgraph and a.flownode=n.code
-                and n.operator='R' and n.roleList LIKE CONCAT('%', #{q.roleCode}, '%'))
+                code in (select distinct a.workflow from flowcurrent a,flownode n
+                where a.flowgraph=n.flowgraph and a.flownode=n.code
+                and n.operator='R' and n.rolelist LIKE CONCAT('%', #{q.roleCode}, '%'))
             </if>
         </where>
     </sql>

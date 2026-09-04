@@ -40,14 +40,23 @@ export interface TaskListResult {
   pageSize: number
 }
 
+/** 蓝本绑定入参 */
+export interface BindParams {
+  transferId: number
+  blueprintId: number
+}
+
 /** 工序任务接口 */
 export const taskProcessAPI = {
   /** 列表（服务端分页） */
   search: (params?: TaskListParams) =>
     http.post<TaskListResult>('/api/taskprocess/search', params) as Promise<ApiResponse<TaskListResult>>,
   /** 新增 */
-  add: (data: Omit<TaskRow, 'id'>) =>
-    http.post<TaskRow>('/api/taskprocess/save', data) as Promise<ApiResponse<TaskRow>>,
+  add: (data: object) =>
+    http.post<string>('/api/taskprocess/save', data) as Promise<ApiResponse<string>>,
+
+  /** 绑定蓝本到调拨单 */
+  bind: (data: BindParams) => http.post<string>('/api/taskprocess/bind', data),
   /** 修改 */
   update: (id: number, data: Omit<TaskRow, 'id'>) =>
     http.put<TaskRow>(`/api/taskprocess/${id}`, data) as Promise<ApiResponse<TaskRow>>,

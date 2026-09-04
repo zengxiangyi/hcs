@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { taskProcessAPI, type TaskRow, type TaskListParams } from '../../api/taskProcess'
+import { useRouter } from 'vue-router'
+
+const router=useRouter()
 
 defineOptions({ name: 'Task' })
 
@@ -98,22 +101,9 @@ function stateTagType(v: string): 'info' | 'warning' | 'success' | 'danger' {
 }
 
 function handleDelete(row: TaskRow) {
-  ElMessageBox.confirm(`确认删除该任务（ID: ${row.id}）？`, '提示', {
-    type: 'warning',
-  })
-    .then(() => {
-      taskProcessAPI
-        .remove(row.id)
-        .then(() => {
-          ElMessage.success('删除成功')
-          if (tableData.value.length === 1 && currentPage.value > 1) {
-            currentPage.value -= 1
-          }
-          fetchData()
-        })
-        .catch((err) => ElMessage.error(err.message || '删除失败'))
-    })
-    .catch(() => {})
+  console.log(row)
+  // 跳转到work
+  router.push({name: 'Work',query: {blueprint: row.blueprint}})
 }
 
 onMounted(fetchData)

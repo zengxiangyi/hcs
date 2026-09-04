@@ -71,7 +71,7 @@
     },
     {
       "name": "工艺执行",
-      "path": "/web/process/flow",
+      "path": "/web/process/work",
       "icon": "Operation",
       "right": "page:process-flow"
     },

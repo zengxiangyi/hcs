@@ -40,9 +40,7 @@ public class JsonTool {
 
     /** 以 DEBUG 级别输出 JSON（替代 System.out，避免泄露敏感信息到 stdout） */
     public static void print(Object obj) {
-        if (log.isDebugEnabled()) {
-            log.debug("{}", toJson(obj));
-        }
+        log.debug("{}", toJson(obj));
     }
 
 }

@@ -17,12 +17,6 @@ export interface TransferListResult {
   pageSize: number
 }
 
-/** 蓝本绑定入参 */
-export interface BindBlueprintParams {
-  transferId: number
-  blueprintId: number
-}
-
 /** 新增/编辑调拨单入参（与后端表结构对齐） */
 export interface TransferCreateParams {
   id?: number            // 调拨单id
@@ -64,10 +58,6 @@ export const transferAPI = {
   /** 新增调拨单 */
   create: (data: TransferCreateParams) =>
     http.post<null>('/api/transfer/save', data),
-
-  /** 绑定蓝本到调拨单 */
-  bindBlueprint: (data: BindBlueprintParams) =>
-    http.post<null>('/api/transfer/bind', data),
 
   /** 编辑调拨单（按 id 更新） */
   update: (data: TransferCreateParams) =>

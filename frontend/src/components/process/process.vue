@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 import { stepFormMap } from './steps'
 import type { StepForm, StepFormExpose } from './steps/shared'
 
-defineOptions({ name: 'ProcessFlowHorizontal' })
+defineOptions({ name: 'Process' })
 
 // 16 个步骤节点
 interface StepNode {
