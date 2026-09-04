@@ -1,11 +1,16 @@
 package com.baogang.info.common;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.server.PathContainer;
 import org.springframework.lang.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,8 +18,8 @@ import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import java.io.IOException;
 import java.util.Arrays;
@@ -36,6 +41,8 @@ import java.util.List;
  * 构成双重注册，导致每个请求重复验签。
  */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private static final String AUTH_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
@@ -105,17 +112,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader(AUTH_HEADER);
         if (header == null || !header.startsWith(BEARER_PREFIX)) {
             // 不能抛异常：本过滤器早于 ExceptionTranslationFilter，抛出只会变成 500
-            commence(request, response, "Missing or invalid Authorization header");
+            commence(request, response, new JwtAuthenticationException(
+                    JwtAuthenticationException.CODE_TOKEN_INVALID, "Missing or invalid Authorization header"));
             return;
         }
 
         String token = header.substring(BEARER_PREFIX.length()).trim();
-        if (!jwtUtil.validateToken(token)) {
-            commence(request, response, "Invalid or expired token");
+        // 只解析一次：验签 + 取 subject 复用同一份 Claims，避免重复验签
+        Claims claims;
+        try {
+            claims = jwtUtil.parseToken(token);
+        } catch (ExpiredJwtException e) {
+            log.warn("JWT 已过期: path={}", request.getRequestURI());
+            commence(request, response, new JwtAuthenticationException(
+                    JwtAuthenticationException.CODE_TOKEN_EXPIRED, "Token expired"));
+            return;
+        } catch (JwtException | IllegalArgumentException e) {
+            log.warn("JWT 校验失败: path={}, reason={}", request.getRequestURI(), e.getMessage());
+            commence(request, response, new JwtAuthenticationException(
+                    JwtAuthenticationException.CODE_TOKEN_INVALID, "Invalid or expired token"));
             return;
         }
 
-        String subject = jwtUtil.getSubject(token);
+        String subject = claims.getSubject();
         if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     subject, null, AuthorityUtils.NO_AUTHORITIES);
@@ -127,15 +146,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 终止请求并返回 401（JSON），与 {@code SecurityConfig} 的未认证响应保持一致。
+     * 终止请求并返回 401（JSON），业务码与文案由调用方通过异常指定，
+     * 与 {@code SecurityConfig} 的未认证响应保持一致。
      */
-    private void commence(HttpServletRequest request, HttpServletResponse response, String message)
+    private void commence(HttpServletRequest request, HttpServletResponse response,
+                           AuthenticationException authException)
             throws IOException, ServletException {
         if (authenticationEntryPoint == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
             return;
         }
-        authenticationEntryPoint.commence(request, response,
-                new AuthenticationCredentialsNotFoundException(message));
+        authenticationEntryPoint.commence(request, response, authException);
     }
 }

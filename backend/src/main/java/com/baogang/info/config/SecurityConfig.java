@@ -1,6 +1,7 @@
 package com.baogang.info.config;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.JwtAuthenticationException;
 import com.baogang.info.common.JwtAuthenticationFilter;
 import com.baogang.info.common.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 @Configuration
 public class SecurityConfig {
 
+    /** ObjectMapper 线程安全，复用单例，避免每次 401 响应都新建 */
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     /**
      * 免认证白名单（ant 风格，相对 context-path，Servlet 路径）。
      * 同时用于 {@code SecurityConfig#securityFilterChain} 的 permitAll 与
@@ -40,6 +44,9 @@ public class SecurityConfig {
 
     /**
      * 未认证（无/非法 token）统一返回 401 + 统一 JSON，而非 Spring Security 默认的 403。
+     * 响应体 code 携带业务码，供前端区分处理：
+     *   - 40101 = token 已过期（引导重新登录）
+     *   - 40102 = token 缺失或无效
      *
      * <p>同时注入 {@link JwtAuthenticationFilter}：该过滤器位于 ExceptionTranslationFilter
      * 之前，抛出 AuthenticationException 不会被引擎翻译成 401，必须由它自己调用本入口点。
@@ -49,10 +56,16 @@ public class SecurityConfig {
         return (HttpServletRequest request,
                 HttpServletResponse response,
                 AuthenticationException authException) -> {
+            int code = JwtAuthenticationException.CODE_TOKEN_INVALID;
+            String message = "Missing or invalid Authorization header";
+            if (authException instanceof JwtAuthenticationException jwtEx) {
+                code = jwtEx.getBusinessCode();
+                message = jwtEx.getMessage();
+            }
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(new ObjectMapper()
-                    .writeValueAsString(ApiResponse.error(401, "Missing or invalid Authorization header")));
+            response.getWriter().write(OBJECT_MAPPER
+                    .writeValueAsString(ApiResponse.error(code, message)));
         };
     }
 
