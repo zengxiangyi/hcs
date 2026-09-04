@@ -29,13 +29,8 @@ public class ConstValueController {
 
     // 复杂/可变条件查询：POST 请求体承载 ConstValueQuery，支持任意字段组合过滤
     @PostMapping("/search")
-    public ApiResponse<PageResult<ConstValue>> searchByQuery(@RequestBody ConstValueQuery query) {
-        int page = query.getPage();
-        int size = query.getPageSize();
-        if (page < 1 || size < 1) {
-            return ApiResponse.error(400, "分页参数错误");
-        }
-        return ApiResponse.success(constValueService.search(query, page - 1, size));
+    public ApiResponse<PageResult<ConstValue>> search(@Valid @RequestBody ConstValueQuery query) {
+        return ApiResponse.success(constValueService.search(query, query.getPage() - 1, query.getPageSize()));
     }
 
     @GetMapping("/{id}")
@@ -48,7 +43,7 @@ public class ConstValueController {
         return ApiResponse.success(constValueService.getByCode(code));
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public ApiResponse<ConstValue> save(@Valid @RequestBody ConstValue constValue) {
         return ApiResponse.success(constValueService.save(constValue));
     }

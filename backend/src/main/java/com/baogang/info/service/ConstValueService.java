@@ -23,7 +23,8 @@ public class ConstValueService {
     }
 
     public ConstValue getById(Long id) {
-        return constValueRepository.findById(id).orElse(null);
+        return constValueRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("constValue not found: " + id));
     }
 
     public ConstValue getByCode(String code) {
@@ -42,6 +43,7 @@ public class ConstValueService {
     @Transactional
     public ConstValue update(Long id, ConstValue constValue) {
         ConstValue existing = getById(id);
+        // 显式字段拷贝：新增字段时必须在此同步补充
         existing.setCode(constValue.getCode());
         existing.setName(constValue.getName());
         existing.setCategory(constValue.getCategory());

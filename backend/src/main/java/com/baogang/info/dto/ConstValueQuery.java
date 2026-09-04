@@ -1,7 +1,10 @@
 package com.baogang.info.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+
 /**
- * 常量查询条件（可变、可选）。所有字段默认 null，表示不参与过滤。
+ * 常量查询条件（可变、可选）。过滤字段默认 null，表示不参与过滤。
  * 通过 POST 请求体接收，支持任意字段组合的过滤条件。
  */
 public class ConstValueQuery {
@@ -12,8 +15,12 @@ public class ConstValueQuery {
     private String name;
     private String remark;
 
-    private Integer page = 1;
-    private Integer pageSize = 10;
+    @Min(value = 1, message = "page 不能小于 1")
+    private int page = 1;
+
+    @Min(value = 1, message = "pageSize 不能小于 1")
+    @Max(value = 200, message = "pageSize 不能超过 200")
+    private int pageSize = 10;
 
     public String getCategory() {
         return category;
@@ -55,19 +62,19 @@ public class ConstValueQuery {
         this.remark = remark;
     }
 
-    public Integer getPage() {
+    public int getPage() {
         return page;
     }
 
-    public void setPage(Integer page) {
+    public void setPage(int page) {
         this.page = page;
     }
 
-    public Integer getPageSize() {
+    public int getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(Integer pageSize) {
+    public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
 }

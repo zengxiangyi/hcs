@@ -48,7 +48,7 @@ export const constValueAPI = {
   search: (params?: ConstValueListParams) =>
     http.post<ConstValueListResult>('/api/constValue/search', params),
   /** 新增常量值 */
-  add: (data: ConstValueSaveParams) => http.post<ConstValueRow>('/api/constValue/save', data),
+  add: (data: ConstValueSaveParams) => http.post<ConstValueRow>('/api/constValue', data),
   /** 修改常量值 */
   update: (id: number, data: ConstValueSaveParams) =>
     http.put<ConstValueRow>(`/api/constValue/${id}`, data),
