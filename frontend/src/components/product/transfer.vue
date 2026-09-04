@@ -452,10 +452,16 @@ onMounted(() => {
 
       <el-table v-loading="blueprintLoading" :data="blueprintData" border stripe style="width: 100%">
         <el-table-column type="index" label="序号" width="70" />
-        <el-table-column prop="blueprintNo" label="蓝本编号" min-width="150" />
-        <el-table-column prop="blueprintName" label="蓝本名称" min-width="200" />
-        <el-table-column prop="spec" label="规格" min-width="120" />
-        <el-table-column prop="material" label="材质" min-width="120" />
+        <el-table-column prop="code" label="蓝本工艺编码" width="120" />
+        <el-table-column prop="name" label="蓝本名称" min-width="140" />
+        <el-table-column prop="graph" label="图号" width="110" />
+        <el-table-column prop="firstLevel" label="一级分类" width="110">
+        </el-table-column>
+        <el-table-column prop="secondLevel" label="二级分类" width="110">
+        </el-table-column>
+        <el-table-column prop="materialName" label="物料名称" min-width="120" />
+        <el-table-column prop="materialCode" label="材料编码" width="120" />
+        <el-table-column prop="weight" label="单重" width="100" />
         <el-table-column prop="version" label="版本" width="90" />
         <el-table-column prop="boundTransferNo" label="已绑定调拨单" min-width="160">
           <template #default="{ row }">
