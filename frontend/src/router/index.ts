@@ -150,7 +150,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'solo',
         name: 'Solo',
-        component: () => import('../components/solo.vue'),
+        component: () => import('../components/tech/solo.vue'),
       },
     ],
   },

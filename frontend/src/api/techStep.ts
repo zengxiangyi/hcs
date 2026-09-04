@@ -60,4 +60,7 @@ export const techStepAPI = {
     http.put<TechStepRow>('/api/techstep/update', data),
   /** 删除工序 */
   remove: (id: number) => http.delete<null>(`/api/techstep/${id}`),
+
+    /** 批量新增工序 */
+  batchSave: (data: TechStepSaveParams[]) => http.post<string>('/api/techstep/batchSave', data),
 }

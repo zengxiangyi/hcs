@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
     "build:war": "npm run build && powershell -NoProfile -Command \"Add-Type -AssemblyName System.IO.Compression.FileSystem; $r=(Resolve-Path 'dist').Path; if (Test-Path 'hcs.war') { Remove-Item 'hcs.war' -Force }; $z=[System.IO.Compression.ZipFile]::Open('hcs.war','Create'); $c=$r.Length+1; Get-ChildItem -LiteralPath $r -Recurse -Directory | ForEach-Object { $z.CreateEntry($_.FullName.Substring($c).Replace('\\','/') + '/') | Out-Null }; Get-ChildItem -LiteralPath $r -Recurse -File | ForEach-Object { [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($z, $_.FullName, $_.FullName.Substring($c).Replace('\\','/'), 'Optimal') | Out-Null }; $z.Dispose()\"",
     "preview": "vite preview"
   },

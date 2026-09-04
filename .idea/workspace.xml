@@ -5,13 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
-      <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-03.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-03.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-04.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-04.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.codebuddy/memory/MEMORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/MEMORY.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TechStepController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TechStepController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.env.production" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/CODEBUDDY.md" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/CODEBUDDY.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/components.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/docs/build.md" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/docs/build.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/hcs.war" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/hcs.war" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/http.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/http.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/techStep.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/techStep.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/process/task.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/process/task.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/solo.vue" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/tech/board.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/tech/board.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/tech/solo.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/tech/solo.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/config/menu.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/config/menu.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/router/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,18 +33,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "zengxiangyi"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;zengxiangyi&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/zengxiangyi/hcs.git",
-    "accountId": "492676f0-e49e-46f9-8822-cf7f507184fd"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/zengxiangyi/hcs.git&quot;,
+    &quot;accountId&quot;: &quot;492676f0-e49e-46f9-8822-cf7f507184fd&quot;
   }
-}]]></component>
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -40,10 +52,10 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="3Ingh1BQXi0MCR1sKQYROQi6Mtl" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />

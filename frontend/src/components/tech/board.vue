@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { ElAlert, ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { techAPI, type TechBoardSaveDTO } from '../../api/tech'
 import { techStepAPI } from '../../api/techStep'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 defineOptions({ name: 'Board' })
 
@@ -145,19 +148,6 @@ function strToNum(v: string | undefined): number | null {
   return Number.isNaN(n) ? null : n
 }
 
-/** 编制模板动态表格：段号 / 温度 / 时间 / 备注，每行可编辑 */
-interface TempRow {
-  segNo: string
-  temp: string
-  time: string
-  remark: string
-}
-const tempRows = ref<TempRow[]>([createTempRow()])
-
-function createTempRow(): TempRow {
-  return { segNo: '', temp: '', time: '', remark: '' }
-}
-
 // ---------- 工艺编制：工序动态表格 ----------
 /** 工序下拉数据（与 step.vue 保持一致）：step-工序编号，stepName-工序名称 */
 const stepMap = [
@@ -176,7 +166,7 @@ const stepMap = [
   { step: 'S13', stepName: '除应力' },
   { step: 'S14', stepName: '硬度叫检' },
   { step: 'S15', stepName: '检硬度' },
-  { step: 'S16', stepName: '合格' },
+  { step: 'S16', stepName: '合格判定' },
   { step: 'S17', stepName: '冷处理' },
   { step: 'S18', stepName: '二次回火' },
   { step: 'S19', stepName: '二次回火测变形' },
@@ -294,6 +284,9 @@ async function initStepRows() {
 watch(
   () => basicForm.value.secondLevel,
   () => {
+    // 设定工艺编号和工艺名称
+    basicForm.value.code = basicForm.value.firstLevel + basicForm.value.secondLevel
+    basicForm.value.name = stepFirstLabelMap.value[basicForm.value.firstLevel] + stepSecondLabelMap.value[basicForm.value.secondLevel]
     initStepRows()
   },
   { immediate: true },
@@ -342,7 +335,13 @@ function handleDeleteStep(index: number) {
 
 /** 保存：校验必填项后提交当前表单数据 */
 async function onSave() {
+  debugger;
   try {
+    // 数据校验
+    if(stepRows.value.length === 0){
+      ElMessageBox.alert('请先添加工序')
+      return
+    }
     // 组装数据
     const bluePrint: TechBoardSaveDTO = {
       code: basicForm.value.code,
@@ -370,7 +369,11 @@ async function onSave() {
       hardnessDepth: requirementForm.value.hardnessDepth
     }
     await techAPI.save(bluePrint)
+    // 保存工序
+    await techStepAPI.batchSave(stepRows.value)
     ElMessage.success('保存成功')
+    // 进入到工序编制页面
+    router.push({ name: 'Solo', query: { code: basicForm.value.code } })
   } catch (err) {
     ElMessage.error((err as Error).message || '保存失败')
   }
@@ -388,7 +391,6 @@ function onCancel() {
   fallHead: '',quenching: '',attention: '',chamfer: '',
   lastHardness: '',firstHardness: '',hardnessDepth: ''
   }
-  tempRows.value = [createTempRow()]
   stepRows.value = []
   stepStagedRows.value = []
   ElMessage.info('已取消')
@@ -593,7 +595,7 @@ async function onSubmit(){
 
     <!-- 工艺编制：按二级工艺动态初始化工序明细 -->
     <section class="board-section">
-      <h3 class="section-title">工艺编制</h3>
+      <h3 class="section-title">工序配置</h3>
       <div class="temp-table__toolbar">
         <el-button type="primary" size="small" :disabled="!basicForm.secondLevel" @click="handleAddStep">
           增加工序
@@ -713,8 +715,7 @@ async function onSubmit(){
   </div>
   <!-- 底部按钮-->
    <div class="bottom-btn">
-    <el-button type="primary" @click="onSave">预览</el-button>
-    <el-button type="primary" @click="onSubmit">发起审核</el-button>
+    <el-button type="primary" @click="onSave">工艺编制</el-button>
   </div>
 </template>
 

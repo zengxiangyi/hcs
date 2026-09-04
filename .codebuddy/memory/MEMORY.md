@@ -19,6 +19,10 @@
 ## 项目约定
 
 - 接口前缀：前端 `src/api/*.ts` 写完整路径 `/api/xxx`，故 `VITE_API_BASE_URL` 只能填 origin 根，**绝不能再带 `/api`**。
+- **改后端接口地址要改两个不同地方**（2026-09-04 踩坑）：
+  - dev → `frontend/vite.config.ts` 的 `server.proxy.target`（重启 dev 生效）；
+  - 生产/发布 → `frontend/.env.production` 的 `VITE_API_BASE_URL`（**必须重新 `npm run build:war`**）。
+  `server.proxy` 不参与打包，改它对发布后的页面完全无效。值可填后端 IP（`http://10.21.46.191:8080`），同源同 Tomcat 时填 `/` 更省心（跟随浏览器 origin、免重打包、无跨域；后端 `CorsConfig` 已放开 origin `*`，填 IP 跨域也通）。
 - 后端 context-path 由 war 名决定，必须保持 `api.war`，否则全线 404 且无编译期提示。
 - `ddl-auto=none`：所有 DDL/DML 由 DBA 执行，AI 只以 SQL 文本交付，禁止自行连库执行。
 - DB 列名一律小写无下划线；MyBatis 的 XML 是查询真源。

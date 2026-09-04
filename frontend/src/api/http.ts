@@ -13,7 +13,7 @@ export interface ApiResponse<T = unknown> {
 const http = axios.create({
   // ⚠ 注意：src/api/*.ts 中的路径已自带 /api 前缀（如 '/api/auth/login'），
   // 与后端 Fastify 的路由定义一一对应。因此这里只能配「后端 origin 根」
-  // （如 http://127.0.0.1:8080 或同源时的 '/'），不能再带 /api，否则会拼成 /api/api/...。
+  // （如 http://<后端IP>:8080 或同源时的 '/'），不能再带 /api，否则会拼成 /api/api/...。
   baseURL: import.meta.env.VITE_API_BASE_URL || '/',
   timeout: 300000,
   headers: { 'Content-Type': 'application/json' },

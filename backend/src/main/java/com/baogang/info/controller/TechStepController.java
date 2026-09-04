@@ -74,6 +74,17 @@ public class TechStepController {
         return ApiResponse.success(techStepService.save(techStep));
     }
 
+    @PostMapping("/batchSave")
+    public ApiResponse<String> batchSave(@Valid @RequestBody List<TechStep> techStepList) {
+        if (techStepList == null&&techStepList.isEmpty()) {
+            return ApiResponse.error(400, "工艺步序为空");
+        }
+        techStepList.forEach(techStep -> {
+            techStepService.save(techStep);
+        });
+        return ApiResponse.success("工艺步序保存成功");
+    }
+
     // 修改
     @PutMapping("/update")
     public ApiResponse<TechStep> update(@Valid @RequestBody TechStep techStep) {

@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import StepS13 from './process/steps/StepS13.vue'
-import type { StepForm } from './process/steps/shared'
-import { el } from 'element-plus/es/locale/index.mjs'
+import type { StepForm } from '../process/steps/shared.js'
 
-defineOptions({ name: 'Solo' })
+defineOptions({ name: 'Work' })
 
 interface BlockState {
   /** 内容区是否展开 */

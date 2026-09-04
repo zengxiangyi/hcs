@@ -66,9 +66,9 @@ Element Plus is registered globally in `src/main.ts` with `zh-cn` locale; `unplu
 
 ### Config / env
 
-- Vite dev proxy forwards `/api` to `http://127.0.0.1:8080` (no rewrite). `baseURL` defaults to `/` unless `VITE_API_BASE_URL` is set, so dev requests go to relative `/api/...` and hit the proxy.
+- Vite dev proxy forwards `/api` to the target in `vite.config.ts` (no rewrite). `baseURL` defaults to `/` unless `VITE_API_BASE_URL` is set, so dev requests go to relative `/api/...` and hit the proxy. **The dev proxy has NO effect on production builds** — for `npm run build:war`, the API address comes solely from `VITE_API_BASE_URL` in `.env.production`.
 - `base` is **`/hcs/`** (`vite.config.ts`): production is deployed as Tomcat context-path `/hcs`. `src/router/index.ts` uses `createWebHistory(import.meta.env.BASE_URL)`, and the 401 redirect also uses `BASE_URL`, so both follow `base` automatically — nothing else needs changing if the context-path changes.
-- `.env.production` sets `VITE_API_BASE_URL=http://127.0.0.1:8080`.
+- `.env.production` sets `VITE_API_BASE_URL` (backend origin root, e.g. `http://10.21.46.191:8080`; use `/` when frontend and backend are same-origin). Re-run `npm run build:war` after changing it.
   **Never append `/api` here.** Every module in `src/api/*.ts` already requests full paths like `/api/auth/login`, so
   the final URL is `VITE_API_BASE_URL + '/api/...'`; adding `/api` to the base yields `/api/api/auth/login` (404).
   If the backend is ever reverse-proxied onto the same origin, set this to `/` instead.
