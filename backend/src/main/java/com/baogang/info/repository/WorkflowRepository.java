@@ -25,6 +25,9 @@ public interface WorkflowRepository extends JpaRepository<Workflow, Long> {
 
     boolean existsByCode(String code);
 
+    // update 改 code 时排除自身后查重，避免撞库中唯一索引变成 500
+    boolean existsByCodeAndIdNot(String code, Long id);
+
     List<Workflow> findByState(String state);
 
     List<Workflow> findByFlowGraph(String flowGraph);

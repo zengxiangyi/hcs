@@ -1,4 +1,5 @@
 import http from './http'
+import type { ApiResponse } from './http'
 
 /** 用户信息 */
 export interface UserInfo {

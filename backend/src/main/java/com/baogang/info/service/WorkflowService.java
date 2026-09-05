@@ -66,6 +66,9 @@ public class WorkflowService {
         existing.setEndTime(workflow.getEndTime());
         existing.setRemark(workflow.getRemark());
         existing.setFlowGraph(workflow.getFlowGraph());
+        if (workflowRepository.existsByCodeAndIdNot(existing.getCode(), id)) {
+            throw new IllegalArgumentException("code already exists: " + existing.getCode());
+        }
         return workflowRepository.save(existing);
     }
 

@@ -15,7 +15,7 @@ public class Workflow {
     private Long id;
     // 流程实例编码
     @Size(max = 30, message = "code 长度不能超过 30")
-    @Column(name = "code", length = 30)
+    @Column(name = "code", length = 30, unique = true) // 库中已有唯一索引 uk_workflow_code（ddl-auto=none，此处仅声明意图）
     private String code;
     // 流程实例名称
     @Size(max = 100, message = "name 长度不能超过 100")
