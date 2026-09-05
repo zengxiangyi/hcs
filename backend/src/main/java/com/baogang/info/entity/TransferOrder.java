@@ -22,8 +22,8 @@ public class TransferOrder {
     @Column(name = "name", length = 100)
     private String name;
 
-    @Size(max = 100, message = "category 长度不能超过 100")
-    @Column(name = "category", length = 100)
+    @Size(max = 20, message = "category 长度不能超过 20")
+    @Column(name = "category", length = 20)
     private String category;
 
     @Size(max = 100, message = "transferdate 长度不能超过 100")

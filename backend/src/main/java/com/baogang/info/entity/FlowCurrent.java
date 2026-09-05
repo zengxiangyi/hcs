@@ -19,15 +19,15 @@ public class FlowCurrent {
     private String workflow;
 
     // 流程图
-    @Size(max = 100, message = "flowGraph 长度不能超过 100")
-    @Column(name = "flowgraph", length = 100)
+    @Size(max = 30, message = "flowGraph 长度不能超过 30")
+    @Column(name = "flowgraph", length = 30)
     private String flowGraph;
     // 流程图节点
     @Size(max = 100, message = "flowNode 长度不能超过 100")
     @Column(name = "flownode", length = 100)
     private String flowNode;
     // 开始时间
-    @Size(max = 30, message = "startTime 长度不能超过 100")
+    @Size(max = 30, message = "startTime 长度不能超过 30")
     @Column(name = "starttime", length = 30)
     private String startTime;
     // 备注

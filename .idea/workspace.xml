@@ -6,9 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
       <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/Module.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/Module.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/Template.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/Template.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/create.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/create.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/users.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowCurrent.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowCurrent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowHistory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/TransferOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/TransferOrder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/Workflow.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/Workflow.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

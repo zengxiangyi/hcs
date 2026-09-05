@@ -30,10 +30,12 @@ public class Workflow {
     @Column(name = "sender", length = 30)
     private String sender;
     // 开始时间
-    @Column(name = "starttime")
+    @Size(max = 30, message = "startTime 长度不能超过 30")
+    @Column(name = "starttime", length = 30)
     private String startTime;
     // 结束时间
-    @Column(name = "endtime")
+    @Size(max = 30, message = "endTime 长度不能超过 30")
+    @Column(name = "endtime", length = 30)
     private String endTime;
     // 备注
     @Size(max = 100, message = "remark 长度不能超过 100")

@@ -23,8 +23,8 @@ public class FlowNode {
     @Column(name = "code", length = 30)
     private String code;
     // 节点名称
-    @Size(max = 50, message = "name 长度不能超过 50")
-    @Column(name = "name", length = 50)
+    @Size(max = 100, message = "name 长度不能超过 100")
+    @Column(name = "name", length = 100)
     private String name;
     // S:开始，M:中间，E:结束
     @Size(max = 20, message = "category 长度不能超过 20")
@@ -51,19 +51,19 @@ public class FlowNode {
     @Column(name = "userlist", length = 100)
     private String userList;
 
-    @Size(max = 45, message = "userlist 长度不能超过 45")
+    @Size(max = 45, message = "坐标字段 长度不能超过 45")
     @Column(name = "X", length = 45)
     private String X;
 
-    @Size(max = 45, message = "userlist 长度不能超过 45")
+    @Size(max = 45, message = "坐标字段 长度不能超过 45")
     @Column(name = "Y", length = 45)
     private String Y;
 
-    @Size(max = 45, message = "userlist 长度不能超过 45")
+    @Size(max = 45, message = "坐标字段 长度不能超过 45")
     @Column(name = "W", length = 45)
     private String W;
 
-    @Size(max = 45, message = "userlist 长度不能超过 45")
+    @Size(max = 45, message = "坐标字段 长度不能超过 45")
     @Column(name = "H", length = 45)
     private String H;
 

@@ -14,28 +14,29 @@ public class FlowHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     // 流程实例编号
-    @Size(max = 100, message = "workflow 长度不能超过 100")
-    @Column(name = "workflow", length = 100)
+    @Size(max = 30, message = "workflow 长度不能超过 30")
+    @Column(name = "workflow", length = 30)
     private String workflow;
 
     // 流程图
-    @Column(name = "flowgraph", length = 100)
+    @Size(max = 30, message = "flowGraph 长度不能超过 30")
+    @Column(name = "flowgraph", length = 30)
     private String flowGraph;
     // 边线
     @Size(max = 100, message = "edge 长度不能超过 100")
     @Column(name = "edge", length = 100)
     private String edge;
 
-    @Size(max = 100, message = "fromnode 长度不能超过 100")
-    @Column(name = "fromnode", length = 100)
+    @Size(max = 45, message = "fromNode 长度不能超过 45")
+    @Column(name = "fromnode", length = 45)
     private String fromNode;
 
-    @Size(max = 100, message = "tonode 长度不能超过 100")
-    @Column(name = "tonode", length = 100)
+    @Size(max = 45, message = "toNode 长度不能超过 45")
+    @Column(name = "tonode", length = 45)
     private String toNode;
 
     // 处理时间
-    @Size(max = 30, message = "dealTime 长度不能超过 100")
+    @Size(max = 30, message = "dealTime 长度不能超过 30")
     @Column(name = "dealtime", length = 30)
     private String dealTime;
     // 处理人工号
