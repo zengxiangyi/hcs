@@ -1,11 +1,13 @@
 package com.baogang.info.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -19,6 +21,8 @@ public class SysUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // code 为登录账号名，创建时必填
+    @NotBlank(message = "code 不能为空")
     @Size(max = 10, message = "code 长度不能超过 10")
     @Column(name = "code", length = 10)
     private String code;
@@ -27,6 +31,8 @@ public class SysUser {
     @Column(name = "name", length = 20)
     private String name;
 
+    // WRITE_ONLY：请求体可写入、响应体不序列化，防止分页列表/详情明文回传密码
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(max = 100, message = "password 长度不能超过 100")
     @Column(name = "password", length = 100)
     private String password;

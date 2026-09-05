@@ -4,11 +4,8 @@ import com.baogang.info.common.ApiResponse;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.SysUserQuery;
 import com.baogang.info.entity.SysUser;
-import com.baogang.info.service.SysRoleUserService;
 import com.baogang.info.service.SysUserService;
-import com.baogang.info.tool.StringTool;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,19 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sysUser")
 public class SysUserController {
 
-    private final SysUserService sysUserService;
-    private final SysRoleUserService sysRoleUserService;
+    private static final int MAX_PAGE_SIZE = 200;
 
-    public SysUserController(SysUserService sysUserService, SysRoleUserService sysRoleUserService) {
+    private final SysUserService sysUserService;
+
+    public SysUserController(SysUserService sysUserService) {
         this.sysUserService = sysUserService;
-        this.sysRoleUserService = sysRoleUserService;
     }
 
     // 复杂/可变条件查询：POST 请求体承载 SysUserQuery，支持任意字段组合过滤
     @PostMapping("/search")
     public ApiResponse<PageResult<SysUser>> searchByQuery(@RequestBody SysUserQuery query) {
-        int page = query.getPage();
-        int size = query.getPageSize();
+        // 分页防护：page/pageSize 为 null 时退回 DTO 默认值；page 最小 1；size 限 1~200，防负 offset 报错与超大结果集
+        int page = query.getPage() == null ? 1 : Math.max(1, query.getPage());
+        int size = query.getPageSize() == null ? 10 : Math.min(Math.max(1, query.getPageSize()), MAX_PAGE_SIZE);
         return ApiResponse.success(sysUserService.search(query, page - 1, size));
     }
 
@@ -58,14 +56,10 @@ public class SysUserController {
         return ApiResponse.success(sysUserService.update(id, sysUser));
     }
 
+    // 级联删除收进服务层单事务（角色绑定 + 用户），不存在时由服务层抛 404
     @DeleteMapping("/code/{code}")
     public ApiResponse<String> delete(@PathVariable String code) {
-        if(StringTool.isNotBlank(code)){
-            sysRoleUserService.deleteByUserCode(code);
-            sysUserService.deleteByCode(code);
-            return ApiResponse.success("删除处理完毕");
-        }
-        return ApiResponse.error(400,"参数错误");
+        sysUserService.deleteCascadeByCode(code);
+        return ApiResponse.success("删除处理完毕");
     }
-
 }
