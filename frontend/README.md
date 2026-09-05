@@ -1,6 +1,6 @@
 # 用户管理后台（page）
 
-基于 **Vue 3 + Vite + TypeScript** 的 SPA 管理后台，用于用户管理与认证。UI 采用 **Element Plus**（中文语言包），数据页支持服务端分页、条件查询与 XLSX 导入导出。
+基于 **Vue 3 + Vite + TypeScript** 的 SPA 管理后台，用于用户管理与认证。UI 采用 **Element Plus**（中文语言包），数据页支持服务端分页与条件查询。
 
 ## 技术栈
 
@@ -12,7 +12,7 @@
 | 路由 | vue-router 5（全局鉴权守卫） |
 | 状态 | Pinia（已注册，当前业务未使用 store） |
 | HTTP | axios（统一拦截：Token 注入 / 响应解包 / 401 处理） |
-| 其他 | xlsx（Excel 导入导出）、Prettier、ESLint |
+| 其他 | Prettier（代码格式化） |
 
 ## 快速开始
 
@@ -43,7 +43,7 @@ frontend/
 │       ├── Login.vue           # 登录页 + 两步重置密码
 │       ├── Web.vue             # 后台布局（顶栏 + 左侧菜单）
 │       ├── MenuBar.vue         # 递归菜单组件
-│       └── data/data2.vue      # 用户管理页（CRUD + 分页 + XLSX）
+│       └── data/data2.vue      # 用户管理页（CRUD + 分页）
 ├── docs/struct.md              # 项目结构与 .gitignore 详细说明
 └── openspec/                   # 规范驱动开发目录
 ```
@@ -63,4 +63,4 @@ frontend/
 
 ## 后端
 
-后端代码位于 `../backend`（Express + Drizzle ORM，默认端口 `8080`）。开发模式下 Vite 将 `/api` 请求代理到 `http://localhost:8080`。
+后端代码位于 `../backend`（Spring Boot，context-path `/api`）。开发模式下 Vite 将 `/api` 请求代理到 `http://127.0.0.1:8080`（见 `vite.config.ts`）。

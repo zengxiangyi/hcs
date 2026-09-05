@@ -39,7 +39,7 @@
 | 文件 | 作用 |
 |------|------|
 | `index.html` | 应用入口 HTML。Vite 在构建时将 `/src/main.ts` 注入此文件，挂载点是 `<div id="app">`；`<link rel="icon" href="/favicon.svg">` 定义浏览器标签图标。 |
-| `package.json` | npm 项目描述文件（name: `page`）。声明脚本（`dev` / `build` / `preview`）与依赖（Vue、Element Plus、Pinia、vue-router、axios、xlsx 等）。 |
+| `package.json` | npm 项目描述文件（name: `page`）。声明脚本（`dev` / `build` / `build:war` / `preview`）与依赖（Vue、Element Plus、Pinia、vue-router、axios 等）。 |
 | `package-lock.json` | npm 自动生成的**精确依赖锁文件**，锁定依赖版本与依赖树，确保团队/CI 环境下安装一致。 |
 | `vite.config.ts` | Vite 构建配置：注册 `vue()` 与 `vueDevTools()` 插件；`unplugin-vue-components` + `ElementPlusResolver()` 按需自动导入 Element Plus 组件并生成 `components.d.ts`；`base: '/hcs/'`（部署到 Tomcat 的 hcs 目录，context-path `/hcs`）；开发代理 `/api` → `http://127.0.0.1:8080`。 |
 | `tsconfig.json` | TypeScript 根配置。采用 **Project References** 模式，仅作为容器，分别引用 `tsconfig.app.json` 和 `tsconfig.node.json`。 |
@@ -133,7 +133,7 @@
 | `src/components/Login.vue` | 登录页。表单提交登录（密码 MD5 加密），成功后保存 token 并跳转 `/web`；内含**两步重置密码对话框**：① 验证手机号 + 邮箱 → ② 设置新密码。 |
 | `src/components/Web.vue` | 认证后的**布局外壳**：顶部标题栏（欢迎语 + 当前用户 + 退出按钮）、左侧菜单（`MenuBar`）、右侧 `<router-view />` 渲染子页面。 |
 | `src/components/MenuBar.vue` | **递归菜单**组件。默认读取 `config/menu.json`，支持传入 `items` 属性；父级点击展开/收起，叶子节点 `router.push` 跳转。 |
-| `src/components/data/data2.vue` | **完整 CRUD 实现**：服务端分页 + 条件查询（姓名/角色/部门/状态）、新增/编辑对话框（表单校验）、删除、XLSX **导入**（按表头"姓名/角色/部门/状态"逐行新增）与**导出**（以 `pageSize: 99999` 拉全量后生成 xlsx）。 |
+| `src/components/data/data2.vue` | **完整 CRUD 实现**：服务端分页 + 条件查询（姓名/角色/部门/状态）、新增/编辑对话框（表单校验）、删除。 |
 
 ---
 
@@ -187,7 +187,7 @@ frontend/
         ├── Web.vue               # 后台布局外壳（顶栏 + 左侧菜单）
         ├── MenuBar.vue           # 递归菜单组件
         └── data/
-            └── data2.vue         # 完整 CRUD + 分页 + XLSX 导入导出
+            └── data2.vue         # 完整 CRUD + 分页
 ```
 
 ---
@@ -229,20 +229,17 @@ frontend/
 - **Vue** ^3.5.40（`<script setup>` SFC）
 - **Element Plus** ^2.14.4 + `@element-plus/icons-vue` ^2.3.2（UI 组件库，zh-cn 语言包）
 - **vue-router** ^5.2.0（路由）
-- **Pinia** ^4.0.3 + `pinia-plugin-persistedstate` ^4.7.1（状态管理；已在 `main.ts` 注册，但当前页面尚未使用 store）
+- **Pinia** ^4.0.3（状态管理；已在 `main.ts` 注册，但当前页面尚未使用 store）
 - **axios** ^1.19.0（HTTP 客户端）
-- **xlsx** ^0.18.5（Excel 导入导出，`data2.vue` 使用）
-- **bpmn-js** ^18.24.0、**echarts** ^6.1.0、**dayjs** ^1.11.21、**@vueuse/core** ^14.4.0（已声明，当前业务未使用）
 
 **构建 / 工具链：**
 - **Vite** ^8.2.0 + `@vitejs/plugin-vue` ^6.0.8
 - **TypeScript** ~6.0.2、**vue-tsc** ^3.3.8、**@vue/tsconfig** ^0.9.1、**@types/node** ^24.13.3
 - **unplugin-vue-components** ^32.1.0（自动导入 Element Plus 并生成 `components.d.ts`）、**unplugin-auto-import** ^21.1.0
 - **vite-plugin-vue-devtools** ^8.2.1（Vue DevTools）
-- **Prettier** 3.9.6、**eslint** ^10.8.1
-- **包管理**：npm（`package-lock.json` 存在）
+- **Prettier** 3.9.6
 
-> 注意：`package.json` 中**未配置**单元测试框架与 lint 脚本；`eslint` 仅作为依赖声明存在。
+> 注意：`package.json` 中**未配置**单元测试框架与 lint 脚本（仅含 Prettier 格式化配置）。
 
 ---
 
@@ -251,4 +248,3 @@ frontend/
 | 项目 | 说明 |
 |------|------|
 | `Login.vue` | 含 `debugger;` 调试语句（`handleLogin` 内），建议移除。 |
-| `package.json` 依赖 | `bpmn-js`、`echarts`、`@vueuse/core`、`dayjs` 已声明但当前业务未使用，可按需移除。 |
