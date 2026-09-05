@@ -190,8 +190,6 @@ MyBatis mapper（9 个，均有对应 XML）：BluePrint、ConstValue、SysRight
 | 文件 | 可信度 |
 |------|--------|
 | `DB/table/` | **schema 真源**（`page` 库 18 张表，一表一文件 + `README.md` 索引，由库中 `information_schema` 导出） |
-| `blue.md` | BluePrint 字段中文对照，可用 |
-| `tb.sql` | 建库脚本，**已过时** |
 | `plans/` | 历史评审报告与待执行 SQL |
 
 ---

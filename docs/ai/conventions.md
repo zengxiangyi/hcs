@@ -15,4 +15,4 @@
 
 - **`docs/structure.md` 是工作区结构真源**（结构以该文件为准）。
 - `backend/docs/DB/table/` = 数据库 schema 真源（`page` 库 18 张表，一表一文件 + `README.md` 索引）。
-- 已知过时文档：`backend/docs/tb.sql`（建库脚本，以 `DB/table/` 为准）；`frontend/docs/struct.md`（结构部分过时，描述的 `src/api/base.ts`、`data/data2.vue` 已不存在）。
+- 已知过时文档：`frontend/docs/struct.md`（结构部分过时，描述的 `src/api/base.ts`、`data/data2.vue` 已不存在）。
