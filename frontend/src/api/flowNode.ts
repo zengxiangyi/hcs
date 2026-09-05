@@ -1,5 +1,5 @@
 import http from './http'
-import type { ApiResponse } from './http'
+import type { ApiResponse, PageResult } from './http'
 
 /** 流程节点行（对齐后端 FlowNode 实体 / flownode 表） */
 export interface FlowNode {
@@ -15,11 +15,14 @@ export interface FlowNode {
   category: string
   /** 节点形状：rect/round/diamond/circle */
   shape: string
-  /** 坐标（唯一保留大写的四列：X/Y/W/H） */
-  X: string
-  Y: string
-  W: string
-  H: string
+  /**
+   * 坐标/尺寸（JSON 键为小写 x/y/w/h——Java 属性名来自 getX() 等标准 getter；
+   * 大写 X/Y/W/H 仅是 DB 列名）。前端读写必须用小写。
+   */
+  x: string
+  y: string
+  w: string
+  h: string
   /** 节点颜色 */
   color: string
   /** 操作人 */
@@ -34,40 +37,26 @@ export interface FlowNode {
 export type FlowNodeSaveDTO = Omit<FlowNode, 'id'> & { id?: number }
 
 /** 分页返回 */
-export interface FlowNodeListResult {
-  content: FlowNode[]
-  total: number
-  page: number
-  pageSize: number
-}
+export type FlowNodeListResult = PageResult<FlowNode>
 
 /** 流程节点接口（FlowNodeController /flowNode） */
 export const flowNodeAPI = {
-  /** 分页列表（1 基 page） */
-  list: (page = 1, size = 10): Promise<ApiResponse<FlowNodeListResult>> =>
-    http.get<FlowNodeListResult>(`/api/flowNode/list?page=${page}&size=${size}`),
-
-  /** 按 id 查询 */
-  get: (id: number): Promise<ApiResponse<FlowNode>> =>
-    http.get<FlowNode>(`/api/flowNode/${id}`),
-
   /** 按流程图编码查询节点列表 */
   listByFlowGraph: (flowGraph: string): Promise<ApiResponse<FlowNode[]>> =>
-    http.get<FlowNode[]>(`/api/flowNode/flowGraph/${flowGraph}`),
+    http.get<FlowNode[]>(`/api/flowNode/flowGraph/${encodeURIComponent(flowGraph)}`),
 
   /** 新增节点 */
   save: (data: FlowNodeSaveDTO): Promise<ApiResponse<FlowNode>> =>
     http.post<FlowNode>('/api/flowNode/save', data),
 
-  /** 编辑节点（按 id 更新，id 必填） */
+  /**
+   * 编辑节点。注意：后端按 flowGraph+code 匹配（不使用 id），匹配不到时静默不落库；
+   * 因此不能用于改 code 的场景（code 在设计器中编辑态只读）。
+   */
   update: (data: FlowNodeSaveDTO): Promise<ApiResponse<FlowNode>> =>
     http.put<FlowNode>('/api/flowNode/update', data),
 
-  /** 删除节点（按 id） */
+  /** 删除节点（按 id，后端级联删除两端连线） */
   remove: (id: number | string): Promise<ApiResponse<null>> =>
     http.delete<null>(`/api/flowNode/${id}`),
-
-  /** 按节点分类查询 */
-  listByCategory: (category: string): Promise<ApiResponse<FlowNode[]>> =>
-    http.get<FlowNode[]>(`/api/flowNode/category/${category}`),
 }

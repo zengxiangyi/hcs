@@ -1,4 +1,5 @@
 import http from './http'
+import type { PageResult } from './http'
 
 /** 常量值行（对齐 mock.ts 的 ConstValue 结构） */
 export interface ConstValueRow {
@@ -25,12 +26,7 @@ export interface ConstValueListParams {
 }
 
 /** 常量值列表返回 */
-export interface ConstValueListResult {
-  content: ConstValueRow[]
-  total: number
-  page: number
-  pageSize: number
-}
+export type ConstValueListResult = PageResult<ConstValueRow>
 
 /** 常量值新增/修改入参 */
 export interface ConstValueSaveParams {

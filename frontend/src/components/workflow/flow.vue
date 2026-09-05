@@ -27,8 +27,8 @@ const form = ref<FlowGraphSaveDTO>({
   id: 0,
   flowGraph: '',
   title: '',
-  width: 0,
-  height: 0,
+  width: '',
+  height: '',
   remark: '',
 })
 
@@ -83,7 +83,7 @@ function onSizeChange(s: number) {
 /** 打开新增弹窗 */
 function openAdd() {
   dialogTitle.value = '新增流程图'
-  form.value = { id: 0, flowGraph: '', title: '', width: 0, height: 0, remark: '' }
+  form.value = { id: 0, flowGraph: '', title: '', width: '', height: '', remark: '' }
   dialogVisible.value = true
 }
 
@@ -195,10 +195,10 @@ onMounted(loadList)
           <el-input v-model="form.title" placeholder="请输入标题" clearable />
         </el-form-item>
         <el-form-item label="宽度">
-          <el-input-number v-model="form.width" :min="0" />
+          <el-input v-model="form.width" placeholder="请输入宽度" clearable />
         </el-form-item>
         <el-form-item label="高度">
-          <el-input-number v-model="form.height" :min="0" />
+          <el-input v-model="form.height" placeholder="请输入高度" clearable />
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注" />

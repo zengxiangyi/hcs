@@ -1,4 +1,5 @@
 import http from './http'
+import type { PageResult } from './http'
 
 /** 角色行（对齐后端 SysRole 实体 / sysrole 表） */
 export interface RoleRow {
@@ -23,12 +24,7 @@ export interface RoleListParams {
 }
 
 /** 角色列表返回 */
-export interface RoleListResult {
-  content: RoleRow[]
-  total: number
-  page: number
-  pageSize: number
-}
+export type RoleListResult = PageResult<RoleRow>
 
 /** 角色新增/修改入参 */
 export interface RoleSaveParams {
@@ -43,16 +39,10 @@ export interface RoleSaveParams {
 export const roleAPI = {
   /** 角色列表（服务端分页） */
   search: (params?: RoleListParams) => http.post<RoleListResult>('/api/sysRole/search', params),
-  /** 按 id 查询 */
-  get: (id: number) => http.get<RoleRow>(`/api/sysRole/${id}`),
-  /** 按编码查询 */
-  getByCode: (code: string) => http.get<RoleRow>(`/api/sysRole/code/${code}`),
-  /** 按分类查询 */
-  listByCategory: (category: string) => http.get<RoleRow[]>(`/api/sysRole/category/${category}`),
   /** 新增角色 */
   add: (data: RoleSaveParams) => http.post<RoleRow>('/api/sysRole/save', data),
   /** 修改角色（路由统一为 PUT /update，id 由请求体携带） */
   update: (id: number, data: RoleSaveParams) => http.put<RoleRow>('/api/sysRole/update', { ...data, id }),
   /** 删除角色（按编码级联删除权限/用户绑定） */
-  remove: (code: string) => http.delete<string>(`/api/sysRole/code/${code}`),
+  remove: (code: string) => http.delete<string>(`/api/sysRole/code/${encodeURIComponent(code)}`),
 }

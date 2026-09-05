@@ -31,7 +31,8 @@ async function handleLogin() {
     localStorage.setItem('token', data.token)
     localStorage.setItem('user', JSON.stringify(data.user))
     // 登录后把后端下发的权限列表持久化到 localStorage，供路由守卫/菜单过滤恢复使用
-    setCurrentUser(data.rights)
+    // 无角色用户后端不下发 rights（null），需兜底为空数组
+    setCurrentUser(data.rights ?? [])
     ElMessage.success('登录成功')
     router.push('/web')
   } catch (err: any) {
@@ -48,6 +49,7 @@ async function handleLogin() {
 // ===== 重置密码 =====
 const resetDialogVisible = ref(false)
 const resetStep = ref(1) // 1=验证身份，2=设置新密码
+const resetUsername = ref('')
 const resetCellphone = ref('')
 const resetEmail = ref('')
 const newPassword = ref('')
@@ -57,6 +59,7 @@ const resetLoading = ref(false)
 
 function openResetDialog() {
   resetStep.value = 1
+  resetUsername.value = ''
   resetCellphone.value = ''
   resetEmail.value = ''
   newPassword.value = ''
@@ -67,8 +70,8 @@ function openResetDialog() {
 const EMAIL_REG = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 async function handleVerify() {
-  if (!resetCellphone.value.trim() || !resetEmail.value.trim()) {
-    ElMessage.warning('请输入手机号和邮箱地址')
+  if (!resetUsername.value.trim() || !resetCellphone.value.trim() || !resetEmail.value.trim()) {
+    ElMessage.warning('请输入用户名、手机号和邮箱地址')
     return
   }
   if (!EMAIL_REG.test(resetEmail.value.trim())) {
@@ -77,7 +80,9 @@ async function handleVerify() {
   }
   verifyLoading.value = true
   try {
+    // 后端 /auth/verify 要求 username+email+cellphone 三者全部匹配
     await baseAPI.verifyIdentity({
+      username: resetUsername.value.trim(),
       cellphone: resetCellphone.value.trim(),
       email: resetEmail.value.trim(),
     })
@@ -108,15 +113,16 @@ async function handleReset() {
   }
   resetLoading.value = true
   try {
+    // 后端 /auth/resetPassword 只收 username + password
     await baseAPI.resetPassword({
-      cellphone: resetCellphone.value,
-      email: resetEmail.value,
-      newPassword: md5(newPwd),
+      username: resetUsername.value.trim(),
+      password: md5(newPwd),
     })
     ElMessage.success('密码重置成功，请使用新密码登录')
     resetDialogVisible.value = false
     // 关闭弹窗后清空表单字段，避免下次打开时残留数据
     resetStep.value = 1
+    resetUsername.value = ''
     resetCellphone.value = ''
     resetEmail.value = ''
     newPassword.value = ''
@@ -248,7 +254,15 @@ async function handleRegister() {
     >
       <!-- 第一步：验证身份 -->
       <div v-if="resetStep === 1" class="reset-form">
-        <p class="reset-tip">请输入注册时填写的手机号和邮箱地址进行验证</p>
+        <p class="reset-tip">请输入注册时的用户名及填写的手机号、邮箱地址进行验证</p>
+        <input
+          v-model="resetUsername"
+          class="login-input"
+          type="text"
+          placeholder="用户名"
+          autocomplete="username"
+          aria-label="用户名"
+        />
         <input
           v-model="resetCellphone"
           class="login-input"

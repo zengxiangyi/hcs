@@ -1,4 +1,5 @@
 import http from './http'
+import type { PageResult } from './http'
 
 /** 权限行（对齐后端 SysRight 实体 / sysright 表） */
 export interface RightRow {
@@ -25,19 +26,15 @@ export interface RightListParams {
 }
 
 /** 权限列表返回 */
-export interface RightListResult {
-  content: RightRow[]
-  total: number
-  page: number
-  pageSize: number
-}
+export type RightListResult = PageResult<RightRow>
 
-/** 权限新增/修改入参 */
+/** 权限新增/修改入参（后端 update 为全量同步，漏传 parent 会把父级清空） */
 export interface RightSaveParams {
   id?: number
   code: string
   name: string
   category: string
+  parent?: string
   remark?: string
 }
 
@@ -45,16 +42,10 @@ export interface RightSaveParams {
 export const rightAPI = {
   /** 权限列表（服务端分页） */
   search: (params?: RightListParams) => http.post<RightListResult>('/api/sysRight/search', params),
-  /** 按 id 查询 */
-  get: (id: number) => http.get<RightRow>(`/api/sysRight/${id}`),
-  /** 按编码查询 */
-  getByCode: (code: string) => http.get<RightRow>(`/api/sysRight/code/${code}`),
-  /** 按分类查询 */
-  listByCategory: (category: string) => http.get<RightRow[]>(`/api/sysRight/category/${category}`),
   /** 新增权限 */
   add: (data: RightSaveParams) => http.post<RightRow>('/api/sysRight/save', data),
   /** 修改权限（路由统一为 PUT /update，id 由请求体携带） */
   update: (id: number, data: RightSaveParams) => http.put<RightRow>('/api/sysRight/update', { ...data, id }),
   /** 删除权限（按编码级联删除角色权限绑定） */
-  remove: (code: string) => http.delete<string>(`/api/sysRight/code/${code}`),
+  remove: (code: string) => http.delete<string>(`/api/sysRight/code/${encodeURIComponent(code)}`),
 }

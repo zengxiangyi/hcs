@@ -1,4 +1,5 @@
 import http from './http'
+import type { PageResult } from './http'
 
 /** 蓝本行（对齐后端 BluePrint 实体 / blueprint 表） */
 export interface BluePrintRow {
@@ -9,14 +10,19 @@ export interface BluePrintRow {
   firstLevel: string
   secondLevel: string
   materialName: string
-  weight: number
+  /** 单重（后端 varchar(100)，序列化为字符串） */
+  weight: string
   materialCode: string
   isFirstCheck: string
-  category: string
   busbarNum: string
   testNum: string
   coolTime: string
-  hardendeep: string
+  /** 硬化层深度(mm) */
+  hardnessDepth: string
+  /** 首检硬度要求 */
+  firstHardness: string
+  /** 完工检硬度要求 */
+  lastHardness: string
   chamfer: string
   fallHead: string
   quenching: string
@@ -43,20 +49,7 @@ export interface BluePrintListParams {
 }
 
 /** 蓝本列表返回 */
-export interface BluePrintListResult {
-  content: BluePrintRow[]
-  total: number
-  page: number
-  pageSize: number
-}
-
-/** 编制模板动态表格行 */
-export interface TechTemplateRow {
-  segNo: string
-  temp: string
-  time: string
-  remark: string
-}
+export type BluePrintListResult = PageResult<BluePrintRow>
 
 /** 工艺看板保存入参（工艺看板页面的蓝本编辑结构） */
 export interface TechBoardSaveDTO {
@@ -114,27 +107,19 @@ export const blueprintAPI = {
   search: (params?: BluePrintListParams) =>
     http.post<BluePrintListResult>('/api/blueprint/search', params),
 
-  /** 新增蓝本（后端固定 edition=V1、state=A） */
+  /** 新增蓝本（后端固定 edition=V1、state=A；(code,edition) 重复时后端 400） */
   save: (data: TechBoardSaveDTO) =>
     http.post<BluePrintRow>('/api/blueprint/save', data),
 
-  /** 修改蓝本（id 由请求体携带；submit 复用此接口） */
+  /** 修改蓝本（id 必填，由请求体携带） */
   update: (data: Partial<TechBoardSaveDTO> & { id: number }) =>
     http.put<BluePrintRow>('/api/blueprint/update', data),
 
-  /** 提交蓝本（后端无独立 submit 端点，复用 PUT /update） */
-  submit: (data: Partial<TechBoardSaveDTO> & { id: number }) =>
-    http.put<BluePrintRow>('/api/blueprint/update', data),
-
-  /** 按蓝本编号查询全部版本 */
-  getByCode: (code: string) =>
-    http.get<BluePrintRow[]>(`/api/blueprint/code/${code}`),
-
   /** 按编号 + 版本查询（原 techAPI.getByCode） */
   getByCodeAndEdition: (code: string, edition: string) =>
-    http.get<BluePrintRow>(`/api/blueprint/code/${code}/${edition}`),
+    http.get<BluePrintRow>(`/api/blueprint/code/${encodeURIComponent(code)}/${encodeURIComponent(edition)}`),
 
   /** 删除蓝本（按编号 + 版本） */
   remove: (code: string, edition: string) =>
-    http.delete<string>(`/api/blueprint/code/${code}/${edition}`),
+    http.delete<string>(`/api/blueprint/code/${encodeURIComponent(code)}/${encodeURIComponent(edition)}`),
 }

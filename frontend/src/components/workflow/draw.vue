@@ -56,10 +56,10 @@ function createNode(): FlowNode {
     name: '',
     category: 'T',
     shape: 'RECT',
-    X: "0",
-    Y: "0",
-    W: "100",
-    H: "50",
+    x: "0",
+    y: "0",
+    w: "100",
+    h: "50",
     color: '#409EFF',
     operator: '',
     roleList: '',
@@ -286,7 +286,7 @@ function parsePoint(value: string | undefined, fallback: number): number {
 
 /**
  * 依据 nodes.value / edges.value 数据绘制流程图。
- * 节点通过 code 互连，坐标取自 X/Y，尺寸取自 W/H，形状取自 shape。
+ * 节点通过 code 互连，坐标取自 x/y，尺寸取自 w/h，形状取自 shape。
  */
 async function renderCanvas() {
   const canvas = document.getElementById('flow-canvas') as HTMLCanvasElement
@@ -301,10 +301,10 @@ async function renderCanvas() {
   const DEFAULT_W = 120
   const DEFAULT_H = 60
   const positions = nodes.value.map((n) => ({
-    x: parsePoint(n.X, 50),
-    y: parsePoint(n.Y, 50),
-    w: parseNum(n.W, DEFAULT_W),
-    h: parseNum(n.H, DEFAULT_H),
+    x: parsePoint(n.x, 50),
+    y: parsePoint(n.y, 50),
+    w: parseNum(n.w, DEFAULT_W),
+    h: parseNum(n.h, DEFAULT_H),
   }))
 
   let WIDTH = 0
@@ -361,10 +361,10 @@ function traceNodePath(ctx: CanvasRenderingContext2D, node: FlowNode, x: number,
 
 /** 绘制节点（支持透明度参数） */
 function renderNode(ctx: CanvasRenderingContext2D, node: FlowNode, DEFAULT_W: number, DEFAULT_H: number, alpha = 1.0) {
-  const x = parsePoint(node.X, 50)
-  const y = parsePoint(node.Y, 50)
-  const w = parseNum(node.W, DEFAULT_W)
-  const h = parseNum(node.H, DEFAULT_H)
+  const x = parsePoint(node.x, 50)
+  const y = parsePoint(node.y, 50)
+  const w = parseNum(node.w, DEFAULT_W)
+  const h = parseNum(node.h, DEFAULT_H)
   const text = node.name || node.code || '-'
   const color = node.color || '#409EFF'
 
@@ -401,11 +401,9 @@ async function removeNode(index: number){
   // 先按对象引用收集待级联删除的连线，避免按 code 过滤时误删其它节点的连线
   const related = new Set(edges.value.filter(e => e.fromNode === row.code || e.toNode === row.code))
   try {
-    // 本地新增行 id = -1 尚未落库，跳过后端请求
-    if (row.id > 0) await flowNodeAPI.remove(String(row.id))
-    for (const e of related) {
-      if (e.id > 0) await flowEdgeAPI.remove(String(e.id))
-    }
+    // 本地新增行 id = -1 尚未落库，跳过后端请求。
+    // 后端 deleteById 已级联删除两端连线，不能再逐条补删（会对已删 id 撞 404）
+    if (row.id > 0) await flowNodeAPI.remove(row.id)
   } catch (err) {
     // 后端删除失败时不改本地数据，保证界面与库一致
     ElMessage.error((err as Error).message || '删除失败')
@@ -420,7 +418,7 @@ async function removeEdge(index: number){
   const row = edges.value[index]
   if (!row) return
   try {
-    if (row.id > 0) await flowEdgeAPI.remove(String(row.id))
+    if (row.id > 0) await flowEdgeAPI.remove(row.id)
   } catch (err) {
     ElMessage.error((err as Error).message || '删除失败')
     return
@@ -473,15 +471,15 @@ function renderEdge(
   const toNode = nodes.find((n) => n.code === edge.toNode)
   if (!fromNode || !toNode) return
 
-  const fromW = parseNum(fromNode.W, DEFAULT_W)
-  const fromH = parseNum(fromNode.H, DEFAULT_H)
-  const toH = parseNum(toNode.H, DEFAULT_H)
+  const fromW = parseNum(fromNode.w, DEFAULT_W)
+  const fromH = parseNum(fromNode.h, DEFAULT_H)
+  const toH = parseNum(toNode.h, DEFAULT_H)
 
   // 起点取 from 节点右边缘中点，终点取 to 节点左边缘中点
-  const startX = parsePoint(fromNode.X, 50) + fromW
-  const startY = parsePoint(fromNode.Y, 50) + fromH / 2
-  const endX = parsePoint(toNode.X, 50)
-  const endY = parsePoint(toNode.Y, 50) + toH / 2
+  const startX = parsePoint(fromNode.x, 50) + fromW
+  const startY = parsePoint(fromNode.y, 50) + fromH / 2
+  const endX = parsePoint(toNode.x, 50)
+  const endY = parsePoint(toNode.y, 50) + toH / 2
 
   const color = edge.color || '#67C23A'
   // 使用 axis 折线坐标（若有），否则绘制直线
@@ -557,10 +555,10 @@ watch(flowGraph, load)
         <el-table-column label="分类" width="100">
           <template #default="{ row }">{{ optionLabel(categoryOptions, row.category) }}</template>
         </el-table-column>
-        <el-table-column prop="X" label="X坐标" width="60" show-overflow-tooltip />
-        <el-table-column prop="Y" label="Y坐标" width="60" show-overflow-tooltip />
-        <el-table-column prop="W" label="宽度" width="60" show-overflow-tooltip />
-        <el-table-column prop="H" label="高度" width="60" show-overflow-tooltip />
+        <el-table-column prop="x" label="X坐标" width="60" show-overflow-tooltip />
+        <el-table-column prop="y" label="Y坐标" width="60" show-overflow-tooltip />
+        <el-table-column prop="w" label="宽度" width="60" show-overflow-tooltip />
+        <el-table-column prop="h" label="高度" width="60" show-overflow-tooltip />
         <el-table-column label="图形" width="80">
           <template #default="{ row }">{{ optionLabel(shapeOptions, row.shape) }}</template>
         </el-table-column>
@@ -646,16 +644,16 @@ watch(flowGraph, load)
           </el-select>
         </el-form-item>
         <el-form-item label="X坐标">
-          <el-input v-model="nodeForm.X" placeholder="请输入" clearable />
+          <el-input v-model="nodeForm.x" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item label="Y坐标">
-          <el-input v-model="nodeForm.Y" placeholder="请输入" clearable />
+          <el-input v-model="nodeForm.y" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item label="宽度">
-          <el-input v-model="nodeForm.W" placeholder="请输入" clearable />
+          <el-input v-model="nodeForm.w" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item label="高度">
-          <el-input v-model="nodeForm.H" placeholder="请输入" clearable />
+          <el-input v-model="nodeForm.h" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item label="颜色">
           <el-color-picker v-model="nodeForm.color" />

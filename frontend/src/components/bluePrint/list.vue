@@ -198,7 +198,7 @@ async function handleDelete(row: BluePrintRow) {
     return
   }
   try {
-    await blueprintAPI.delete(row.code,row.edition)
+    await blueprintAPI.remove(row.code,row.edition)
     ElMessage.success(`已删除：${row.code}`)
     // 删除当前页最后一条时回退一页
     if (tableData.value.length === 1 && currentPage.value > 1) {
@@ -288,8 +288,8 @@ onMounted(fetchData)
       <el-table-column prop="weight" label="单重" width="100" />
   
       <el-table-column prop="isFirstCheck" label="是否首检" width="100" />
-      <el-table-column prop="firstCheckHardness" label="首检硬度要求" width="120" />
-      <el-table-column prop="lastCheckHardness" label="完工硬度要求" width="120" />
+      <el-table-column prop="firstHardness" label="首检硬度要求" width="120" />
+      <el-table-column prop="lastHardness" label="完工硬度要求" width="120" />
       <el-table-column prop="busbarNum" label="母线数量" width="100" />
       <el-table-column prop="testNum" label="测点数量" width="110" />
       <el-table-column prop="coolTime" label="冷却时间" width="100" />

@@ -1,5 +1,5 @@
 import http from './http'
-import type { ApiResponse } from './http'
+import type { ApiResponse, PageResult } from './http'
 
 /** 流程图（表头）行（对齐后端 FlowGraph 实体 / flowgraph 表） */
 export interface FlowGraphRow {
@@ -9,16 +9,16 @@ export interface FlowGraphRow {
   flowGraph: string
   /** 标题 */
   title: string
-  /** 宽度 */
-  width: number
-  /** 高度 */
-  height: number
+  /** 宽度（后端 varchar，序列化为字符串） */
+  width: string
+  /** 高度（后端 varchar，序列化为字符串） */
+  height: string
   /** 备注 */
   remark: string
 }
 
-/** 流程图保存/编辑入参（edit 时 id 必填） */
-export type FlowGraphSaveDTO = FlowGraphRow
+/** 流程图新增入参（编辑时需携带 id） */
+export type FlowGraphSaveDTO = Omit<FlowGraphRow, 'id'> & { id?: number }
 
 /** 流程图查询参数（POST /search 请求体，分页 1 基） */
 export interface FlowGraphQuery {
@@ -29,12 +29,7 @@ export interface FlowGraphQuery {
 }
 
 /** 分页返回 */
-export interface FlowGraphListResult {
-  content: FlowGraphRow[]
-  total: number
-  page: number
-  pageSize: number
-}
+export type FlowGraphListResult = PageResult<FlowGraphRow>
 
 /** 流程图接口（FlowGraphController /flowGraph） */
 export const flowGraphAPI = {
@@ -42,23 +37,15 @@ export const flowGraphAPI = {
   search: (params?: FlowGraphQuery): Promise<ApiResponse<FlowGraphListResult>> =>
     http.post<FlowGraphListResult>('/api/flowGraph/search', params),
 
-  /** 按 id 查询 */
-  get: (id: number): Promise<ApiResponse<FlowGraphRow>> =>
-    http.get<FlowGraphRow>(`/api/flowGraph/${id}`),
-
-  /** 按流程图编码查询（取第一条，不存在抛 404） */
-  getByFlowGraph: (flowGraph: string): Promise<ApiResponse<FlowGraphRow>> =>
-    http.get<FlowGraphRow>(`/api/flowGraph/flowGraph/${flowGraph}`),
-
-  /** 新增流程图 */
+  /** 新增流程图（后端忽略 id） */
   save: (data: FlowGraphSaveDTO): Promise<ApiResponse<FlowGraphRow>> =>
     http.post<FlowGraphRow>('/api/flowGraph/save', data),
 
   /** 编辑流程图（id 必填） */
-  update: (data: FlowGraphSaveDTO): Promise<ApiResponse<FlowGraphRow>> =>
+  update: (data: FlowGraphSaveDTO & { id: number }): Promise<ApiResponse<FlowGraphRow>> =>
     http.put<FlowGraphRow>('/api/flowGraph/update', data),
 
-  /** 删除流程图（按 id） */
+  /** 删除流程图（按 id，后端级联删除节点与连线） */
   remove: (id: number): Promise<ApiResponse<null>> =>
     http.delete<null>(`/api/flowGraph/${id}`),
 }

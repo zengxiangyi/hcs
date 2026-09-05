@@ -3,25 +3,11 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
-import { workflowAPI } from '../../api/workflow'
+import { workflowAPI, type WorkflowRow } from '../../api/workflow'
 
 defineOptions({ name: 'Send' })
 
 const router = useRouter()
-/** workflow 行信息 */
-interface WorkFlowRow {
-  id: number
-  code: string
-  name: string
-  category: string
-  targetCode: string
-  sender: string
-  startTime: string
-  state: string
-  flowGraph: string
-  endTime: string
-  remark: string
-}
 
 /** 从 catch 的错误对象中提取用户可读信息 */
 function getErrorMessage(err: unknown, fallback: string): string {
@@ -38,7 +24,7 @@ const query = ref<{
 })
 
 // 表格数据 + 分页
-const tableData = ref<WorkFlowRow[]>([])
+const tableData = ref<WorkflowRow[]>([])
 const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -80,8 +66,15 @@ async function fetchData() {
   try {
     // 后端 GET /sender 不接收查询参数，处理人取自当前登录用户，固定返回前 30 条
     const res = await workflowAPI.sender()
-    tableData.value = res.data.content
-    total.value = res.data.total
+    // 用户无实例时后端可能返回 data: null
+    const data = res.data
+    if (!data) {
+      tableData.value = []
+      total.value = 0
+      return
+    }
+    tableData.value = data.content
+    total.value = data.total
   } catch (err) {
     ElMessage.error(getErrorMessage(err, '获取数据失败'))
   } finally {
@@ -109,7 +102,7 @@ function handleSizeChange() {
   fetchData()
 }
 
-async function handleCancel(row: WorkFlowRow){
+async function handleCancel(row: WorkflowRow){
   // 撤销：后端无 /approve 端点，走 PUT /workflow/update 变更状态为 C（已取消）
   try {
     await workflowAPI.update({ ...row, state: 'C' })
@@ -120,7 +113,7 @@ async function handleCancel(row: WorkFlowRow){
   }
 }
 
-async function handleClose(row: WorkFlowRow){
+async function handleClose(row: WorkflowRow){
   // 作废：变更状态为 D
   row.state='D'
   try {
@@ -132,7 +125,7 @@ async function handleClose(row: WorkFlowRow){
   }
 }
 
-async function handleDrop(row: WorkFlowRow){
+async function handleDrop(row: WorkflowRow){
   // 删除流程实例（DELETE /workflow/{id}）
   try {
     await workflowAPI.remove(row.id)
@@ -144,7 +137,7 @@ async function handleDrop(row: WorkFlowRow){
 }
 
 // 查看：携带流程编号跳转到 instance.vue
-function seeProcess(row: WorkFlowRow) {
+function seeProcess(row: WorkflowRow) {
   router.push({ name: 'Instance', query: { workflow: row.code } })
 }
 
@@ -204,10 +197,10 @@ onMounted(fetchData)
       <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="success" @click="seeProcess(row as WorkFlowRow)">查看</el-button>
-          <el-button size="small" v-if="row.state==='A'" type="warning" @click="handleCancel(row as WorkFlowRow)">撤销</el-button>
-          <el-button size="small" v-if="row.state==='C'" type="warning" @click="handleClose(row as WorkFlowRow)">作废</el-button>
-          <el-button size="small" v-if="row.state==='D'" type="warning" @click="handleDrop(row as WorkFlowRow)">删除</el-button>
+          <el-button size="small" type="success" @click="seeProcess(row as WorkflowRow)">查看</el-button>
+          <el-button size="small" v-if="row.state==='A'" type="warning" @click="handleCancel(row as WorkflowRow)">撤销</el-button>
+          <el-button size="small" v-if="row.state==='C'" type="warning" @click="handleClose(row as WorkflowRow)">作废</el-button>
+          <el-button size="small" v-if="row.state==='D'" type="warning" @click="handleDrop(row as WorkflowRow)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

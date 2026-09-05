@@ -1,5 +1,4 @@
 import http from './http'
-import type { ApiResponse } from './http'
 
 /** 用户信息 */
 export interface UserInfo {
@@ -18,12 +17,13 @@ export interface LoginParams {
 export interface LoginResult {
   token: string
   user: UserInfo
-  rights: string[]
-  roles: string[]
+  /** 无角色用户登录时后端不下发，可能为 null */
+  rights?: string[]
+  /** 无角色用户登录时后端不下发，可能为 null */
+  roles?: string[]
 }
 
-
-/** 重置密码：身份验证入参（后端按 username + email + cellphone 校验） */
+/** 重置密码：身份验证入参（后端按 username + email + cellphone 全部校验） */
 export interface VerifyIdentityParams {
   username: string
   cellphone: string
@@ -47,17 +47,17 @@ export interface RegisterParams {
 export const baseAPI = {
   /** 登录 */
   login: (data: LoginParams): Promise<ApiResponse<LoginResult>> =>
-    http.post<LoginResult>('/api/auth/login', data) as Promise<ApiResponse<LoginResult>>,
+    http.post<LoginResult>('/api/auth/login', data),
 
-  /** 重置密码：验证用户名 + 邮箱 + 手机号是否匹配 */
+  /** 重置密码第一步：验证用户名 + 邮箱 + 手机号是否匹配 */
   verifyIdentity: (data: VerifyIdentityParams): Promise<ApiResponse<string>> =>
-    http.post<string>('/api/auth/verify', data) as Promise<ApiResponse<string>>,
+    http.post<string>('/api/auth/verify', data),
 
-  /** 重置密码：验证通过后设置新密码 */
+  /** 重置密码第二步：验证通过后设置新密码 */
   resetPassword: (data: ResetPasswordParams): Promise<ApiResponse<string>> =>
-    http.post<string>('/api/auth/resetPassword', data) as Promise<ApiResponse<string>>,
-  
+    http.post<string>('/api/auth/resetPassword', data),
+
   /** 注册新账号 */
   register: (data: RegisterParams): Promise<ApiResponse<string>> =>
-    http.post<string>('/api/auth/register', data) as Promise<ApiResponse<string>>,
+    http.post<string>('/api/auth/register', data),
 }

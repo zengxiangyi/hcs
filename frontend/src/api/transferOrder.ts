@@ -1,4 +1,5 @@
 import http from './http'
+import type { PageResult } from './http'
 
 /** 调拨单查询参数（POST /search 请求体，分页 1 基） */
 export interface TransferQueryParams {
@@ -10,12 +11,7 @@ export interface TransferQueryParams {
 }
 
 /** 调拨单列表返回 */
-export interface TransferListResult {
-  content: TransferRow[]
-  total: number
-  page: number
-  pageSize: number
-}
+export type TransferListResult = PageResult<TransferRow>
 
 /** 新增/编辑调拨单入参（与后端表结构对齐） */
 export interface TransferCreateParams {
@@ -25,8 +21,8 @@ export interface TransferCreateParams {
   category: string       // 调拨类型
   transferDate: string   // 调拨日期
   materialCode: string   // 物料编码
-  num: number            // 数量
-  weight: number         // 单重
+  num: string            // 数量（后端 varchar(100)）
+  weight: string         // 单重（后端 varchar(100)）
   material: string       // 材质
   rollNum: string        // 辊号
   outProcess: string     // 调出工序组
@@ -42,9 +38,11 @@ export interface TransferCreateParams {
   state: string          // 状态
 }
 
-/** 调拨单行（与后端表结构对齐，含接收信息） */
-export interface TransferRow extends TransferCreateParams {
+/** 调拨单行（与后端表结构对齐，含接收信息；num/weight 后端序列化为字符串） */
+export interface TransferRow extends Omit<TransferCreateParams, 'num' | 'weight'> {
   id: number             // 调拨单id
+  num: string            // 数量
+  weight: string         // 单重
   receiveUser: string    // 接收人
   receiveTime: string    // 接收时间
 }
@@ -55,25 +53,15 @@ export const transferAPI = {
   search: (params?: TransferQueryParams) =>
     http.post<TransferListResult>('/api/transfer/search', params),
 
-  /** 分页列表（query 参数 page/size） */
-  list: (page = 1, size = 10) =>
-    http.get<TransferListResult>(`/api/transfer/list?page=${page}&size=${size}`),
-
-  /** 按 id 查询 */
-  get: (id: number) => http.get<TransferRow>(`/api/transfer/${id}`),
-
-  /** 按调拨单号查询（可能多行） */
-  getByCode: (code: string) => http.get<TransferRow[]>(`/api/transfer/code/${code}`),
-
   /** 新增调拨单 */
   create: (data: TransferCreateParams) =>
     http.post<TransferRow>('/api/transfer/save', data),
 
-  /** 编辑调拨单（id 由请求体携带） */
-  update: (data: TransferCreateParams) =>
+  /** 编辑调拨单（id 必填，由请求体携带） */
+  update: (data: TransferCreateParams & { id: number }) =>
     http.put<TransferRow>('/api/transfer/update', data),
 
   /** 删除调拨单（按 id） */
-  delete: (id: number) =>
+  remove: (id: number) =>
     http.delete<string>(`/api/transfer/${id}`),
 }

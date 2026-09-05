@@ -1,18 +1,26 @@
 /**
  * Axios HTTP 客户端 — 统一请求/响应拦截
  */
-import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosError, type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 
-/** 后端统一响应包装结构（按实际后端约定调整） */
+/** 后端统一响应包装结构（对齐 com.baogang.info.common.ApiResponse） */
 export interface ApiResponse<T = unknown> {
   code: number
   data: T
   message: string
 }
 
+/** 后端统一分页返回结构（对齐 com.baogang.info.common.PageResult，page 为 1 基页码） */
+export interface PageResult<T> {
+  content: T[]
+  total: number
+  page: number
+  size: number
+}
+
 const http = axios.create({
   // ⚠ 注意：src/api/*.ts 中的路径已自带 /api 前缀（如 '/api/auth/login'），
-  // 与后端 Fastify 的路由定义一一对应。因此这里只能配「后端 origin 根」
+  // 与后端 Spring Boot 的路由定义一一对应。因此这里只能配「后端 origin 根」
   // （如 http://<后端IP>:8080 或同源时的 '/'），不能再带 /api，否则会拼成 /api/api/...。
   baseURL: import.meta.env.VITE_API_BASE_URL || '/',
   timeout: 300000,
@@ -63,7 +71,7 @@ function redirectToLogin(): void {
 http.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
     const res = response.data
-    // 按后端约定判断业务码，此处以 code === 200 为例
+    // 业务码非 200 视为失败（HTTP 200 + body code 400 的 Auth/绑定类业务校验走此通道）
     if (res && res.code !== undefined && res.code !== 200) {
       return Promise.reject(new Error(res.message || '业务处理失败'))
     }
@@ -76,7 +84,7 @@ http.interceptors.response.use(
       redirectToLogin()
     }
 
-    // HTTP 非 2xx 时解包后端业务错误信息（body 为 { code, msg }），
+    // HTTP 非 2xx 时解包后端业务错误信息（body 为 { code, message }），
     // 使调用处能通过 err.message 拿到「验证信息错误」等业务提示
     const res = error.response?.data as ApiResponse | undefined
     if (res && typeof res.code === 'number' && res.code !== 200) {
@@ -91,11 +99,11 @@ http.interceptors.response.use(
  * 故各方法直接返回 Promise<ApiResponse<T>>（T 为业务 data 类型）。
  * 调用处通过 res.data 取业务数据。
  */
-export interface TypedHttp {
-  get: <T>(url: string, config?: Record<string, unknown>) => Promise<ApiResponse<T>>
-  post: <T>(url: string, data?: unknown, config?: Record<string, unknown>) => Promise<ApiResponse<T>>
-  put: <T>(url: string, data?: unknown, config?: Record<string, unknown>) => Promise<ApiResponse<T>>
-  delete: <T>(url: string, config?: Record<string, unknown>) => Promise<ApiResponse<T>>
+interface TypedHttp {
+  get: <T>(url: string, config?: AxiosRequestConfig) => Promise<ApiResponse<T>>
+  post: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) => Promise<ApiResponse<T>>
+  put: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) => Promise<ApiResponse<T>>
+  delete: <T>(url: string, config?: AxiosRequestConfig) => Promise<ApiResponse<T>>
 }
 
 export default http as unknown as TypedHttp

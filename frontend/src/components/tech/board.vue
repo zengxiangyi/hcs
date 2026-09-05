@@ -335,7 +335,6 @@ function handleDeleteStep(index: number) {
 
 /** 保存：校验必填项后提交当前表单数据 */
 async function onSave() {
-  debugger;
   try {
     // 数据校验
     if(stepRows.value.length === 0){
@@ -369,8 +368,18 @@ async function onSave() {
       hardnessDepth: requirementForm.value.hardnessDepth
     }
     await blueprintAPI.save(bluePrint)
-    // 保存工序
-    await techStepAPI.batchSave(stepRows.value)
+    // 保存工序：看板行是 step=名称/stepCode=编号，后端实体是 step=编号/stepName=名称，必须映射
+    await techStepAPI.batchSave(
+      stepRows.value.map((r) => ({
+        firstLevel: r.firstLevel,
+        secondLevel: r.secondLevel,
+        step: r.stepCode,
+        stepName: r.step,
+        sort: r.sort == null ? '' : String(r.sort),
+        isNeed: r.isNeed,
+        remark: r.remark,
+      })),
+    )
     ElMessage.success('保存成功')
     // 进入到工序编制页面
     router.push({ name: 'Solo', query: { code: basicForm.value.code } })
@@ -394,43 +403,6 @@ function onCancel() {
   stepRows.value = []
   stepStagedRows.value = []
   ElMessage.info('已取消')
-}
-
-async function onSubmit(){
-  // 数据校验
-  // 组装数据
-  try {
-    // 组装数据
-    const bluePrint: TechBoardSaveDTO = {
-      code: basicForm.value.code,
-      name: basicForm.value.name,
-      graph: basicForm.value.graph,
-      firstLevel: basicForm.value.firstLevel,
-      secondLevel: basicForm.value.secondLevel,
-      materialName: basicForm.value.materialName,
-      materialCode: basicForm.value.materialCode,
-      weight: basicForm.value.weight,
-      model: basicForm.value.model,
-      specs: basicForm.value.specs,
-      customer: basicForm.value.customer,
-      remark: basicForm.value.remark,
-      isFirstCheck: requirementForm.value.isFirstCheck,
-      testNum: numToStr(requirementForm.value.testNum),
-      coolTime: requirementForm.value.coolTime,
-      busbarNum: numToStr(requirementForm.value.busbarNum),
-      fallHead: requirementForm.value.fallHead,
-      quenching: requirementForm.value.quenching,
-      attention: requirementForm.value.attention,
-      chamfer: requirementForm.value.chamfer,
-      lastHardness: requirementForm.value.lastHardness,
-      firstHardness: requirementForm.value.firstHardness,
-      hardnessDepth: requirementForm.value.hardnessDepth
-    }
-    await blueprintAPI.submit(bluePrint)
-    ElMessage.success('保存成功')
-  } catch (err) {
-    ElMessage.error((err as Error).message || '保存失败')
-  }
 }
 
 </script>

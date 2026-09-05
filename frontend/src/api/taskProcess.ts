@@ -1,7 +1,7 @@
 import http from './http'
-import type { ApiResponse } from './http'
+import type { PageResult } from './http'
 
-/** 工序任务行 */
+/** 工序任务行（对齐后端 TaskProcess 实体 / taskprocess 表） */
 export interface TaskRow {
   /** id */
   id: number
@@ -15,10 +15,20 @@ export interface TaskRow {
   step: string
   /** 状态 */
   state: string
+  /** 审核人 */
+  auditUser?: string
+  /** 审核时间 */
+  auditTime?: string
+  /** 审核意见 */
+  auditMessage?: string
   /** 创建人 */
   createUser: string
   /** 创建时间 */
   createTime: string
+  /** 更新人 */
+  updateUser?: string
+  /** 更新时间 */
+  updateTime?: string
 }
 
 /** 工序任务列表查询参数 */
@@ -33,12 +43,7 @@ export interface TaskListParams {
 }
 
 /** 工序任务列表返回 */
-export interface TaskListResult {
-  content: TaskRow[]
-  total: number
-  page: number
-  pageSize: number
-}
+export type TaskListResult = PageResult<TaskRow>
 
 /** 蓝本绑定入参（后端按 transfer/blueprint 编码字符串落库） */
 export interface BindParams {
@@ -48,21 +53,12 @@ export interface BindParams {
   blueprint: string
 }
 
-/** 工序任务接口 */
+/** 工序任务接口（TaskProcessController /taskprocess） */
 export const taskProcessAPI = {
   /** 列表（服务端分页） */
   search: (params?: TaskListParams) =>
-    http.post<TaskListResult>('/api/taskprocess/search', params) as Promise<ApiResponse<TaskListResult>>,
-  /** 新增 */
-  add: (data: object) =>
-    http.post<string>('/api/taskprocess/save', data) as Promise<ApiResponse<string>>,
+    http.post<TaskListResult>('/api/taskprocess/search', params),
 
   /** 绑定蓝本到调拨单 */
   bind: (data: BindParams) => http.post<string>('/api/taskprocess/bind', data),
-  /** 修改 */
-  update: (id: number, data: Omit<TaskRow, 'id'>) =>
-    http.put<TaskRow>('/api/taskprocess/update', { ...data, id }) as Promise<ApiResponse<TaskRow>>,
-  /** 删除 */
-  remove: (id: number) =>
-    http.delete<null>(`/api/taskprocess/${id}`) as Promise<ApiResponse<null>>,
 }

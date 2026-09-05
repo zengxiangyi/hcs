@@ -108,7 +108,7 @@ async function loadFlowGraph() {
 
 /**
  * 依据 nodes.value / edges.value 数据绘制流程图。
- * 节点通过 code 互连，坐标取自 X/Y，尺寸取自 W/H，形状取自 shape。
+ * 节点通过 code 互连，坐标取自 x/y，尺寸取自 w/h，形状取自 shape。
  */
 async function renderCanvas() {
   const canvas = document.getElementById('flowmap') as HTMLCanvasElement
@@ -123,10 +123,10 @@ async function renderCanvas() {
   const DEFAULT_W = 120
   const DEFAULT_H = 60
   const positions = nodes.value.map((n) => ({
-    x: parsePoint(n.X, 50),
-    y: parsePoint(n.Y, 50),
-    w: parseNum(n.W, DEFAULT_W),
-    h: parseNum(n.H, DEFAULT_H),
+    x: parsePoint(n.x, 50),
+    y: parsePoint(n.y, 50),
+    w: parseNum(n.w, DEFAULT_W),
+    h: parseNum(n.h, DEFAULT_H),
   }))
 
   let WIDTH = 0
@@ -183,10 +183,10 @@ function traceNodePath(ctx: CanvasRenderingContext2D, node: FlowNode, x: number,
 
 /** 绘制节点（支持透明度参数） */
 function renderNode(ctx: CanvasRenderingContext2D, node: FlowNode, DEFAULT_W: number, DEFAULT_H: number, alpha = 1.0) {
-  const x = parsePoint(node.X, 50)
-  const y = parsePoint(node.Y, 50)
-  const w = parseNum(node.W, DEFAULT_W)
-  const h = parseNum(node.H, DEFAULT_H)
+  const x = parsePoint(node.x, 50)
+  const y = parsePoint(node.y, 50)
+  const w = parseNum(node.w, DEFAULT_W)
+  const h = parseNum(node.h, DEFAULT_H)
   const text = node.name || node.code || '-'
   const color = node.color || '#409EFF'
 
@@ -272,15 +272,15 @@ function renderEdge(
   const toNode = nodes.find((n) => n.code === edge.toNode)
   if (!fromNode || !toNode) return
 
-  const fromW = parseNum(fromNode.W, DEFAULT_W)
-  const fromH = parseNum(fromNode.H, DEFAULT_H)
-  const toH = parseNum(toNode.H, DEFAULT_H)
+  const fromW = parseNum(fromNode.w, DEFAULT_W)
+  const fromH = parseNum(fromNode.h, DEFAULT_H)
+  const toH = parseNum(toNode.h, DEFAULT_H)
 
   // 起点取 from 节点右边缘中点，终点取 to 节点左边缘中点
-  const startX = parsePoint(fromNode.X, 50) + fromW
-  const startY = parsePoint(fromNode.Y, 50) + fromH / 2
-  const endX = parsePoint(toNode.X, 50)
-  const endY = parsePoint(toNode.Y, 50) + toH / 2
+  const startX = parsePoint(fromNode.x, 50) + fromW
+  const startY = parsePoint(fromNode.y, 50) + fromH / 2
+  const endX = parsePoint(toNode.x, 50)
+  const endY = parsePoint(toNode.y, 50) + toH / 2
 
   const color = edge.color || '#67C23A'
   // 使用 axis 折线坐标（若有），否则绘制直线
@@ -391,7 +391,9 @@ watch(workflow, () => {
       >
         <el-table-column type="index" label="#" width="60" />
         <el-table-column prop="flowGraph" label="流程图" min-width="140" show-overflow-tooltip />
-        <el-table-column prop="flowNode" label="节点" min-width="140" show-overflow-tooltip />
+        <el-table-column label="流转节点" min-width="180" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.fromNode }} → {{ row.toNode }}</template>
+        </el-table-column>
         <el-table-column prop="dealTime" label="处理时间" min-width="180" show-overflow-tooltip />
         <el-table-column prop="dealUser" label="处理人工号" min-width="140" show-overflow-tooltip />
         <el-table-column prop="userName" label="处理人姓名" min-width="140" show-overflow-tooltip />

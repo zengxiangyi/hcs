@@ -85,8 +85,8 @@ const emptyForm: TransferCreateParams = {
   category: '',
   transferDate: '',
   materialCode: '',
-  num: 1,
-  weight: 0,
+  num: '1',
+  weight: '',
   material: '',
   rollNum: '',
   outProcess: '',
@@ -154,7 +154,7 @@ async function handleDelete(row: TransferRow) {
     return // 用户取消
   }
   try {
-    await transferAPI.delete(row.id)
+    await transferAPI.remove(row.id)
     ElMessage.success('删除成功')
     // 若删除的是当前选中行，清空选中
     if (selectedTransfer.value?.id === row.id) {
@@ -304,7 +304,7 @@ onMounted(() => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="数量" prop="num">
-                <el-input-number v-model="form.num" :min="1" controls-position="right" style="width: 100%" />
+                <el-input v-model="form.num" placeholder="数量" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
