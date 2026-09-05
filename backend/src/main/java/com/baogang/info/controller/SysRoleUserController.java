@@ -7,21 +7,12 @@ import com.baogang.info.entity.SysRoleUser;
 import com.baogang.info.service.SysRoleUserService;
 import com.baogang.info.tool.StringTool;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/sysRoleUser")
@@ -67,9 +58,12 @@ public class SysRoleUserController {
         return ApiResponse.success("保存成功");
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<SysRoleUser> update(@PathVariable Long id, @Valid @RequestBody SysRoleUser sysRoleUser) {
-        return ApiResponse.success(sysRoleUserService.update(id, sysRoleUser));
+    @PutMapping("/update")
+    public ApiResponse<SysRoleUser> update(@Valid @RequestBody SysRoleUser sysRoleUser) {
+        if (sysRoleUser.getId() == null) {
+            throw new IllegalArgumentException("修改操作必须传入 id");
+        }
+        return ApiResponse.success(sysRoleUserService.update(sysRoleUser.getId(), sysRoleUser));
     }
 
     @DeleteMapping("/{id}")

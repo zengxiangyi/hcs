@@ -10,10 +10,10 @@
 | 2 | flowgraph | varchar(30) | 流程标记 |
 | 3 | title | varchar(100) | |
 | 4 | width | varchar(10) | 宽度 |
-| 5 | heght | varchar(10) | 高度 |
+| 5 | height | varchar(10) | 高度 |
 | 6 | remark | varchar(100) | 备注 |
 
 ## 说明
 
-- `heght` 为库中原始拼写（疑 `height` 笔误），实体类映射按原样书写。
+- `height` 原 `heght`（疑 `height` 笔误），2026-09-05 已由 DBA 纠正拼写；实体 `FlowGraph` 本就映射 `@Column(name = "height")`，改名后代码零改动、前后端 JSON 字段名不变。
 - `title` 未设置列注释，表格中留空。

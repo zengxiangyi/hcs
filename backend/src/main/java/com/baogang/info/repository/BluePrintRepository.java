@@ -20,5 +20,7 @@ public interface BluePrintRepository extends JpaRepository<BluePrint, Long> {
 
     Optional<BluePrint> findByCodeAndEdition(String code, String edition);
 
+    boolean existsByCodeAndEdition(String code, String edition);
+
     int deleteByCodeAndEdition(String code, String edition);
 }

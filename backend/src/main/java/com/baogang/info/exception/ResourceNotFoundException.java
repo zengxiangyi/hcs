@@ -1,7 +1,7 @@
 package com.baogang.info.exception;
 
 /**
- * 资源未找到异常，对应 HTTP 404。
+ * 资源未找到异常，对应 HTTP 400。
  */
 public class ResourceNotFoundException extends RuntimeException {
 

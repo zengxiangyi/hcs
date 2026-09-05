@@ -19,6 +19,7 @@
 ## 项目约定
 
 - 接口前缀：前端 `src/api/*.ts` 写完整路径 `/api/xxx`，故 `VITE_API_BASE_URL` 只能填 origin 根，**绝不能再带 `/api`**。
+- **URL 风格定稿（2026-09-05 用户确认）**：**动词式 URL，不严格 RESTful——URL 要反馈操作方法信息**。约定形态：查询 `POST /xxx/search`（复杂条件）或 `GET /xxx/list`；创建 `POST /xxx/save`；更新 `PUT /xxx/update`（id 在 body，null 抛 IAE→400）；删除 `DELETE /xxx/{id}`；**按字段过滤/定位用路径段**（`/state/{state}`、`/category/{category}`、`/workflow/{workflow}`、`/code/{code}` 等，保留不改 query 参数）。新接口照此写，勿为对齐纯 REST 改成裸资源/`PUT /{id}`/query 过滤。错误语义：404 只走全局 `ResourceNotFoundException`，Controller 不手写 404 code；手写 `error(400,...)`（HTTP 200）仅剩 Auth/绑定类业务校验，前端拦截器双通道兼容。均已写入 `docs/ai/contract.md` 第 2 条。
 - **改后端接口地址要改两个不同地方**（2026-09-04 踩坑）：
   - dev → `frontend/vite.config.ts` 的 `server.proxy.target`（重启 dev 生效）；
   - 生产/发布 → `frontend/.env.production` 的 `VITE_API_BASE_URL`（**必须重新 `npm run build:war`**）。
@@ -26,11 +27,11 @@
 - 后端 context-path 由 war 名决定，必须保持 `api.war`，否则全线 404 且无编译期提示。
 - `ddl-auto=none`：所有 DDL/DML 由 DBA 执行，AI 只以 SQL 文本交付，禁止自行连库执行。
 - DB 列名一律小写无下划线；MyBatis 的 XML 是查询真源。
-- **列名/表名大小写例外**（2026-09-05 实测）：`page` 库列名绝大多数为驼峰（`flowGraph`、`roleList`）或全小写，但 **`flownode` 表的 `X/Y/W/H` 四个列名是大写**，JPA `@Column` 必须写成大写才能映射上（2026-09-05 用户确认：这四个是例外，保持大写，不参与「注解列名全小写」检查）；`workflow.id` 是 **bigint** 不是 int；库中另有拼写遗留：`approval.sartTime`（疑 startTime 笔误）、`flowgraph.heght`（疑 height 笔误）——均以库中实际拼写为准，勿擅自纠正。
+- **列名大小写规则（2026-09-05 用户定稿，推翻旧「以库中实际拼写为准」）**：**以代码为准——JPA `@Column` / Mapper XML 列名一律全小写**（唯一例外：`flownode` 表 `X/Y/W/H` 四个大写列，`@Column` 必须写大写，不参与小写检查）；DB 侧由 DBA 把库中驼峰列改名小写对齐代码，DDL 见 `backend/docs/plans/2026-09-05-lowercase-columns.sql`（15 表 68 列），**已于 2026-09-05 由 DBA 执行完毕，AI 实测验证通过（information_schema 0 行残留）——代码/文档/库三者列名完全一致**。拼写遗留已于 2026-09-05 由 DBA 纠正并实测验证：`approval.sartTime→starttime`、`flowgraph.heght→height`；代码侧 FlowGraph 实体本就映射 height、approval 表无任何代码映射，零改动。`workflow.id` 是 **bigint** 不是 int。
 - **时间/数值字段多为 varchar**（2026-09-05）：`flowhistory.dealTime` varchar(30)、`taskprocess.auditTime/createTime/updateTime` varchar(20)、`techstep.sort/isNeed` varchar(45)、`blueprint` 的 weight/isFirstCheck/busbarNum 等 varchar(100)。做范围查询/排序会受影响，后续可优化。
 - **表名也是全小写**（与 JPA `@Table` 一致）。MySQL 列名大小写不敏感，但**表名在 Linux（lower_case_table_names=0）大小写敏感**：Mapper XML / 原生 SQL 里写成 `flowNode` 这类驼峰会直接报 `Table 'page.flowNode' doesn't exist`（2026-09-04 踩坑，见当日日志）。写 SQL 前先核对 `entity/*.java` 的 `@Table(name=...)`。
 - **SQL 表名 schema 前缀约定（2026-09-05 用户确认，多轮讨论定稿）**：Mapper XML / 原生 SQL 中表名一律硬编码 `page.` 前缀（如 `FROM page.sysuser`、`from page.flowhistory`、`from page.flowcurrent a, page.flownode n`）。理由：①一个 DB 实例下可有多个 schema，库名归 DBA 管理、不轻易改，但 JDBC URL 的库名参数在**多 schema 环境极易被混用/配错**；②后期还要支持**多 schema 联合查询**，表名必须显式带 schema 才能在跨 schema SQL 中定位；③把前缀写进 URL 等于把库归属交给了易被误改的部署配置，一旦漏填/错填所有不带前缀的 SQL 会全线找不到表。故**前缀绝不进 JDBC URL、硬编码在 SQL/XML**；库名若真要改或新增 schema，需同步改全部 Mapper XML（换库即断风险已知并接受）。
-- **表文档列名规范（2026-09-05 用户确认）**：`backend/docs/DB/table/*.md` 的字段清单 `COLUMN_NAME` 列**统一小写、无下划线**，对齐 XML/entity `@Column` 与 README「列名一律小写」规则；唯一例外是 `flownode` 表的 `X/Y/W/H` 四个大写列（JPA `@Column` 也必须大写才能映射）。注意：`page` 库实列本以驼峰为主，文档按约定呈现小写，靠 MySQL 列名大小写不敏感与代码一致。改表结构文档时列名保持小写（X/Y/W/H 除外）。
+- **表文档列名规范（2026-09-05 用户确认）**：`backend/docs/DB/table/*.md` 的字段清单 `COLUMN_NAME` 列**统一小写、无下划线**，对齐 XML/entity `@Column` 与 README「列名一律小写」规则；唯一例外是 `flownode` 表的 `X/Y/W/H` 四个大写列（JPA `@Column` 也必须大写才能映射）。库中实列已于 2026-09-05 由 DBA 全量改名小写，文档/代码/库完全一致。改表结构文档时列名保持小写（X/Y/W/H 除外）。
 - **后端日志级别**（2026-09-04 踩坑）：项目无自定义 `logback-spring.xml`，走 Spring Boot 默认，**根级别 INFO**；`application.properties` 需逐个显式开 `logging.level.<包>=DEBUG`（已开 `com.baogang.info.mapper`、`com.baogang.info.tool`）。项目**无 actuator/devtools**，`logging.level.*` 不会热更新，**改完必须重新 `mvn package` + 重启 Tomcat**（`.\deploy-test.ps1 -Part Back`）。未配 `logging.file.name`，日志只进 console（Tomcat 控制台窗口 / `logs/catalina.*.log`）。
 - 受保护（只读）：`.idea/`、`script/`、`config/` 目录；后端另有 `mvnw`/`mvnw.cmd`/`info.iml`/`target/`/`.mvn/`。
 

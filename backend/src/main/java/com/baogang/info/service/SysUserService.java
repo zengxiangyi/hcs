@@ -46,7 +46,7 @@ public class SysUserService {
 
     @Transactional
     public SysUser update(Long id, SysUser sysUser) {
-        // 不存在时抛 404，避免此前 null 直接 NPE 变成 500
+        // 不存在时抛 400，避免此前 null 直接 NPE 变成 500
         SysUser existing = sysUserRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("sysUser not found: " + id));
         // code 是登录账号名，变更需查重，否则可造出重复 code

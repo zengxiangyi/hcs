@@ -67,7 +67,7 @@ export interface GraphRow {
   /** 宽度 */
   width: number
   /** 高度 */
-  heght: number
+  height: number
   /** 备注 */
   remark: string
 }

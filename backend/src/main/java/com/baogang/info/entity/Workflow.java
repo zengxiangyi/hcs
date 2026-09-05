@@ -1,16 +1,8 @@
 package com.baogang.info.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.time.LocalDateTime;
 
 /** 流程实例表：存储业务流程定义、状态及起止时间。 */
 @Entity

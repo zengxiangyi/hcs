@@ -7,15 +7,7 @@ import com.baogang.info.entity.FlowHistory;
 import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.FlowHistoryService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -51,9 +43,12 @@ public class FlowHistoryController {
         return ApiResponse.success(flowHistoryService.save(flowHistory));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<FlowHistory> update(@PathVariable Long id, @Valid @RequestBody FlowHistory flowHistory) {
-        return ApiResponse.success(flowHistoryService.update(id, flowHistory));
+    @PutMapping("/update")
+    public ApiResponse<FlowHistory> update(@Valid @RequestBody FlowHistory flowHistory) {
+        if (flowHistory.getId() == null) {
+            throw new IllegalArgumentException("修改操作必须传入 id");
+        }
+        return ApiResponse.success(flowHistoryService.update(flowHistory.getId(), flowHistory));
     }
 
     @DeleteMapping("/{id}")

@@ -60,7 +60,7 @@ public class TechStepController {
     }
 
     @PostMapping("/batchSave")
-    public ApiResponse<String> batchSave(@Valid @RequestBody List<TechStep> techStepList) {
+    public ApiResponse<String> batchSave(@Valid @RequestBody List<@Valid TechStep> techStepList) {
         if (techStepList.isEmpty()) {
             throw new IllegalArgumentException("工艺步序为空");
         }

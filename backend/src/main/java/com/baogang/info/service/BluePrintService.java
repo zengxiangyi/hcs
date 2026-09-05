@@ -34,6 +34,11 @@ public class BluePrintService {
     @Transactional
     public BluePrint save(BluePrint bluePrint) {
         bluePrint.setId(null);  // 新增时忽略客户端传入的 id（createTime 由 controller 服务端填充）
+        // (code, edition) 业务键防重：重复插入会让 findByCodeAndEdition（Optional 单行语义）直接 500
+        if (bluePrintRepository.existsByCodeAndEdition(bluePrint.getCode(), bluePrint.getEdition())) {
+            throw new IllegalArgumentException(
+                    "蓝本已存在：code=" + bluePrint.getCode() + ", edition=" + bluePrint.getEdition());
+        }
         return bluePrintRepository.save(bluePrint);
     }
 

@@ -1,11 +1,6 @@
 package com.baogang.info.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -27,44 +22,44 @@ public class TaskProcess {
     @Column(name = "blueprint", length = 100)
     private String blueprint;
 
-    @Size(max = 100, message = "auditUser 长度不能超过 100")
-    @Column(name = "audituser", length = 100)
+    @Size(max = 20, message = "auditUser 长度不能超过 20")
+    @Column(name = "audituser", length = 20)
     private String auditUser;
 
-    @Size(max = 100, message = "auditTime 长度不能超过 100")
-    @Column(name = "audittime")
+    @Size(max = 20, message = "auditTime 长度不能超过 20")
+    @Column(name = "audittime", length = 20)
     private String auditTime;
 
-    @Size(max = 100, message = "auditMessage 长度不能超过 100")
-    @Column(name = "auditmessage", length = 100)
+    @Size(max = 20, message = "auditMessage 长度不能超过 20")
+    @Column(name = "auditmessage", length = 20)
     private String auditMessage;
 
-    @Size(max = 50, message = "auditState 长度不能超过 50")
-    @Column(name = "auditstate", length = 50)
+    @Size(max = 20, message = "auditState 长度不能超过 20")
+    @Column(name = "auditstate", length = 20)
     private String auditState;
 
-    @Size(max = 50, message = "step 长度不能超过 50")
-    @Column(name = "step", length = 50)
+    @Size(max = 100, message = "step 长度不能超过 100")
+    @Column(name = "step", length = 100)
     private String step;
 
-    @Size(max = 50, message = "state 长度不能超过 50")
-    @Column(name = "state", length = 50)
+    @Size(max = 20, message = "state 长度不能超过 20")
+    @Column(name = "state", length = 20)
     private String state;
 
-    @Size(max = 100, message = "createUser 长度不能超过 100")
-    @Column(name = "createuser", length = 100)
+    @Size(max = 20, message = "createUser 长度不能超过 20")
+    @Column(name = "createuser", length = 20)
     private String createUser;
 
-    @Size(max = 100, message = "createTime 长度不能超过 100")
-    @Column(name = "createtime")
+    @Size(max = 20, message = "createTime 长度不能超过 20")
+    @Column(name = "createtime", length = 20)
     private String createTime;
 
-    @Size(max = 100, message = "updateUser 长度不能超过 100")
-    @Column(name = "updateuser", length = 100)
+    @Size(max = 20, message = "updateUser 长度不能超过 20")
+    @Column(name = "updateuser", length = 20)
     private String updateUser;
 
-    @Size(max = 100, message = "updateTime 长度不能超过 100")
-    @Column(name = "updatetime")
+    @Size(max = 20, message = "updateTime 长度不能超过 20")
+    @Column(name = "updatetime", length = 20)
     private String updateTime;
 
     public Long getId() {

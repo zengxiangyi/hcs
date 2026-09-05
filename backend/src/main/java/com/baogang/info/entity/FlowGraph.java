@@ -1,11 +1,6 @@
 package com.baogang.info.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -31,9 +26,9 @@ public class FlowGraph {
     @Column(name = "width", length = 10)
     private String width;
     // 高度
-    @Size(max = 10, message = "heght 长度不能超过 10")
-    @Column(name = "heght", length = 10)
-    private String heght;
+    @Size(max = 10, message = "height 长度不能超过 10")
+    @Column(name = "height", length = 10)
+    private String height;
     // 备注
     @Size(max = 100, message = "remark 长度不能超过 100")
     @Column(name = "remark", length = 100)
@@ -71,12 +66,12 @@ public class FlowGraph {
         this.width = width;
     }
 
-    public String getHeght() {
-        return heght;
+    public String getHeight() {
+        return height;
     }
 
-    public void setHeght(String heght) {
-        this.heght = heght;
+    public void setHeight(String height) {
+        this.height = height;
     }
 
     public String getRemark() {

@@ -39,7 +39,7 @@ public class WorkflowService {
         return workflowRepository.findByCode(code).orElse(null);
     }
 
-    // 审批专用：悲观行锁读取，未命中抛 404（FlowEngine.dealNode 用）
+    // 审批专用：悲观行锁读取，未命中抛 400（FlowEngine.dealNode 用）
     @Transactional
     public Workflow getByCodeForUpdate(String code) {
         return workflowRepository.findByCodeForUpdate(code)

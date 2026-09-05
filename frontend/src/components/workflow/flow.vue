@@ -28,7 +28,7 @@ const form = ref<GraphSaveDTO>({
   flowGraph: '',
   title: '',
   width: 0,
-  heght: 0,
+  height: 0,
   remark: '',
 })
 
@@ -83,7 +83,7 @@ function onSizeChange(s: number) {
 /** 打开新增弹窗 */
 function openAdd() {
   dialogTitle.value = '新增流程图'
-  form.value = { id: 0, flowGraph: '', title: '', width: 0, heght: 0, remark: '' }
+  form.value = { id: 0, flowGraph: '', title: '', width: 0, height: 0, remark: '' }
   dialogVisible.value = true
 }
 
@@ -161,7 +161,7 @@ onMounted(loadList)
       <el-table-column prop="flowGraph" label="流程图编号" min-width="140" />
       <el-table-column prop="title" label="标题" min-width="160" />
       <el-table-column prop="width" label="宽度" width="100" />
-      <el-table-column prop="heght" label="高度" width="100" />
+      <el-table-column prop="height" label="高度" width="100" />
       <el-table-column prop="remark" label="备注" min-width="180" show-overflow-tooltip />
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
@@ -198,7 +198,7 @@ onMounted(loadList)
           <el-input-number v-model="form.width" :min="0" />
         </el-form-item>
         <el-form-item label="高度">
-          <el-input-number v-model="form.heght" :min="0" />
+          <el-input-number v-model="form.height" :min="0" />
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注" />

@@ -34,7 +34,6 @@ public class BluePrintQuery {
     private String attention;
     private String firstHardness;
     private String lastHardness;
-    private String category;
 
     private Integer page = 1;
     private Integer pageSize = 10;
@@ -245,14 +244,6 @@ public class BluePrintQuery {
 
     public void setLastHardness(String lastHardness) {
         this.lastHardness = lastHardness;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public Integer getPage() {

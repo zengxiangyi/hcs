@@ -1,11 +1,6 @@
 package com.baogang.info.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -19,33 +14,33 @@ public class TechStep {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // 一级工艺
-    @Size(max = 100, message = "firstLevel 长度不能超过 100")
-    @Column(name = "firstlevel", length = 100)
+    // 一级工艺（库 varchar(45)）
+    @Size(max = 45, message = "firstLevel 长度不能超过 45")
+    @Column(name = "firstlevel", length = 45)
     private String firstLevel;
-    // 二级工艺
-    @Size(max = 100, message = "secondLevel 长度不能超过 100")
-    @Column(name = "secondlevel", length = 100)
+    // 二级工艺（库 varchar(45)）
+    @Size(max = 45, message = "secondLevel 长度不能超过 45")
+    @Column(name = "secondlevel", length = 45)
     private String secondLevel;
-    // 工序编号
-    @Size(max = 50, message = "step 长度不能超过 50")
-    @Column(name = "step", length = 50)
+    // 工序编号（库 varchar(45)）
+    @Size(max = 45, message = "step 长度不能超过 45")
+    @Column(name = "step", length = 45)
     private String step;
-    // 工序名称
-    @Size(max = 100, message = "stepName 长度不能超过 100")
-    @Column(name = "stepname", length = 100)
+    // 工序名称（库 varchar(45)）
+    @Size(max = 45, message = "stepName 长度不能超过 45")
+    @Column(name = "stepname", length = 45)
     private String stepName;
-    // 排序
-    @Size(max = 20, message = "sort 长度不能超过 20")
-    @Column(name = "sort", length = 20)
+    // 排序（库 varchar(45)）
+    @Size(max = 45, message = "sort 长度不能超过 45")
+    @Column(name = "sort", length = 45)
     private String sort;
-    // 可选
-    @Size(max = 10, message = "isNeed 长度不能超过 10")
-    @Column(name = "isneed", length = 10)
+    // 可选（库 varchar(45)）
+    @Size(max = 45, message = "isNeed 长度不能超过 45")
+    @Column(name = "isneed", length = 45)
     private String isNeed;
-    // 备注
-    @Size(max = 200, message = "remark 长度不能超过 200")
-    @Column(name = "remark", length = 200)
+    // 备注（库 varchar(100)）
+    @Size(max = 100, message = "remark 长度不能超过 100")
+    @Column(name = "remark", length = 100)
     private String remark;
 
     public Long getId() {

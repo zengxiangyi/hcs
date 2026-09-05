@@ -3,6 +3,7 @@ package com.baogang.info.service;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.TaskProcessQuery;
 import com.baogang.info.entity.TaskProcess;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.mapper.TaskProcessMapper;
 import com.baogang.info.repository.TaskProcessRepository;
 import org.springframework.data.domain.Page;
@@ -69,6 +70,10 @@ public class TaskProcessService {
 
     @Transactional
     public void deleteById(Long id) {
+        // 与 TransferOrderService.deleteById 对齐：不存在时 404，而非 EmptyResultDataAccessException → 500
+        if (!taskProcessRepository.existsById(id)) {
+            throw new ResourceNotFoundException("任务流程不存在：id=" + id);
+        }
         taskProcessRepository.deleteById(id);
     }
 

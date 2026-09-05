@@ -7,15 +7,7 @@ import com.baogang.info.entity.FlowCurrent;
 import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.FlowCurrentService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -51,9 +43,12 @@ public class FlowCurrentController {
         return ApiResponse.success(flowCurrentService.save(flowCurrent));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<FlowCurrent> update(@PathVariable Long id, @Valid @RequestBody FlowCurrent flowCurrent) {
-        return ApiResponse.success(flowCurrentService.update(id, flowCurrent));
+    @PutMapping("/update")
+    public ApiResponse<FlowCurrent> update(@Valid @RequestBody FlowCurrent flowCurrent) {
+        if (flowCurrent.getId() == null) {
+            throw new IllegalArgumentException("修改操作必须传入 id");
+        }
+        return ApiResponse.success(flowCurrentService.update(flowCurrent.getId(), flowCurrent));
     }
 
     @DeleteMapping("/{id}")

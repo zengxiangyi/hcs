@@ -1,11 +1,6 @@
 package com.baogang.info.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -24,9 +19,9 @@ public class BluePrint {
     @Column(name = "code", length = 100)
     private String code;
 
-    // 名称
-    @Size(max = 50, message = "name 长度不能超过 50")
-    @Column(name = "name", length = 50)
+    // 名称（库 varchar(100)）
+    @Size(max = 100, message = "name 长度不能超过 100")
+    @Column(name = "name", length = 100)
     private String name;
 
     // 图形
@@ -49,9 +44,9 @@ public class BluePrint {
     @Column(name = "materialname", length = 100)
     private String materialName;
 
-    // 单重
-    @Size(max = 45, message = "weight 长度不能超过 45")
-    @Column(name = "weight", length = 45)
+    // 单重（库 varchar(100)）
+    @Size(max = 100, message = "weight 长度不能超过 100")
+    @Column(name = "weight", length = 100)
     private String weight;
 
     // 物料编码
@@ -144,26 +139,26 @@ public class BluePrint {
     @Column(name = "remark", length = 100)
     private String remark;
 
-    // 创建时间
-    @Size(max = 100, message = "createTime 长度不能超过 100")
-    @Column(name = "createtime", length = 100)
+    // 创建时间（库 varchar(45)）
+    @Size(max = 45, message = "createTime 长度不能超过 45")
+    @Column(name = "createtime", length = 45)
     private String createTime;
-    // 创建人
-    @Size(max = 100, message = "createUser 长度不能超过 100")
-    @Column(name = "createuser", length = 100)
+    // 创建人（库 varchar(45)）
+    @Size(max = 45, message = "createUser 长度不能超过 45")
+    @Column(name = "createuser", length = 45)
     private String createUser;
 
-    // 最近修改时间
-    @Size(max = 100, message = "updateTime 长度不能超过 100")
-    @Column(name = "updatetime", length = 100)
+    // 最近修改时间（库 varchar(45)）
+    @Size(max = 45, message = "updateTime 长度不能超过 45")
+    @Column(name = "updatetime", length = 45)
     private String updateTime;
-    // 最近修改人
-    @Size(max = 100, message = "updateUser 长度不能超过 100")
-    @Column(name = "updateuser", length = 100)
+    // 最近修改人（库 varchar(45)）
+    @Size(max = 45, message = "updateUser 长度不能超过 45")
+    @Column(name = "updateuser", length = 45)
     private String updateUser;
-    // 流程实例编码
-    @Size(max = 100, message = "workflow 长度不能超过 100")
-    @Column(name = "workflow", length = 100)
+    // 流程实例编码（库 varchar(45)）
+    @Size(max = 45, message = "workflow 长度不能超过 45")
+    @Column(name = "workflow", length = 45)
     private String workflow;
 
     public Long getId() {

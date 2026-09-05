@@ -29,7 +29,7 @@
 
 ## 数据库约定
 - **命名（真实库为准，改动前必查）**：表名全小写无下划线（flowgraph / flownode / flowedge / flowcurrent / flowhistory / workflow / blueprint / transferorder / taskprocess）；列名多数全小写无下划线（createtime / createuser / materialcode / audituser / firstlevel / materialname）。`docs/tb.sql` 已过时，不可作依据。
-- **列名例外（已核验，勿"纠正"）**：`flowhistory.fromNode`/`toNode` 驼峰、`flownode.X/Y/W/H` 大写单字母（Java 字段名同步大写以对齐前端 JSON key）、`flowgraph.heght` 拼写错误。改名走 DBA 流程。
+- **列名例外（已核验，勿"纠正"）**：`flowhistory.fromNode`/`toNode` 驼峰、`flownode.X/Y/W/H` 大写单字母（Java 字段名同步大写以对齐前端 JSON key）、`flowgraph.height` 拼写错误。改名走 DBA 流程。
 - **陷阱 1**：`@Table(name = "flowXxx")` 驼峰会被 Hibernate 转成 `flow_xxx` → Table doesn't exist。`@Table` 一律全小写。
 - **陷阱 2**：全局 `map-underscore-to-camel-case` 对**无下划线列无效**，须在 XML 用 `resultMap` 显式映射列→驼峰字段（如 taskprocess）。
 - **DDL/DML 一律由 DBA 执行**，AI 绝不自行改库；schema 变更只以 **SQL 文本**交付。`ddl-auto=none`，不会自动同步任何结构变更。

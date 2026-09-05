@@ -11,17 +11,9 @@ import com.baogang.info.service.WorkflowService;
 import com.baogang.info.tool.StringTool;
 import com.baogang.info.tool.UserInfo;
 import jakarta.validation.Valid;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 @RequestMapping("/workflow")
@@ -68,6 +60,9 @@ public class WorkflowController {
 
     @PutMapping("/update")
     public ApiResponse<Workflow> update(@Valid @RequestBody Workflow workflow) {
+        if (workflow.getId() == null) {
+            throw new IllegalArgumentException("修改操作必须传入 id");
+        }
         return ApiResponse.success(workflowService.update(workflow.getId(), workflow));
     }
 

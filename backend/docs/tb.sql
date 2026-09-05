@@ -145,7 +145,7 @@ CREATE TABLE flowGraph (
   id        int           NOT NULL AUTO_INCREMENT COMMENT '主键',
   workflow  varchar(20)   DEFAULT NULL COMMENT '流程标记',
   width     varchar(10)   DEFAULT NULL COMMENT '宽度',
-  heght     varchar(10)   DEFAULT NULL COMMENT '高度',
+  height     varchar(10)   DEFAULT NULL COMMENT '高度',
   firstNode varchar(20)   DEFAULT NULL COMMENT '开始节点',
   remark    varchar(100)  DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (id)

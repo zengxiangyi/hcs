@@ -25,10 +25,10 @@ order by ordinal_position;
 - **主键统一为 `id`，类型为 int**；全库唯一例外是 `workflow.id` 为 **bigint**。
 - **字段类型几乎全为 varchar**：`id` 之外的列基本都是 varchar，长度直接写在类型列中（如 `varchar(100)`）。
 - **时间/数值字段也多为 varchar**，范围查询与排序只能按字符串处理，需保证写入格式统一（如 `yyyy-MM-dd HH:mm:ss`）。涉及列举例：`flowhistory.dealTime`、`taskprocess.auditTime/createTime/updateTime`、`techstep.sort/isNeed`、`blueprint.weight/isFirstCheck/busbarNum`、`transferorder.num/weight`。
-- **拼写与大小写例外**（以库中实际拼写为准，勿擅自纠正，改实体类映射而非改库）：
-  - `approval.sartTime` —— 疑为 `startTime` 笔误；
-  - `flowgraph.heght` —— 疑为 `height` 笔误；
-  - `flownode.X / Y / W / H` —— **大写列名**，JPA `@Column` 必须写成大写才能映射上，且为 varchar(45)，前端需自行转数值。
+- **拼写与大小写说明**（2026-09-05 规则定稿：**以代码为准 = 列名全小写**，库中驼峰列由 DBA 改名对齐，DDL 见 `backend/docs/plans/2026-09-05-lowercase-columns.sql`，共 15 表 68 列，**已于 2026-09-05 执行完毕并验证通过**——除 `flownode.X/Y/W/H` 外库中已无大写列，文档/代码/库三者完全一致）：
+  - `approval.starttime` —— 原 `sartTime`（疑 startTime 笔误），**2026-09-05 已由 DBA 纠正拼写并小写化**；
+  - `flowgraph.height` —— 原 `heght`（疑 height 笔误），**2026-09-05 已由 DBA 纠正拼写**（实体本就映射 height，代码零改动）；
+  - `flownode.X / Y / W / H` —— **保持大写**（全库唯一例外），JPA `@Column` 必须写成大写才能映射上，且为 varchar(45)，前端需自行转数值。
 
 ## 表清单
 

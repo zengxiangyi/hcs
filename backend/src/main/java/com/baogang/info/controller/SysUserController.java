@@ -8,14 +8,7 @@ import com.baogang.info.entity.SysUser;
 import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.SysUserService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/sysUser")
@@ -66,7 +59,7 @@ public class SysUserController {
         return ApiResponse.success(sysUserService.update(sysUser.getId(), sysUser));
     }
 
-    // 级联删除收进服务层单事务（角色绑定 + 用户），不存在时由服务层抛 404
+    // 级联删除收进服务层单事务（角色绑定 + 用户），不存在时由服务层抛 400
     @DeleteMapping("/code/{code}")
     public ApiResponse<String> delete(@PathVariable String code) {
         sysUserService.deleteCascadeByCode(code);

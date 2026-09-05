@@ -46,6 +46,8 @@
 
     <sql id="Query_Where">
         <where>
+            <!-- keyword：跨编号/名称/物料/客户/材质/备注多字段模糊匹配 -->
+            <if test="q.keyword != null and q.keyword != ''">AND (code LIKE CONCAT('%', #{q.keyword}, '%') OR name LIKE CONCAT('%', #{q.keyword}, '%') OR materialname LIKE CONCAT('%', #{q.keyword}, '%') OR materialcode LIKE CONCAT('%', #{q.keyword}, '%') OR customer LIKE CONCAT('%', #{q.keyword}, '%') OR model LIKE CONCAT('%', #{q.keyword}, '%') OR remark LIKE CONCAT('%', #{q.keyword}, '%'))</if>
             <if test="q.code != null and q.code != ''">AND code LIKE CONCAT('%', #{q.code}, '%')</if>
             <if test="q.name != null and q.name != ''">AND name LIKE CONCAT('%', #{q.name}, '%')</if>
             <if test="q.graph != null and q.graph != ''">AND graph LIKE CONCAT('%', #{q.graph}, '%')</if>

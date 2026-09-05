@@ -50,8 +50,9 @@ public class FlowGraphService {
         FlowGraph existing = flowGraphRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("flowGraph not found: " + id));
         existing.setFlowGraph(flowGraph.getFlowGraph());
+        existing.setTitle(flowGraph.getTitle());
         existing.setWidth(flowGraph.getWidth());
-        existing.setHeght(flowGraph.getHeght());
+        existing.setHeight(flowGraph.getHeight());
         existing.setRemark(flowGraph.getRemark());
         return flowGraphRepository.save(existing);
     }
