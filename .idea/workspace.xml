@@ -6,12 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
       <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/ai/db-conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/ai/db-conventions.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/blue.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/tables.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/tb.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/ai/conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/ai/conventions.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/structure.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/structure.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/Module.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/Module.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/Template.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/Template.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/create.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/create.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
