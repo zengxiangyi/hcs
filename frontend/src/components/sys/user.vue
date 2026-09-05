@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
-import { sysUserAPI, type SysUserRow, type SysUserSaveParams } from '../../api/user'
+import { sysUserAPI, type SysUserRow, type SysUserSaveParams } from '../../api/sysUser'
 
 defineOptions({ name: 'User' })
 

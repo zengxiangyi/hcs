@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { transferAPI } from '../../api/transfer'
-import type { TransferRow, TransferCreateParams } from '../../api/transfer'
+import { transferAPI } from '../../api/transferOrder'
+import type { TransferRow, TransferCreateParams } from '../../api/transferOrder'
 import { blueprintAPI } from '../../api/blueprint'
 import { taskProcessAPI } from '../../api/taskProcess'
 

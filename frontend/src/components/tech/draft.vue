@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { techAPI, type TechBoardSaveDTO } from '../../api/tech'
+import { blueprintAPI, type TechBoardSaveDTO } from '../../api/blueprint'
 
 defineOptions({ name: 'Draft' })
 
@@ -171,7 +171,7 @@ async function onSave() {
       firstHardness: requirementForm.value.firstHardness,
       hardnessDepth: requirementForm.value.hardnessDepth
     }
-    await techAPI.save(bluePrint)
+    await blueprintAPI.save(bluePrint)
     ElMessage.success('保存成功')
   } catch (err) {
     ElMessage.error((err as Error).message || '保存失败')
@@ -197,7 +197,7 @@ function onCancel() {
 /** 通过 code和edition 加载蓝本编辑信息，回填表单 */
 async function loadByCode(code: string,edition: string) {
   try {
-    const res = await techAPI.getByCode(code,edition)
+    const res = await blueprintAPI.getByCodeAndEdition(code,edition)
     const data = res.data
     if (!data) {
       ElMessage.warning(`未找到蓝本：${code}`)

@@ -2,7 +2,8 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { flowNodeAPI, flowEdgeAPI, type FlowNode, type FlowEdge } from '../../api/flow'
+import { flowNodeAPI, type FlowNode } from '../../api/flowNode'
+import { flowEdgeAPI, type FlowEdge } from '../../api/flowEdge'
 
 defineOptions({ name: 'Draw' })
 
@@ -259,8 +260,8 @@ async function load() {
   if (!flowGraph.value) return
   try {
     const [nodeRes, edgeRes] = await Promise.all([
-      flowNodeAPI.list(flowGraph.value),
-      flowEdgeAPI.list(flowGraph.value),
+      flowNodeAPI.listByFlowGraph(flowGraph.value),
+      flowEdgeAPI.listByFlowGraph(flowGraph.value),
     ])
     nodes.value = nodeRes.data || []
     edges.value = edgeRes.data || []

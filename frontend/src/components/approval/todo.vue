@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import http from '../../api/http'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
+import { workflowAPI, type WorkflowQuery } from '../../api/workflow'
+import { flowEngineAPI } from '../../api/flowEngine'
 
 defineOptions({ name: 'Todo' })
 
@@ -101,9 +102,9 @@ function buildQueryParams(overrides: Partial<WorkFlowListParams> = {}): WorkFlow
 async function fetchData() {
   loading.value = true
   try {
-    const res = await http.get<WorkFlowListResult>('/api/workflow/todo', {
-      params: buildQueryParams({ page: currentPage.value, pageSize: pageSize.value }),
-    })
+    const res = await workflowAPI.todo(
+      buildQueryParams({ page: currentPage.value, pageSize: pageSize.value }) as WorkflowQuery
+    )
     tableData.value = res.data.content
     total.value = res.data.total
   } catch (err) {
@@ -154,8 +155,10 @@ function openApproveDialog(row: WorkFlowRow, mode: ApproveMode) {
 }
 
 /**
- * 提交审批：通过 -> /approve，驳回 -> /reject
- * 审批描述以 note 字段提交（对应 flowHistory.note，若后端字段名不同在此调整）
+ * 提交审批：后端无 /approve、/reject 端点，统一走流程引擎 POST /flowEngine/deal
+ * （沿指定连线流转，参数 workflow/flowGraph/edge）。
+ * 注意：edge 需传流程图中定义的连线编码，当前以审批模式占位（agree/reject），
+ * 若流程图连线编码不同需在此调整；审批描述后端暂无对应参数。
  */
 async function submitApprove() {
   const row = currentRow.value
@@ -168,8 +171,10 @@ async function submitApprove() {
   }
   submitting.value = true
   try {
-    await http.post<null>(`/api/workflow/${row.id}/${isApprove ? 'approve' : 'reject'}`, {
-      note: approveNote.value.trim(),
+    await flowEngineAPI.deal({
+      workflow: row.code,
+      flowGraph: row.flowGraph,
+      edge: isApprove ? 'agree' : 'reject',
     })
     ElMessage.success(isApprove ? '已通过' : '已驳回')
     dialogVisible.value = false

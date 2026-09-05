@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import http from '../../api/http'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
+import { workflowAPI, type WorkflowQuery } from '../../api/workflow'
 import { useRouter } from 'vue-router'
 
 defineOptions({ name: 'Done' })
@@ -107,9 +107,9 @@ function buildQueryParams(overrides: Partial<WorkFlowListParams> = {}): WorkFlow
 async function fetchData() {
   loading.value = true
   try {
-    const res = await http.get<WorkFlowListResult>('/api/workflow/done', {
-      params: buildQueryParams({ page: currentPage.value, pageSize: pageSize.value }),
-    })
+    const res = await workflowAPI.done(
+      buildQueryParams({ page: currentPage.value, pageSize: pageSize.value }) as WorkflowQuery
+    )
     tableData.value = res.data.content
     total.value = res.data.total
   } catch (err) {

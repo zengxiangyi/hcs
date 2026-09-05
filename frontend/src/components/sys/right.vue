@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
-import { rightAPI, type RightRow, type RightSaveParams } from '../../api/right'
+import { rightAPI, type RightRow, type RightSaveParams } from '../../api/sysRight'
 
 defineOptions({ name: 'Right' })
 

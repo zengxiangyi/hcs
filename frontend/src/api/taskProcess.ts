@@ -40,10 +40,12 @@ export interface TaskListResult {
   pageSize: number
 }
 
-/** 蓝本绑定入参 */
+/** 蓝本绑定入参（后端按 transfer/blueprint 编码字符串落库） */
 export interface BindParams {
-  transferId: number
-  blueprintId: number
+  /** 调拨单编码 */
+  transfer: string
+  /** 蓝本工艺编码 */
+  blueprint: string
 }
 
 /** 工序任务接口 */

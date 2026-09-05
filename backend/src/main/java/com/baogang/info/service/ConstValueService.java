@@ -34,8 +34,10 @@ public class ConstValueService {
     @Transactional
     public ConstValue save(ConstValue constValue) {
         constValue.setId(null); // 新增时忽略客户端传入的 id
-        if (constValueRepository.existsByCode(constValue.getCode())) {
-            throw new IllegalArgumentException("code already exists: " + constValue.getCode());
+        // (code, category) 业务键防重：同一 category 下 code 重复会让按组合定位出现歧义
+        if (constValueRepository.existsByCodeAndCategory(constValue.getCode(), constValue.getCategory())) {
+            throw new IllegalArgumentException(
+                    "常量值已存在：code=" + constValue.getCode() + ", category=" + constValue.getCategory());
         }
         return constValueRepository.save(constValue);
     }

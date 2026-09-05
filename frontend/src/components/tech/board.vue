@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { techAPI, type TechBoardSaveDTO } from '../../api/tech'
+import { blueprintAPI, type TechBoardSaveDTO } from '../../api/blueprint'
 import { techStepAPI } from '../../api/techStep'
 import { useRouter } from 'vue-router'
 
@@ -368,7 +368,7 @@ async function onSave() {
       firstHardness: requirementForm.value.firstHardness,
       hardnessDepth: requirementForm.value.hardnessDepth
     }
-    await techAPI.save(bluePrint)
+    await blueprintAPI.save(bluePrint)
     // 保存工序
     await techStepAPI.batchSave(stepRows.value)
     ElMessage.success('保存成功')
@@ -426,7 +426,7 @@ async function onSubmit(){
       firstHardness: requirementForm.value.firstHardness,
       hardnessDepth: requirementForm.value.hardnessDepth
     }
-    await techAPI.submit(bluePrint)
+    await blueprintAPI.submit(bluePrint)
     ElMessage.success('保存成功')
   } catch (err) {
     ElMessage.error((err as Error).message || '保存失败')

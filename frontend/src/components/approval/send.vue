@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import http from '../../api/http'
+import { ElMessage } from 'element-plus'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
-import { ApprovalAPI } from '../../api/approval'
+import { workflowAPI } from '../../api/workflow'
 
 defineOptions({ name: 'Send' })
 
@@ -22,23 +21,6 @@ interface WorkFlowRow {
   flowGraph: string
   endTime: string
   remark: string
-}
-
-/** 列表查询参数 */
-interface WorkFlowListParams {
-  targetCode?: string
-  startTimeStart?: string
-  startTimeEnd?: string
-  page?: number
-  pageSize?: number
-}
-
-/** 列表返回 */
-interface WorkFlowListResult {
-  content: WorkFlowRow[]
-  total: number
-  page: number
-  pageSize: number
 }
 
 /** 从 catch 的错误对象中提取用户可读信息 */
@@ -92,21 +74,12 @@ const stateMap: Record<string, { label: string; type: TagType }> = {
 /** 根据状态 key 取展示文本 / tag 类型，未匹配时文本回退原值、类型回退 warning（公共方法生成） */
 const { label: formatStateLabel, type: formatStateType } = createStateFormatter(stateMap)
 
-// 构建查询参数（列表与后续导出共用）
-function buildQueryParams(overrides: Partial<WorkFlowListParams> = {}): WorkFlowListParams {
-  return {
-    startTimeStart: query.value.startTimeStart || undefined,
-    startTimeEnd: query.value.startTimeEnd || undefined,
-    ...overrides,
-  }
-}
 // 拉取列表
 async function fetchData() {
   loading.value = true
   try {
-    const res = await http.get<WorkFlowListResult>('/api/workflow/sender', {
-      params: buildQueryParams({ page: currentPage.value, pageSize: pageSize.value }),
-    })
+    // 后端 GET /sender 不接收查询参数，处理人取自当前登录用户，固定返回前 30 条
+    const res = await workflowAPI.sender()
     tableData.value = res.data.content
     total.value = res.data.total
   } catch (err) {
@@ -137,22 +110,21 @@ function handleSizeChange() {
 }
 
 async function handleCancel(row: WorkFlowRow){
-  // 发请求变更状态
+  // 撤销：后端无 /approve 端点，走 PUT /workflow/update 变更状态为 C（已取消）
   try {
-    await http.post<null>(`/api/workflow/${row.id}/approve`)
-    ElMessage.success('已通过')
+    await workflowAPI.update({ ...row, state: 'C' })
+    ElMessage.success('已撤销')
     fetchData()
   } catch (err) {
     ElMessage.error(getErrorMessage(err, '操作失败'))
   }
-  
 }
 
 async function handleClose(row: WorkFlowRow){
-  // 发请求变更状态
+  // 作废：变更状态为 D
   row.state='D'
   try {
-    await ApprovalAPI.update(row)
+    await workflowAPI.update(row)
     ElMessage.success('完成')
     fetchData()
   } catch (err) {
@@ -161,30 +133,10 @@ async function handleClose(row: WorkFlowRow){
 }
 
 async function handleDrop(row: WorkFlowRow){
-  // 发请求变更状态
+  // 删除流程实例（DELETE /workflow/{id}）
   try {
-    await http.post<null>(`/api/workflow/${row.id}/approve`)
-    ElMessage.success('已通过')
-    fetchData()
-  } catch (err) {
-    ElMessage.error(getErrorMessage(err, '操作失败'))
-  }
-}
-
-// 通过
-async function handleApprove(row: WorkFlowRow) {
-  try {
-    await ElMessageBox.confirm(`确认通过任务「${row.name}」？`, '审批', {
-      type: 'warning',
-      confirmButtonText: '通过',
-      cancelButtonText: '取消',
-    })
-  } catch {
-    return
-  }
-  try {
-    await http.post<null>(`/api/workflow/${row.id}/approve`)
-    ElMessage.success('已通过')
+    await workflowAPI.remove(row.id)
+    ElMessage.success('已删除')
     fetchData()
   } catch (err) {
     ElMessage.error(getErrorMessage(err, '操作失败'))

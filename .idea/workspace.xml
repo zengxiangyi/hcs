@@ -7,12 +7,36 @@
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
       <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/users.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowCurrent.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowCurrent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/TransferOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/TransferOrder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/Workflow.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/Workflow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/ConstValueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/ConstValueController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/ConstValueRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/ConstValueRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/ConstValueService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/ConstValueService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/approval.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/approval.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/blueprint.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/blueprint.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/flow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/flow.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/instance.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/instance.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/right.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/right.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/role.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/role.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/roleRight.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/roleRight.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/roleUser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/roleUser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/taskProcess.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/taskProcess.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/tech.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/tech.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/transfer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/transfer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/done.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/done.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/todo.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/todo.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/product/transfer.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/product/transfer.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/sys/right.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/sys/right.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/sys/role.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/sys/role.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/sys/roleRright.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/sys/roleRright.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/sys/roleUser.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/sys/roleUser.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/sys/user.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/sys/user.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/tech/board.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/tech/board.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/tech/draft.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/tech/draft.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/workflow/draw.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/workflow/draw.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/workflow/flow.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/workflow/flow.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/workflow/instance.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/workflow/instance.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -2,8 +2,11 @@
 import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute,useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { instanceAPI, type InstanceRow, type FlowHistoryRow } from '../../api/instance'
-import { flowEdgeAPI, flowNodeAPI, type FlowEdge, type FlowNode } from '../../api/flow'
+import { workflowAPI } from '../../api/workflow'
+import { flowCurrentAPI, type FlowCurrentRow } from '../../api/flowCurrent'
+import { flowHistoryAPI, type FlowHistoryRow } from '../../api/flowHistory'
+import { flowNodeAPI, type FlowNode } from '../../api/flowNode'
+import { flowEdgeAPI, type FlowEdge } from '../../api/flowEdge'
 
 defineOptions({ name: 'Instance' })
 
@@ -25,7 +28,7 @@ const workflow = computed(() => {
 
 const currentLoading = ref(false)
 /** 当前节点列表，并行流程可能同时存在多个待处理节点 */
-const current = ref<InstanceRow[]>([])
+const current = ref<FlowCurrentRow[]>([])
 
 /** 加载流程实例当前节点信息 */
 async function loadCurrent() {
@@ -35,7 +38,7 @@ async function loadCurrent() {
   }
   currentLoading.value = true
   try {
-    const res = await instanceAPI.current(workflow.value)
+    const res = await flowCurrentAPI.listByWorkflow(workflow.value)
     current.value = res.data ?? []
   } catch (err) {
     current.value = []
@@ -58,7 +61,7 @@ async function loadHistory() {
   }
   historyLoading.value = true
   try {
-    const res = await instanceAPI.history(workflow.value)
+    const res = await flowHistoryAPI.listByWorkflow(workflow.value)
     history.value = res.data ?? []
   } catch (err) {
     history.value = []
@@ -82,12 +85,12 @@ async function loadFlowGraph() {
   }
   flowGraphLoading.value = true
   try {
-    const instance = await instanceAPI.detail(workflow.value)
+    const instance = await workflowAPI.getByCode(workflow.value)
     const flowGraph = instance.data?.flowGraph
     if (flowGraph) {
       const [nodeRes, edgeRes] = await Promise.all([
-        flowNodeAPI.list(flowGraph),
-        flowEdgeAPI.list(flowGraph),
+        flowNodeAPI.listByFlowGraph(flowGraph),
+        flowEdgeAPI.listByFlowGraph(flowGraph),
       ])
       nodes.value = nodeRes.data || []
       edges.value = edgeRes.data || []

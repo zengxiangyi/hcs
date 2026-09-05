@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { graphAPI, type GraphRow, type GraphSaveDTO } from '../../api/flow'
+import { flowGraphAPI, type FlowGraphRow, type FlowGraphSaveDTO } from '../../api/flowGraph'
 import router from '../../router'
 
 defineOptions({ name: 'Flow' })
 
 /** 列表数据 */
-const list = ref<GraphRow[]>([])
+const list = ref<FlowGraphRow[]>([])
 const total = ref(0)
 const page = ref(1)
 const pageSize = ref(10)
@@ -23,7 +23,7 @@ const query = ref({
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增流程图')
 const formRef = ref()
-const form = ref<GraphSaveDTO>({
+const form = ref<FlowGraphSaveDTO>({
   id: 0,
   flowGraph: '',
   title: '',
@@ -41,7 +41,7 @@ const rules = {
 async function loadList() {
   loading.value = true
   try {
-    const res = await graphAPI.search({
+    const res = await flowGraphAPI.search({
       flowGraph: query.value.flowGraph || undefined,
       title: query.value.title || undefined,
       page: page.value,
@@ -88,7 +88,7 @@ function openAdd() {
 }
 
 /** 打开编辑弹窗 */
-function openEdit(row: GraphRow) {
+function openEdit(row: FlowGraphRow) {
   dialogTitle.value = '编辑流程图'
   form.value = { ...row }
   dialogVisible.value = true
@@ -107,10 +107,10 @@ async function onSubmit() {
     if (!valid) return
     try {
       if (form.value.id) {
-        await graphAPI.edit(form.value)
+        await flowGraphAPI.update(form.value)
         ElMessage.success('编辑成功')
       } else {
-        await graphAPI.save(form.value)
+        await flowGraphAPI.save(form.value)
         ElMessage.success('新增成功')
       }
       dialogVisible.value = false
@@ -122,7 +122,7 @@ async function onSubmit() {
 }
 
 /** 删除 */
-async function onRemove(row: GraphRow) {
+async function onRemove(row: FlowGraphRow) {
   try {
     await ElMessageBox.confirm(`确认删除流程图「${row.title}」？`, '提示', {
       type: 'warning',
@@ -131,7 +131,7 @@ async function onRemove(row: GraphRow) {
     return
   }
   try {
-    await graphAPI.remove(row.id)
+    await flowGraphAPI.remove(row.id)
     ElMessage.success('删除成功')
     loadList()
   } catch (err) {
@@ -166,8 +166,8 @@ onMounted(loadList)
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button size="small" type="success" @click="openShow(row.flowGraph)">查看</el-button>
-          <el-button size="small" type="primary" @click="openEdit(row as GraphRow)">编辑</el-button>
-          <el-button size="small" type="danger" @click="onRemove(row as GraphRow)">删除</el-button>
+          <el-button size="small" type="primary" @click="openEdit(row as FlowGraphRow)">编辑</el-button>
+          <el-button size="small" type="danger" @click="onRemove(row as FlowGraphRow)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

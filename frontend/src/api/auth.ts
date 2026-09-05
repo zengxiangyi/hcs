@@ -14,7 +14,7 @@ export interface LoginParams {
   password: string
 }
 
-/** 登录返回 */
+/** 登录返回（对齐后端 LoginOut：token + 用户信息 + 角色/权限编码列表） */
 export interface LoginResult {
   token: string
   user: UserInfo
@@ -22,15 +22,18 @@ export interface LoginResult {
   roles: string[]
 }
 
-/** 重置密码：身份验证入参（手机号 + 邮箱） */
+
+/** 重置密码：身份验证入参（后端按 username + email + cellphone 校验） */
 export interface VerifyIdentityParams {
+  username: string
   cellphone: string
   email: string
 }
 
-/** 重置密码：设置新密码入参 */
-export interface ResetPasswordParams extends VerifyIdentityParams {
-  newPassword: string
+/** 重置密码：设置新密码入参（后端只收 username + password） */
+export interface ResetPasswordParams {
+  username: string
+  password: string
 }
 
 /** 注册账号入参 */
@@ -46,11 +49,7 @@ export const baseAPI = {
   login: (data: LoginParams): Promise<ApiResponse<LoginResult>> =>
     http.post<LoginResult>('/api/auth/login', data) as Promise<ApiResponse<LoginResult>>,
 
-  /** 登出 */
-  logout: (): Promise<ApiResponse<null>> =>
-    http.post<null>('/api/auth/logout') as Promise<ApiResponse<null>>,
-
-  /** 重置密码：验证手机号 + 邮箱是否匹配 */
+  /** 重置密码：验证用户名 + 邮箱 + 手机号是否匹配 */
   verifyIdentity: (data: VerifyIdentityParams): Promise<ApiResponse<string>> =>
     http.post<string>('/api/auth/verify', data) as Promise<ApiResponse<string>>,
 

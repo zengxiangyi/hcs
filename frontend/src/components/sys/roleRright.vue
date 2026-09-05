@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, type Ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { roleAPI, type RoleRow } from '../../api/role'
-import { rightAPI, type RightRow } from '../../api/right'
-import { roleRightAPI } from '../../api/roleRight'
+import { roleAPI, type RoleRow } from '../../api/sysRole'
+import { rightAPI, type RightRow } from '../../api/sysRight'
+import { roleRightAPI } from '../../api/sysRoleRight'
 
 defineOptions({ name: 'RoleRight' })
 
@@ -54,7 +54,7 @@ async function syncChecked() {
     return
   }
   try {
-    const res = await roleRightAPI.list(selectedRoleCode.value)
+    const res = await roleRightAPI.listByRole(selectedRoleCode.value)
     checkedRightCodes.value = res.data.rightCodes
   } catch (e) {
     ElMessage.error((e as Error).message || '加载关联失败')

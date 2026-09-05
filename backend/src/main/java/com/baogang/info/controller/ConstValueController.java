@@ -50,6 +50,7 @@ public class ConstValueController {
     // 新增：路由统一为 POST /save（原为 POST ""）
     @PostMapping("/save")
     public ApiResponse<ConstValue> save(@Valid @RequestBody ConstValue constValue) {
+        // 数据校验
         return ApiResponse.success(constValueService.save(constValue));
     }
 

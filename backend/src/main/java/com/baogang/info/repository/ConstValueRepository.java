@@ -12,7 +12,7 @@ public interface ConstValueRepository extends JpaRepository<ConstValue, Long> {
 
     Optional<ConstValue> findByCode(String code);
 
-    boolean existsByCode(String code);
+    boolean existsByCodeAndCategory(String code, String category);
 
     List<ConstValue> findByCategory(String category);
 }

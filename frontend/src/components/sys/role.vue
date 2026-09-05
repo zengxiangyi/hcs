@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
-import { roleAPI, type RoleRow, type RoleSaveParams } from '../../api/role'
+import { roleAPI, type RoleRow, type RoleSaveParams } from '../../api/sysRole'
 
 defineOptions({ name: 'Role' })
 

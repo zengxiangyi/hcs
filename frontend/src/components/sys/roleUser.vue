@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, type Ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { roleAPI, type RoleRow } from '../../api/role'
-import { sysUserAPI, type SysUserRow } from '../../api/user'
-import { roleUserAPI } from '../../api/roleUser'
+import { roleAPI, type RoleRow } from '../../api/sysRole'
+import { sysUserAPI, type SysUserRow } from '../../api/sysUser'
+import { roleUserAPI } from '../../api/sysRoleUser'
 
 defineOptions({ name: 'RoleUser' })
 
