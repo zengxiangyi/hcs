@@ -39,8 +39,10 @@ public class FlowCurrentService {
 
     @Transactional
     public FlowCurrent update(Long id, FlowCurrent flowCurrent) {
-        FlowCurrent existing = getById(id);
+        FlowCurrent existing = flowCurrentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("flowCurrent not found: " + id));
         existing.setWorkflow(flowCurrent.getWorkflow());
+        existing.setFlowGraph(flowCurrent.getFlowGraph());
         existing.setFlowNode(flowCurrent.getFlowNode());
         existing.setStartTime(flowCurrent.getStartTime());
         existing.setRemark(flowCurrent.getRemark());
@@ -66,6 +68,12 @@ public class FlowCurrentService {
     @Transactional
     public void deleteByWorkflow(String workflow) {
         flowCurrentRepository.removeByWorkflow(workflow);
+    }
+
+    // 定向删除：只清某个节点的当前记录，保留同流程其它并行分支（供 FlowEngine 审批调用）
+    @Transactional
+    public void deleteByWorkflowAndFlowNode(String workflow, String flowNode) {
+        flowCurrentRepository.deleteByWorkflowAndFlowNode(workflow, flowNode);
     }
 
 }

@@ -5,6 +5,7 @@ import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.ConstValueQuery;
 import com.baogang.info.entity.ConstValue;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.ConstValueService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,22 +38,35 @@ public class ConstValueController {
 
     @GetMapping("/{id}")
     public ApiResponse<ConstValue> getById(@PathVariable Long id) {
-        return ApiResponse.success(constValueService.getById(id));
+        ConstValue constValue = constValueService.getById(id);
+        if (constValue == null) {
+            throw new ResourceNotFoundException("constValue not found: " + id);
+        }
+        return ApiResponse.success(constValue);
     }
 
     @GetMapping("/code/{code}")
     public ApiResponse<ConstValue> getByCode(@PathVariable String code) {
-        return ApiResponse.success(constValueService.getByCode(code));
+        ConstValue constValue = constValueService.getByCode(code);
+        if (constValue == null) {
+            throw new ResourceNotFoundException("constValue not found: " + code);
+        }
+        return ApiResponse.success(constValue);
     }
 
-    @PostMapping
+    // 新增：路由统一为 POST /save（原为 POST ""）
+    @PostMapping("/save")
     public ApiResponse<ConstValue> save(@Valid @RequestBody ConstValue constValue) {
         return ApiResponse.success(constValueService.save(constValue));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<ConstValue> update(@PathVariable Long id, @Valid @RequestBody ConstValue constValue) {
-        return ApiResponse.success(constValueService.update(id, constValue));
+    // 修改：路由统一为 PUT /update，id 由请求体携带
+    @PutMapping("/update")
+    public ApiResponse<ConstValue> update(@Valid @RequestBody ConstValue constValue) {
+        if (constValue.getId() == null) {
+            throw new IllegalArgumentException("修改操作必须传入 id");
+        }
+        return ApiResponse.success(constValueService.update(constValue.getId(), constValue));
     }
 
     @DeleteMapping("/{id}")

@@ -59,7 +59,7 @@
     <select id="query" resultMap="TransferOrderResultMap">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM transferorder
+        FROM page.transferorder
         <include refid="Query_Where"/>
         ORDER BY id DESC
         LIMIT #{offset}, #{limit}
@@ -67,7 +67,7 @@
 
     <select id="countByQuery" resultType="long">
         SELECT COUNT(1)
-        FROM transferorder
+        FROM page.transferorder
         <include refid="Query_Where"/>
     </select>
 

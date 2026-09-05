@@ -5,9 +5,8 @@ import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.SysRightQuery;
 import com.baogang.info.entity.SysRight;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.SysRightService;
-import com.baogang.info.service.SysRoleRightService;
-import com.baogang.info.tool.StringTool;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,11 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class SysRightController {
 
     private final SysRightService sysRightService;
-    private final SysRoleRightService sysRoleRightService;
 
-    public SysRightController(SysRightService sysRightService, SysRoleRightService sysRoleRightService) {
+    public SysRightController(SysRightService sysRightService) {
         this.sysRightService = sysRightService;
-        this.sysRoleRightService = sysRoleRightService;
     }
 
     // 复杂/可变条件查询：POST 请求体承载 SysRightQuery，支持任意字段组合过滤
@@ -40,12 +37,20 @@ public class SysRightController {
 
     @GetMapping("/{id}")
     public ApiResponse<SysRight> getById(@PathVariable Long id) {
-        return ApiResponse.success(sysRightService.getById(id));
+        SysRight sysRight = sysRightService.getById(id);
+        if (sysRight == null) {
+            throw new ResourceNotFoundException("sysRight not found: " + id);
+        }
+        return ApiResponse.success(sysRight);
     }
 
     @GetMapping("/code/{code}")
     public ApiResponse<SysRight> getByCode(@PathVariable String code) {
-        return ApiResponse.success(sysRightService.getByCode(code));
+        SysRight sysRight = sysRightService.getByCode(code);
+        if (sysRight == null) {
+            throw new ResourceNotFoundException("sysRight not found: " + code);
+        }
+        return ApiResponse.success(sysRight);
     }
 
     @PostMapping("/save")
@@ -53,20 +58,20 @@ public class SysRightController {
         return ApiResponse.success(sysRightService.save(sysRight));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<SysRight> update(@PathVariable Long id, @Valid @RequestBody SysRight sysRight) {
-        return ApiResponse.success(sysRightService.update(id, sysRight));
+    // 修改：路由统一为 PUT /update，id 由请求体携带
+    @PutMapping("/update")
+    public ApiResponse<SysRight> update(@Valid @RequestBody SysRight sysRight) {
+        if (sysRight.getId() == null) {
+            throw new IllegalArgumentException("修改操作必须传入 id");
+        }
+        return ApiResponse.success(sysRightService.update(sysRight.getId(), sysRight));
     }
 
     @DeleteMapping("/code/{code}")
     public ApiResponse<String> delete(@PathVariable String code) {
-        if(StringTool.isNotBlank(code)) {
-            sysRightService.deleteByCode(code);
-            // 级联删除角色权限绑定
-            sysRoleRightService.deleteByRightCode(code);
-            return ApiResponse.success("处理完毕");
-        }
-        return ApiResponse.error(400,"参数错误");
+        // 级联删除（角色权限绑定 + 权限本体）已下沉到 Service 单事务内完成
+        sysRightService.deleteCascadeByCode(code);
+        return ApiResponse.success("处理完毕");
     }
 
     @GetMapping("/category/{category}")

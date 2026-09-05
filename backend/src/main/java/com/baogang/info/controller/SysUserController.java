@@ -5,6 +5,7 @@ import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.SysUserQuery;
 import com.baogang.info.entity.SysUser;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.SysUserService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,12 +36,20 @@ public class SysUserController {
 
     @GetMapping("/{id}")
     public ApiResponse<SysUser> getById(@PathVariable Long id) {
-        return ApiResponse.success(sysUserService.getById(id));
+        SysUser sysUser = sysUserService.getById(id);
+        if (sysUser == null) {
+            throw new ResourceNotFoundException("sysUser not found: " + id);
+        }
+        return ApiResponse.success(sysUser);
     }
 
     @GetMapping("/code/{code}")
     public ApiResponse<SysUser> getByCode(@PathVariable String code) {
-        return ApiResponse.success(sysUserService.getByCode(code));
+        SysUser sysUser = sysUserService.getByCode(code);
+        if (sysUser == null) {
+            throw new ResourceNotFoundException("sysUser not found: " + code);
+        }
+        return ApiResponse.success(sysUser);
     }
 
     @PostMapping("/save")
@@ -48,9 +57,13 @@ public class SysUserController {
         return ApiResponse.success(sysUserService.save(sysUser));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<SysUser> update(@PathVariable Long id, @Valid @RequestBody SysUser sysUser) {
-        return ApiResponse.success(sysUserService.update(id, sysUser));
+    // 修改：路由统一为 PUT /update，id 由请求体携带，createTime/createUser 由 service 保留原值
+    @PutMapping("/update")
+    public ApiResponse<SysUser> update(@Valid @RequestBody SysUser sysUser) {
+        if (sysUser.getId() == null) {
+            throw new IllegalArgumentException("修改操作必须传入 id");
+        }
+        return ApiResponse.success(sysUserService.update(sysUser.getId(), sysUser));
     }
 
     // 级联删除收进服务层单事务（角色绑定 + 用户），不存在时由服务层抛 404

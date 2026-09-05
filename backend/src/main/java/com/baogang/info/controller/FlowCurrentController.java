@@ -4,6 +4,7 @@ import com.baogang.info.common.ApiResponse;
 import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.entity.FlowCurrent;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.FlowCurrentService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +39,11 @@ public class FlowCurrentController {
 
     @GetMapping("/{id}")
     public ApiResponse<FlowCurrent> getById(@PathVariable Long id) {
-        return ApiResponse.success(flowCurrentService.getById(id));
+        FlowCurrent flowCurrent = flowCurrentService.getById(id);
+        if (flowCurrent == null) {
+            throw new ResourceNotFoundException("flowCurrent not found: " + id);
+        }
+        return ApiResponse.success(flowCurrent);
     }
 
     @PostMapping("/save")

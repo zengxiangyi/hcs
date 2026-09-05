@@ -47,8 +47,8 @@ export const rightAPI = {
   search: (params?: RightListParams) => http.post<RightListResult>('/api/sysRight/search', params),
   /** 新增权限 */
   add: (data: RightSaveParams) => http.post<RightRow>('/api/sysRight/save', data),
-  /** 修改权限 */
-  update: (id: number, data: RightSaveParams) => http.put<RightRow>(`/api/sysRight/${id}`, data),
+  /** 修改权限（路由统一为 PUT /update，id 由请求体携带） */
+  update: (id: number, data: RightSaveParams) => http.put<RightRow>('/api/sysRight/update', { ...data, id }),
   /** 删除权限 */
   remove: (id: number) => http.delete<null>(`/api/sysRight/${id}`),
 }

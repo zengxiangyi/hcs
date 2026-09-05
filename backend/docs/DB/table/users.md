@@ -7,11 +7,11 @@
 | 序号 | COLUMN_NAME | 类型 | COLUMN_COMMENT |
 | ---- | ----------- | ---- | -------------- |
 | 1 | id | int | |
-| 2 | userName | varchar(64) | |
-| 3 | roleName | varchar(32) | |
+| 2 | username | varchar(64) | |
+| 3 | rolename | varchar(32) | |
 | 4 | department | varchar(64) | |
 | 5 | state | varchar(16) | |
-| 6 | createTime | varchar(32) | |
+| 6 | createtime | varchar(32) | |
 
 ## 说明
 

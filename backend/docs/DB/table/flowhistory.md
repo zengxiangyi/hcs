@@ -8,13 +8,13 @@
 | ---- | ----------- | ---- | -------------- |
 | 1 | id | int | 主键 |
 | 2 | workflow | varchar(30) | 实例ID |
-| 3 | flowGraph | varchar(30) | 流程标记 |
+| 3 | flowgraph | varchar(30) | 流程标记 |
 | 4 | edge | varchar(100) | 边线 |
-| 5 | fromNode | varchar(45) | |
-| 6 | toNode | varchar(45) | |
-| 7 | dealTime | varchar(30) | 操作时间 |
-| 8 | dealUser | varchar(100) | 操作人工号 |
-| 9 | userName | varchar(100) | 操作人名称 |
+| 5 | fromnode | varchar(45) | |
+| 6 | tonode | varchar(45) | |
+| 7 | dealtime | varchar(30) | 操作时间 |
+| 8 | dealuser | varchar(100) | 操作人工号 |
+| 9 | username | varchar(100) | 操作人名称 |
 | 10 | action | varchar(100) | 动作描述 |
 | 11 | note | varchar(100) | 审批信息 |
 | 12 | remark | varchar(100) | 备注 |

@@ -5,33 +5,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/ConstValue.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.codebuddy/memory/MEMORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/MEMORY.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/CODEBUDDY.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/CODEBUDDY.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/ai/db-conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/ai/db-conventions.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/plans/2026-08-31-drop-flownodeaction.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/plans/2026-08-31-drop-flownodeaction.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/tables.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/tables.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.codebuddy/memory/MEMORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.codebuddy/memory/MEMORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/approval.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/approval.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/blueprint.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/blueprint.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/flowcurrent.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/flowcurrent.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/flowedge.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/flowedge.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/flowgraph.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/flowgraph.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/flowhistory.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/flowhistory.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/flownode.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/flownode.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/sysroleright.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/sysroleright.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/sysroleuser.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/sysroleuser.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/taskprocess.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/taskprocess.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/techstep.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/techstep.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/transferorder.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/transferorder.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/users.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/users.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/DB/table/workflow.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/DB/table/workflow.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/BluePrintController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/BluePrintController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/ConstValueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/ConstValueController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowCurrentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowCurrentController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowEdgeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowEdgeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowEngineController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowEngineController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowGraphController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowGraphController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowHistoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowHistoryController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowNodeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowNodeController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRightController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRightController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleRightController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleRightController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleUserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysUserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TechStepController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TechStepController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TransferOrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TransferOrderController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/FlowCurrentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/FlowCurrentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/FlowEdgeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/FlowEdgeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/FlowNodeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/FlowNodeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/WorkflowRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/WorkflowRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/BluePrintService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/BluePrintService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowCurrentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowCurrentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowEdgeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowEdgeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowEngine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowGraphService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowGraphService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowHistoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowHistoryService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java" afterDir="false" />
@@ -39,18 +52,34 @@
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/SysRoleRightService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/SysRoleRightService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/SysRoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/SysRoleService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/SysRoleUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/SysRoleUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/TaskProcessService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/TaskProcessService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/TechStepService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/TechStepService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/TransferOrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/TransferOrderService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/WorkflowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/WorkflowService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/20260903.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/20260903.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/ai/contract.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/ai/contract.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/ai/conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/ai/conventions.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/structure.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/structure.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/BluePrintMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/BluePrintMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/ConstValueMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/ConstValueMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/SysRightMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/SysRightMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/SysRoleMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/SysRoleMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/SysUserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/SysUserMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/TaskProcessMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/TaskProcessMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/TechStepMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/TechStepMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/TransferOrderMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/TransferOrderMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/constValue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/constValue.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/process.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/process.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/right.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/right.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/role.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/role.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/taskProcess.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/taskProcess.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/user.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseLocalColorSettings">
+    <colors>
+      <entry key="1b92b432-b1e4-42f7-81ad-104cd7c9a8b1" value="" />
+    </colors>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -158,7 +187,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
           <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java</url>
-          <line>61</line>
+          <line>57</line>
           <log-expression expression="        one.setBlueprint(bindMap.get(&quot;blueprint&quot;));&#10;" language="JAVA" mode="CODE_FRAGMENT" />
           <placement>INTER_LINE</placement>
           <option name="timeStamp" value="11" />

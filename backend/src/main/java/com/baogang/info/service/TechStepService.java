@@ -32,6 +32,15 @@ public class TechStepService {
         return techStepRepository.save(techStep);
     }
 
+    // 批量保存：单事务，任一条失败整体回滚，避免逐条提交产生部分写入
+    @Transactional
+    public void saveBatch(List<TechStep> techStepList) {
+        for (TechStep techStep : techStepList) {
+            techStep.setId(null); // 新增时忽略客户端传入的 id
+        }
+        techStepRepository.saveAll(techStepList);
+    }
+
     // 修改：按 id 更新已有记录，逐字段同步到托管实体
     @Transactional
     public TechStep update(TechStep techStep) {
@@ -39,7 +48,7 @@ public class TechStepService {
             throw new IllegalArgumentException("修改操作必须传入 id");
         }
         TechStep existing = techStepRepository.findById(techStep.getId())
-                .orElseThrow(() -> new IllegalArgumentException("工序不存在：id=" + techStep.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("工序不存在：id=" + techStep.getId()));
         existing.setFirstLevel(techStep.getFirstLevel());
         existing.setSecondLevel(techStep.getSecondLevel());
         existing.setStep(techStep.getStep());

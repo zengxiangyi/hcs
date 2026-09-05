@@ -39,8 +39,13 @@ public class FlowHistoryService {
 
     @Transactional
     public FlowHistory update(Long id, FlowHistory flowHistory) {
-        FlowHistory existing = getById(id);
+        FlowHistory existing = flowHistoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("flowHistory not found: " + id));
         existing.setWorkflow(flowHistory.getWorkflow());
+        existing.setFlowGraph(flowHistory.getFlowGraph());
+        existing.setEdge(flowHistory.getEdge());
+        existing.setFromNode(flowHistory.getFromNode());
+        existing.setToNode(flowHistory.getToNode());
         existing.setDealTime(flowHistory.getDealTime());
         existing.setDealUser(flowHistory.getDealUser());
         existing.setUserName(flowHistory.getUserName());

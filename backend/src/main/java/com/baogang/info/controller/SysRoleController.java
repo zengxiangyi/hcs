@@ -5,10 +5,8 @@ import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.SysRoleQuery;
 import com.baogang.info.entity.SysRole;
-import com.baogang.info.service.SysRoleRightService;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.SysRoleService;
-import com.baogang.info.service.SysRoleUserService;
-import com.baogang.info.tool.StringTool;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,14 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class SysRoleController {
 
     private final SysRoleService sysRoleService;
-    private final SysRoleRightService sysRoleRightService;
-    private final SysRoleUserService sysRoleUserService;
 
-
-    public SysRoleController(SysRoleService sysRoleService, SysRoleRightService sysRoleRightService, SysRoleUserService sysRoleUserService) {
+    public SysRoleController(SysRoleService sysRoleService) {
         this.sysRoleService = sysRoleService;
-        this.sysRoleRightService = sysRoleRightService;
-        this.sysRoleUserService = sysRoleUserService;
     }
 
     // 复杂/可变条件查询：POST 请求体承载 SysRoleQuery，支持任意字段组合过滤
@@ -44,12 +37,20 @@ public class SysRoleController {
 
     @GetMapping("/{id}")
     public ApiResponse<SysRole> getById(@PathVariable Long id) {
-        return ApiResponse.success(sysRoleService.getById(id));
+        SysRole sysRole = sysRoleService.getById(id);
+        if (sysRole == null) {
+            throw new ResourceNotFoundException("sysRole not found: " + id);
+        }
+        return ApiResponse.success(sysRole);
     }
 
     @GetMapping("/code/{code}")
     public ApiResponse<SysRole> getByCode(@PathVariable String code) {
-        return ApiResponse.success(sysRoleService.getByCode(code));
+        SysRole sysRole = sysRoleService.getByCode(code);
+        if (sysRole == null) {
+            throw new ResourceNotFoundException("sysRole not found: " + code);
+        }
+        return ApiResponse.success(sysRole);
     }
 
     @PostMapping("/save")
@@ -57,21 +58,20 @@ public class SysRoleController {
         return ApiResponse.success(sysRoleService.save(sysRole));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<SysRole> update(@PathVariable Long id, @Valid @RequestBody SysRole sysRole) {
-        return ApiResponse.success(sysRoleService.update(id, sysRole));
+    // 修改：路由统一为 PUT /update，id 由请求体携带
+    @PutMapping("/update")
+    public ApiResponse<SysRole> update(@Valid @RequestBody SysRole sysRole) {
+        if (sysRole.getId() == null) {
+            throw new IllegalArgumentException("修改操作必须传入 id");
+        }
+        return ApiResponse.success(sysRoleService.update(sysRole.getId(), sysRole));
     }
 
     @DeleteMapping("/code/{code}")
     public ApiResponse<String> delete(@PathVariable String code) {
-        if(StringTool.isNotBlank(code)){
-            // 级联删除角色权限绑定
-            sysRoleRightService.deleteByRoleCode(code);
-            sysRoleUserService.deleteByRoleCode(code);
-            sysRoleService.deleteByCode(code);
-            return ApiResponse.success("处理完毕");
-        }
-        return ApiResponse.error(400,"参数错误");
+        // 级联删除（权限绑定 + 用户绑定 + 角色本体）已下沉到 Service 单事务内完成
+        sysRoleService.deleteCascadeByCode(code);
+        return ApiResponse.success("处理完毕");
     }
 
     @GetMapping("/category/{category}")

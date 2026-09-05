@@ -1,5 +1,10 @@
 # MEMORY.md（长期记忆，控制 4 KB 内；细节下沉到 daily 按需读取）
 
+## 规范批改动（2026-09-05，需重打包部署 + 前端重新 build 才生效）
+- **PUT 路由全量统一为 `PUT /xxx/update`（id 由请求体携带）**：后端改 sysUser/sysRole/sysRight（原 `/{id}`）、constValue（原 `/{id}` + `POST ""`→`POST /save`）、flowGraph（删与 `/update` 重复的 `PUT /{id}`）；前端 api 同步改 user.ts(2处)/role.ts/right.ts/process.ts/taskProcess.ts(原调 `/{id}` 本就不匹配，顺手修复)/constValue.ts，改法 `http.put('/api/xxx/update', {...data, id})`。按 code 删除的 `DELETE /code/{code}` 系保留未动。
+- **try/catch 与手写判空拆除**：BluePrint/TransferOrder/TaskProcess/FlowGraph update 的 try-catch、`@RequestBody` 判 null 死代码、TechStep @PathVariable blank 检查全删。TechStep.batchSave 修 `&&` 判空 bug，批量下沉 `TechStepService.saveBatch`（@Transactional + saveAll）。
+- **404 语义统一**：手写 error(400,"不存在") 全改抛 `ResourceNotFoundException`（BluePrint/TransferOrder/TaskProcess/TechStep getById 与 delete、FlowGraph.findByWorkflow 原 get(0) 越界）；Service 侧 BluePrintService.update、TechStepService.update、TransferOrderService.deleteById 同步。`getById` 返回 `success(null)` 型大量接口**未改**（涉及前端判空行为，待用户决定）。RNFE → HTTP 404 + {code:404,message}，前端拦截器解包提示，兼容。
+
 ## 用户偏好
 - 用最简/最小实现（"懒"编码），反对过度工程化；文档用渐进式披露+按需加载的压缩风格。
 - 大型代码对齐任务偏好**多 agent 并行**。

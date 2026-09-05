@@ -26,9 +26,11 @@
 - 后端 context-path 由 war 名决定，必须保持 `api.war`，否则全线 404 且无编译期提示。
 - `ddl-auto=none`：所有 DDL/DML 由 DBA 执行，AI 只以 SQL 文本交付，禁止自行连库执行。
 - DB 列名一律小写无下划线；MyBatis 的 XML 是查询真源。
-- **列名/表名大小写例外**（2026-09-05 实测）：`page` 库列名绝大多数为驼峰（`flowGraph`、`roleList`）或全小写，但 **`flownode` 表的 `X/Y/W/H` 四个列名是大写**，JPA `@Column` 必须写成大写才能映射上；`workflow.id` 是 **bigint** 不是 int；库中另有拼写遗留：`approval.sartTime`（疑 startTime 笔误）、`flowgraph.heght`（疑 height 笔误）——均以库中实际拼写为准，勿擅自纠正。
+- **列名/表名大小写例外**（2026-09-05 实测）：`page` 库列名绝大多数为驼峰（`flowGraph`、`roleList`）或全小写，但 **`flownode` 表的 `X/Y/W/H` 四个列名是大写**，JPA `@Column` 必须写成大写才能映射上（2026-09-05 用户确认：这四个是例外，保持大写，不参与「注解列名全小写」检查）；`workflow.id` 是 **bigint** 不是 int；库中另有拼写遗留：`approval.sartTime`（疑 startTime 笔误）、`flowgraph.heght`（疑 height 笔误）——均以库中实际拼写为准，勿擅自纠正。
 - **时间/数值字段多为 varchar**（2026-09-05）：`flowhistory.dealTime` varchar(30)、`taskprocess.auditTime/createTime/updateTime` varchar(20)、`techstep.sort/isNeed` varchar(45)、`blueprint` 的 weight/isFirstCheck/busbarNum 等 varchar(100)。做范围查询/排序会受影响，后续可优化。
 - **表名也是全小写**（与 JPA `@Table` 一致）。MySQL 列名大小写不敏感，但**表名在 Linux（lower_case_table_names=0）大小写敏感**：Mapper XML / 原生 SQL 里写成 `flowNode` 这类驼峰会直接报 `Table 'page.flowNode' doesn't exist`（2026-09-04 踩坑，见当日日志）。写 SQL 前先核对 `entity/*.java` 的 `@Table(name=...)`。
+- **SQL 表名 schema 前缀约定（2026-09-05 用户确认，多轮讨论定稿）**：Mapper XML / 原生 SQL 中表名一律硬编码 `page.` 前缀（如 `FROM page.sysuser`、`from page.flowhistory`、`from page.flowcurrent a, page.flownode n`）。理由：①一个 DB 实例下可有多个 schema，库名归 DBA 管理、不轻易改，但 JDBC URL 的库名参数在**多 schema 环境极易被混用/配错**；②后期还要支持**多 schema 联合查询**，表名必须显式带 schema 才能在跨 schema SQL 中定位；③把前缀写进 URL 等于把库归属交给了易被误改的部署配置，一旦漏填/错填所有不带前缀的 SQL 会全线找不到表。故**前缀绝不进 JDBC URL、硬编码在 SQL/XML**；库名若真要改或新增 schema，需同步改全部 Mapper XML（换库即断风险已知并接受）。
+- **表文档列名规范（2026-09-05 用户确认）**：`backend/docs/DB/table/*.md` 的字段清单 `COLUMN_NAME` 列**统一小写、无下划线**，对齐 XML/entity `@Column` 与 README「列名一律小写」规则；唯一例外是 `flownode` 表的 `X/Y/W/H` 四个大写列（JPA `@Column` 也必须大写才能映射）。注意：`page` 库实列本以驼峰为主，文档按约定呈现小写，靠 MySQL 列名大小写不敏感与代码一致。改表结构文档时列名保持小写（X/Y/W/H 除外）。
 - **后端日志级别**（2026-09-04 踩坑）：项目无自定义 `logback-spring.xml`，走 Spring Boot 默认，**根级别 INFO**；`application.properties` 需逐个显式开 `logging.level.<包>=DEBUG`（已开 `com.baogang.info.mapper`、`com.baogang.info.tool`）。项目**无 actuator/devtools**，`logging.level.*` 不会热更新，**改完必须重新 `mvn package` + 重启 Tomcat**（`.\deploy-test.ps1 -Part Back`）。未配 `logging.file.name`，日志只进 console（Tomcat 控制台窗口 / `logs/catalina.*.log`）。
 - 受保护（只读）：`.idea/`、`script/`、`config/` 目录；后端另有 `mvnw`/`mvnw.cmd`/`info.iml`/`target/`/`.mvn/`。
 

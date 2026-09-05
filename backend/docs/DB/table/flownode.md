@@ -7,15 +7,15 @@
 | 序号 | COLUMN_NAME | 类型 | COLUMN_COMMENT |
 | ---- | ----------- | ---- | -------------- |
 | 1 | id | int | 主键 |
-| 2 | flowGraph | varchar(30) | 流程图编号 |
+| 2 | flowgraph | varchar(30) | 流程图编号 |
 | 3 | code | varchar(30) | 编号 |
 | 4 | name | varchar(100) | 名称 |
 | 5 | category | varchar(20) | 分类 |
 | 6 | shape | varchar(20) | 形状 |
 | 7 | color | varchar(10) | 颜色 |
 | 8 | operator | varchar(10) | 操作人分类 |
-| 9 | roleList | varchar(100) | 角色组 |
-| 10 | userList | varchar(100) | 具体用户 |
+| 9 | rolelist | varchar(100) | 角色组 |
+| 10 | userlist | varchar(100) | 具体用户 |
 | 11 | X | varchar(45) | |
 | 12 | Y | varchar(45) | |
 | 13 | W | varchar(45) | |

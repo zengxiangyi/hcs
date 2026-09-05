@@ -46,8 +46,8 @@ export const dataAPI = {
   getUsers: (params?: UserListParams) => http.get<UserListResult>('/api/sysUser/list', { params }),
   /** 新增用户 */
   addUser: (data: UserSaveParams) => http.post<UserRow>('/api/sysUser/save', data),
-  /** 修改用户 */
-  updateUser: (id: number, data: UserSaveParams) => http.put<UserRow>(`/api/sysUser/${id}`, data),
+  /** 修改用户（路由统一为 PUT /update，id 由请求体携带） */
+  updateUser: (id: number, data: UserSaveParams) => http.put<UserRow>('/api/sysUser/update', { ...data, id }),
   /** 删除用户 */
   deleteUser: (id: number) => http.delete<null>(`/api/sysUser/${id}`),
 }
@@ -101,8 +101,8 @@ export const sysUserAPI = {
   search: (params?: SysUserListParams) => http.post<SysUserListResult>('/api/sysUser/search', params),
   /** 新增用户 */
   add: (data: SysUserSaveParams) => http.post<SysUserRow>('/api/sysUser/save', data),
-  /** 修改用户 */
-  update: (id: number, data: SysUserSaveParams) => http.put<SysUserRow>(`/api/sysUser/${id}`, data),
+  /** 修改用户（路由统一为 PUT /update，id 由请求体携带） */
+  update: (id: number, data: SysUserSaveParams) => http.put<SysUserRow>('/api/sysUser/update', { ...data, id }),
   /** 删除用户 */
   remove: (code: string) => http.delete<string>(`/api/sysUser/code/${code}`),
 }

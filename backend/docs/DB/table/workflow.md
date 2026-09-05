@@ -10,12 +10,12 @@
 | 2 | code | varchar(30) | 编号 |
 | 3 | name | varchar(100) | 名称 |
 | 4 | category | varchar(45) | |
-| 5 | targetCode | varchar(45) | 目标编号 |
+| 5 | targetcode | varchar(45) | 目标编号 |
 | 6 | sender | varchar(30) | |
-| 7 | startTime | varchar(30) | 开始时间 |
+| 7 | starttime | varchar(30) | 开始时间 |
 | 8 | state | varchar(30) | 状态 |
-| 9 | flowGraph | varchar(30) | 流程图编号 |
-| 10 | endTime | varchar(30) | 结束时间 |
+| 9 | flowgraph | varchar(30) | 流程图编号 |
+| 10 | endtime | varchar(30) | 结束时间 |
 | 11 | remark | varchar(100) | 备注 |
 
 ## 说明

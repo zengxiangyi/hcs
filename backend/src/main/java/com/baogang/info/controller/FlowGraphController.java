@@ -4,9 +4,8 @@ import com.baogang.info.common.ApiResponse;
 import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.GraphQuery;
-import com.baogang.info.dto.SysRoleQuery;
-import com.baogang.info.entity.BluePrint;
 import com.baogang.info.entity.FlowGraph;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.FlowGraphService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,17 +38,16 @@ public class FlowGraphController {
 
     @GetMapping("/{id}")
     public ApiResponse<FlowGraph> getById(@PathVariable Long id) {
-        return ApiResponse.success(flowGraphService.getById(id));
+        FlowGraph flowGraph = flowGraphService.getById(id);
+        if (flowGraph == null) {
+            throw new ResourceNotFoundException("flowGraph not found: " + id);
+        }
+        return ApiResponse.success(flowGraph);
     }
 
     @PostMapping("/save")
     public ApiResponse<FlowGraph> save(@Valid @RequestBody FlowGraph flowGraph) {
         return ApiResponse.success(flowGraphService.save(flowGraph));
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse<FlowGraph> update(@PathVariable Long id, @Valid @RequestBody FlowGraph flowGraph) {
-        return ApiResponse.success(flowGraphService.update(id, flowGraph));
     }
 
     @DeleteMapping("/{id}")
@@ -60,22 +58,19 @@ public class FlowGraphController {
 
     @GetMapping("/flowGraph/{flowGraph}")
     public ApiResponse<FlowGraph> findByWorkflow(@PathVariable String flowGraph) {
-        return ApiResponse.success(flowGraphService.findByFlowGraph(flowGraph).get(0));
+        List<FlowGraph> graphs = flowGraphService.findByFlowGraph(flowGraph);
+        if (graphs == null || graphs.isEmpty()) {
+            throw new ResourceNotFoundException("流程图不存在：" + flowGraph);
+        }
+        return ApiResponse.success(graphs.get(0));
     }
 
     // 修改：必须传入 id，createTime/createUser 等创建信息由 service 保留原值
     @PutMapping("/update")
     public ApiResponse<FlowGraph> update(@Valid @RequestBody FlowGraph flowGraph) {
-        if (flowGraph == null) {
-            return ApiResponse.error(400, "请求体不能为空");
-        }
         if (flowGraph.getId() == null) {
-            return ApiResponse.error(400, "修改操作必须传入 id");
+            throw new IllegalArgumentException("修改操作必须传入 id");
         }
-        try {
-            return ApiResponse.success(flowGraphService.update(flowGraph.getId(),flowGraph));
-        } catch (IllegalArgumentException e) {
-            return ApiResponse.error(400, e.getMessage());
-        }
+        return ApiResponse.success(flowGraphService.update(flowGraph.getId(), flowGraph));
     }
 }

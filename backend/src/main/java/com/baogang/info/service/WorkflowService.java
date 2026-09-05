@@ -39,6 +39,13 @@ public class WorkflowService {
         return workflowRepository.findByCode(code).orElse(null);
     }
 
+    // 审批专用：悲观行锁读取，未命中抛 404（FlowEngine.dealNode 用）
+    @Transactional
+    public Workflow getByCodeForUpdate(String code) {
+        return workflowRepository.findByCodeForUpdate(code)
+                .orElseThrow(() -> new ResourceNotFoundException("workflow not found: " + code));
+    }
+
     @Transactional
     public Workflow save(Workflow workflow) {
         workflow.setId(null); // 新增时忽略客户端传入的 id
@@ -50,7 +57,8 @@ public class WorkflowService {
 
     @Transactional
     public Workflow update(Long id, Workflow workflow) {
-        Workflow existing = getById(id);
+        Workflow existing = workflowRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("workflow not found: " + id));
         existing.setCode(workflow.getCode());
         existing.setName(workflow.getName());
         existing.setState(workflow.getState());

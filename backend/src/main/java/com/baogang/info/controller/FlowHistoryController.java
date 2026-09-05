@@ -4,6 +4,7 @@ import com.baogang.info.common.ApiResponse;
 import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.entity.FlowHistory;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.FlowHistoryService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +39,11 @@ public class FlowHistoryController {
 
     @GetMapping("/{id}")
     public ApiResponse<FlowHistory> getById(@PathVariable Long id) {
-        return ApiResponse.success(flowHistoryService.getById(id));
+        FlowHistory flowHistory = flowHistoryService.getById(id);
+        if (flowHistory == null) {
+            throw new ResourceNotFoundException("flowHistory not found: " + id);
+        }
+        return ApiResponse.success(flowHistory);
     }
 
     @PostMapping("/save")

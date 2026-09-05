@@ -23,7 +23,7 @@
     <select id="query" resultType="com.baogang.info.entity.SysUser">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM sysuser
+        FROM page.sysuser
         <include refid="Query_Where"/>
         ORDER BY id DESC
         LIMIT #{offset}, #{limit}
@@ -31,7 +31,7 @@
 
     <select id="countByQuery" resultType="long">
         SELECT COUNT(1)
-        FROM sysuser
+        FROM page.sysuser
         <include refid="Query_Where"/>
     </select>
 

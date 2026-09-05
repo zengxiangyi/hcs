@@ -19,7 +19,7 @@
     <select id="query" resultType="com.baogang.info.entity.SysRole">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM sysrole
+        FROM page.sysrole
         <include refid="Query_Where"/>
         ORDER BY id DESC
         LIMIT #{offset}, #{limit}
@@ -27,7 +27,7 @@
 
     <select id="countByQuery" resultType="long">
         SELECT COUNT(1)
-        FROM sysrole
+        FROM page.sysrole
         <include refid="Query_Where"/>
     </select>
 

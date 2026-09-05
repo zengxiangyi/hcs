@@ -7,7 +7,7 @@
 | 序号 | COLUMN_NAME | 类型 | COLUMN_COMMENT |
 | ---- | ----------- | ---- | -------------- |
 | 1 | id | int | 主键 |
-| 2 | flowGraph | varchar(30) | 流程标记 |
+| 2 | flowgraph | varchar(30) | 流程标记 |
 | 3 | title | varchar(100) | |
 | 4 | width | varchar(10) | 宽度 |
 | 5 | heght | varchar(10) | 高度 |

@@ -39,7 +39,8 @@ public class SysRoleUserService {
 
     @Transactional
     public SysRoleUser update(Long id, SysRoleUser sysRoleUser) {
-        SysRoleUser existing = getById(id);
+        SysRoleUser existing = sysRoleUserRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("sysRoleUser not found: " + id));
         existing.setRoleCode(sysRoleUser.getRoleCode());
         existing.setUserCode(sysRoleUser.getUserCode());
         existing.setRemark(sysRoleUser.getRemark());

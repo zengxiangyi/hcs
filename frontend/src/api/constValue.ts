@@ -47,11 +47,11 @@ export const constValueAPI = {
   /** 常量值列表（服务端分页） */
   search: (params?: ConstValueListParams) =>
     http.post<ConstValueListResult>('/api/constValue/search', params),
-  /** 新增常量值 */
-  add: (data: ConstValueSaveParams) => http.post<ConstValueRow>('/api/constValue', data),
-  /** 修改常量值 */
+  /** 新增常量值（路由统一为 POST /save） */
+  add: (data: ConstValueSaveParams) => http.post<ConstValueRow>('/api/constValue/save', data),
+  /** 修改常量值（路由统一为 PUT /update，id 由请求体携带） */
   update: (id: number, data: ConstValueSaveParams) =>
-    http.put<ConstValueRow>(`/api/constValue/${id}`, data),
+    http.put<ConstValueRow>('/api/constValue/update', { ...data, id }),
   /** 删除常量值 */
   remove: (id: number) => http.delete<null>(`/api/constValue/${id}`),
 }

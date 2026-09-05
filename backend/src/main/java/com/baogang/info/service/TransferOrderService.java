@@ -3,6 +3,7 @@ package com.baogang.info.service;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.TransferOrderQuery;
 import com.baogang.info.entity.TransferOrder;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.mapper.TransferOrderMapper;
 import com.baogang.info.repository.TransferOrderRepository;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ public class TransferOrderService {
             throw new IllegalArgumentException("修改操作必须传入 id");
         }
         TransferOrder existing = transferOrderRepository.findById(transferOrder.getId())
-                .orElseThrow(() -> new IllegalArgumentException("调拨单不存在：id=" + transferOrder.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("调拨单不存在：id=" + transferOrder.getId()));
         existing.setCode(transferOrder.getCode());
         existing.setName(transferOrder.getName());
         existing.setCategory(transferOrder.getCategory());
@@ -61,8 +62,7 @@ public class TransferOrderService {
         existing.setPrompt(transferOrder.getPrompt());
         existing.setQuenching(transferOrder.getQuenching());
         existing.setSupplier(transferOrder.getSupplier());
-        existing.setCreateUser(transferOrder.getCreateUser());
-        existing.setCreateTime(transferOrder.getCreateTime());
+        // 不覆盖 createUser/createTime：创建审计信息以首次新增为准，不允许修改时改写
         existing.setReceiveUser(transferOrder.getReceiveUser());
         existing.setReceiveTime(transferOrder.getReceiveTime());
         existing.setState(transferOrder.getState());
@@ -79,6 +79,9 @@ public class TransferOrderService {
 
     @Transactional
     public void deleteById(Long id) {
+        if (!transferOrderRepository.existsById(id)) {
+            throw new ResourceNotFoundException("调拨单不存在：id=" + id);
+        }
         transferOrderRepository.deleteById(id);
     }
 

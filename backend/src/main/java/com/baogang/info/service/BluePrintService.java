@@ -3,6 +3,7 @@ package com.baogang.info.service;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.BluePrintQuery;
 import com.baogang.info.entity.BluePrint;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.mapper.BluePrintMapper;
 import com.baogang.info.repository.BluePrintRepository;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ public class BluePrintService {
             throw new IllegalArgumentException("修改操作必须传入 id");
         }
         BluePrint existing = bluePrintRepository.findById(bluePrint.getId())
-                .orElseThrow(() -> new IllegalArgumentException("蓝本不存在：id=" + bluePrint.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("蓝本不存在：id=" + bluePrint.getId()));
         // 在托管实体上同步业务字段；createTime/createUser/edition/state 不改动即自动保留
         existing.setCode(bluePrint.getCode());
         existing.setName(bluePrint.getName());

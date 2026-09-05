@@ -24,6 +24,9 @@ public class FlowEngineController {
 
     @PostMapping("/start")
     public ApiResponse<String> start(@RequestBody Map<String, String> params){
+        if (params.get("flowType") == null || params.get("flowType").isBlank()) {
+            throw new IllegalArgumentException("flowType 不能为空");
+        }
         return ApiResponse.success(flowEngine.start(params.get("flowType")));
     }
 

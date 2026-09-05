@@ -19,10 +19,15 @@ public class SysRoleService {
 
     private final SysRoleRepository sysRoleRepository;
     private final SysRoleMapper sysRoleMapper;
+    private final SysRoleRightService sysRoleRightService;
+    private final SysRoleUserService sysRoleUserService;
 
-    public SysRoleService(SysRoleRepository sysRoleRepository, SysRoleMapper sysRoleMapper) {
+    public SysRoleService(SysRoleRepository sysRoleRepository, SysRoleMapper sysRoleMapper,
+                          SysRoleRightService sysRoleRightService, SysRoleUserService sysRoleUserService) {
         this.sysRoleRepository = sysRoleRepository;
         this.sysRoleMapper = sysRoleMapper;
+        this.sysRoleRightService = sysRoleRightService;
+        this.sysRoleUserService = sysRoleUserService;
     }
 
     public PageResult<SysRole> listPaged(int page, int size) {
@@ -50,7 +55,8 @@ public class SysRoleService {
 
     @Transactional
     public SysRole update(Long id, SysRole sysRole) {
-        SysRole existing = getById(id);
+        SysRole existing = sysRoleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("sysRole not found: " + id));
         existing.setCode(sysRole.getCode());
         existing.setName(sysRole.getName());
         existing.setCategory(sysRole.getCategory());
@@ -61,6 +67,16 @@ public class SysRoleService {
     @Transactional
     public void deleteByCode(String code) {
         sysRoleRepository.deleteByCode(code);
+    }
+
+    // 级联删除：角色权限绑定、角色用户绑定、角色本体在同一事务内完成，任一步失败整体回滚
+    @Transactional
+    public void deleteCascadeByCode(String code) {
+        sysRoleRightService.deleteByRoleCode(code);
+        sysRoleUserService.deleteByRoleCode(code);
+        if (sysRoleRepository.deleteByCode(code) == 0) {
+            throw new ResourceNotFoundException("sysRole not found: " + code);
+        }
     }
 
     public List<SysRole> findByCategory(String category) {

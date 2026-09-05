@@ -23,4 +23,10 @@ public interface FlowEdgeRepository extends JpaRepository<FlowEdge, Long> {
     List<FlowEdge> findByFlowGraphAndCode(String flowGraph,String code);
 
     List<FlowEdge> findByFlowGraph(String flowGraph);
+
+    void deleteByFlowGraph(String flowGraph);
+
+    void deleteByFlowGraphAndFromNode(String flowGraph, String fromNode);
+
+    void deleteByFlowGraphAndToNode(String flowGraph, String toNode);
 }

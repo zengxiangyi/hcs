@@ -59,7 +59,7 @@ export const taskProcessAPI = {
   bind: (data: BindParams) => http.post<string>('/api/taskprocess/bind', data),
   /** 修改 */
   update: (id: number, data: Omit<TaskRow, 'id'>) =>
-    http.put<TaskRow>(`/api/taskprocess/${id}`, data) as Promise<ApiResponse<TaskRow>>,
+    http.put<TaskRow>('/api/taskprocess/update', { ...data, id }) as Promise<ApiResponse<TaskRow>>,
   /** 删除 */
   remove: (id: number) =>
     http.delete<null>(`/api/taskprocess/${id}`) as Promise<ApiResponse<null>>,

@@ -14,4 +14,7 @@ public interface FlowCurrentRepository extends JpaRepository<FlowCurrent, Long> 
     List<FlowCurrent> findByFlowNode(String flowNode);
 
     void removeByWorkflow(String workflow);
+
+    // 定向删除：只清某个节点的当前记录，保留同流程其它并行分支
+    void deleteByWorkflowAndFlowNode(String workflow, String flowNode);
 }

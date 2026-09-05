@@ -4,6 +4,7 @@ import com.baogang.info.common.ApiResponse;
 import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.entity.FlowNode;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.FlowNodeService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +39,11 @@ public class FlowNodeController {
 
     @GetMapping("/{id}")
     public ApiResponse<FlowNode> getById(@PathVariable Long id) {
-        return ApiResponse.success(flowNodeService.getById(id));
+        FlowNode flowNode = flowNodeService.getById(id);
+        if (flowNode == null) {
+            throw new ResourceNotFoundException("flowNode not found: " + id);
+        }
+        return ApiResponse.success(flowNode);
     }
 
     @GetMapping("/flowGraph/{flowGraph}")

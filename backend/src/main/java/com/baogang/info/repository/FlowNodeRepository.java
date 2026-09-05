@@ -22,4 +22,5 @@ public interface FlowNodeRepository extends JpaRepository<FlowNode, Long> {
 
     List<FlowNode> findByFlowGraph(String flowGraph);
 
+    void deleteByFlowGraph(String flowGraph);
 }

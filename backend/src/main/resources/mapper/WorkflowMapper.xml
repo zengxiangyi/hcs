@@ -32,7 +32,7 @@
     <sql id="Query_Todo">
         <where>
             <if test="q.roleCode != null and q.roleCode != ''">
-                code in (select distinct a.workflow from flowcurrent a,flownode n
+                code in (select distinct a.workflow from page.flowcurrent a, page.flownode n
                 where a.flowgraph=n.flowgraph and a.flownode=n.code
                 and n.operator='R' and n.rolelist LIKE CONCAT('%', #{q.roleCode}, '%'))
             </if>
@@ -42,7 +42,7 @@
     <select id="queryDone" resultMap="WorkflowResultMap">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM workflow
+        FROM page.workflow
         <include refid="Query_Done"/>
         ORDER BY id DESC
         LIMIT #{offset}, #{limit}
@@ -50,14 +50,14 @@
 
     <select id="countDone" resultType="long">
         SELECT COUNT(1)
-        FROM workflow
+        FROM page.workflow
         <include refid="Query_Done"/>
     </select>
 
     <select id="queryTodo" resultMap="WorkflowResultMap">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM workflow
+        FROM page.workflow
         <include refid="Query_Todo"/>
         ORDER BY id DESC
         LIMIT #{offset}, #{limit}
@@ -65,7 +65,7 @@
 
     <select id="countTodo" resultType="long">
         SELECT COUNT(1)
-        FROM workflow
+        FROM page.workflow
         <include refid="Query_Todo"/>
     </select>
 

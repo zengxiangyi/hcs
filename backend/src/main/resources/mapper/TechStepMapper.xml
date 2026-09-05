@@ -33,7 +33,7 @@
     <select id="query" resultMap="TechStepResultMap">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM techstep
+        FROM page.techstep
         <include refid="Query_Where"/>
         ORDER BY firstlevel, secondlevel, sort + 0
         LIMIT #{offset}, #{limit}
@@ -41,7 +41,7 @@
 
     <select id="countByQuery" resultType="long">
         SELECT COUNT(1)
-        FROM techstep
+        FROM page.techstep
         <include refid="Query_Where"/>
     </select>
 

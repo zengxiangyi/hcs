@@ -39,7 +39,8 @@ public class SysRoleRightService {
 
     @Transactional
     public SysRoleRight update(Long id, SysRoleRight sysRoleRight) {
-        SysRoleRight existing = getById(id);
+        SysRoleRight existing = sysRoleRightRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("sysRoleRight not found: " + id));
         existing.setRoleCode(sysRoleRight.getRoleCode());
         existing.setRightCode(sysRoleRight.getRightCode());
         existing.setRemark(sysRoleRight.getRemark());

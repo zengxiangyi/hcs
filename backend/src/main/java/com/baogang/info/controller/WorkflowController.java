@@ -5,6 +5,7 @@ import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.WorkflowQuery;
 import com.baogang.info.entity.Workflow;
+import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.service.SysRoleUserService;
 import com.baogang.info.service.WorkflowService;
 import com.baogang.info.tool.StringTool;
@@ -44,12 +45,20 @@ public class WorkflowController {
 
     @GetMapping("/{id}")
     public ApiResponse<Workflow> getById(@PathVariable Long id) {
-        return ApiResponse.success(workflowService.getById(id));
+        Workflow workflow = workflowService.getById(id);
+        if (workflow == null) {
+            throw new ResourceNotFoundException("workflow not found: " + id);
+        }
+        return ApiResponse.success(workflow);
     }
 
     @GetMapping("/code/{code}")
     public ApiResponse<Workflow> getByCode(@PathVariable String code) {
-        return ApiResponse.success(workflowService.getByCode(code));
+        Workflow workflow = workflowService.getByCode(code);
+        if (workflow == null) {
+            throw new ResourceNotFoundException("workflow not found: " + code);
+        }
+        return ApiResponse.success(workflow);
     }
 
     @PostMapping("/save")

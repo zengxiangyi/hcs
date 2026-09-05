@@ -3,6 +3,7 @@ package com.baogang.info.service;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.entity.FlowNode;
 import com.baogang.info.exception.ResourceNotFoundException;
+import com.baogang.info.repository.FlowEdgeRepository;
 import com.baogang.info.repository.FlowNodeRepository;
 import com.baogang.info.tool.CollectionTool;
 import org.springframework.data.domain.Page;
@@ -17,9 +18,11 @@ import java.util.List;
 public class FlowNodeService {
 
     private final FlowNodeRepository flowNodeRepository;
+    private final FlowEdgeRepository flowEdgeRepository;
 
-    public FlowNodeService(FlowNodeRepository flowNodeRepository) {
+    public FlowNodeService(FlowNodeRepository flowNodeRepository, FlowEdgeRepository flowEdgeRepository) {
         this.flowNodeRepository = flowNodeRepository;
+        this.flowEdgeRepository = flowEdgeRepository;
     }
 
     public PageResult<FlowNode> listPaged(int page, int size) {
@@ -70,10 +73,12 @@ public class FlowNodeService {
 
     @Transactional
     public void deleteById(Long id) {
-        if (!flowNodeRepository.existsById(id)) {
-            throw new ResourceNotFoundException("flowNode not found: " + id);
-        }
-        flowNodeRepository.deleteById(id);
+        FlowNode node = flowNodeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("flowNode not found: " + id));
+        // 级联清理：删除该图中以本节点为起点/终点的边，再删节点，避免留下悬空连线
+        flowEdgeRepository.deleteByFlowGraphAndFromNode(node.getFlowGraph(), node.getCode());
+        flowEdgeRepository.deleteByFlowGraphAndToNode(node.getFlowGraph(), node.getCode());
+        flowNodeRepository.delete(node);
     }
 
     public List<FlowNode> findByCategory(String category) {

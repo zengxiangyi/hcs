@@ -45,8 +45,8 @@ export const roleAPI = {
   search: (params?: RoleListParams) => http.post<RoleListResult>('/api/sysRole/search', params),
   /** 新增角色 */
   add: (data: RoleSaveParams) => http.post<RoleRow>('/api/sysRole/save', data),
-  /** 修改角色 */
-  update: (id: number, data: RoleSaveParams) => http.put<RoleRow>(`/api/sysRole/${id}`, data),
+  /** 修改角色（路由统一为 PUT /update，id 由请求体携带） */
+  update: (id: number, data: RoleSaveParams) => http.put<RoleRow>('/api/sysRole/update', { ...data, id }),
   /** 删除角色 */
   remove: (code: string) => http.delete<string>(`/api/sysRole/code/${code}`),
 }

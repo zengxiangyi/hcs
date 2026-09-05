@@ -19,10 +19,13 @@ public class SysRightService {
 
     private final SysRightRepository sysRightRepository;
     private final SysRightMapper sysRightMapper;
+    private final SysRoleRightService sysRoleRightService;
 
-    public SysRightService(SysRightRepository sysRightRepository, SysRightMapper sysRightMapper) {
+    public SysRightService(SysRightRepository sysRightRepository, SysRightMapper sysRightMapper,
+                           SysRoleRightService sysRoleRightService) {
         this.sysRightRepository = sysRightRepository;
         this.sysRightMapper = sysRightMapper;
+        this.sysRoleRightService = sysRoleRightService;
     }
 
     public PageResult<SysRight> listPaged(int page, int size) {
@@ -50,7 +53,8 @@ public class SysRightService {
 
     @Transactional
     public SysRight update(Long id, SysRight sysRight) {
-        SysRight existing = getById(id);
+        SysRight existing = sysRightRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("sysRight not found: " + id));
         existing.setCode(sysRight.getCode());
         existing.setName(sysRight.getName());
         existing.setCategory(sysRight.getCategory());
@@ -69,6 +73,16 @@ public class SysRightService {
 
     @Transactional
     public void deleteByCode(String code) {
+        sysRightRepository.deleteByCode(code);
+    }
+
+    // 级联删除：角色权限绑定与权限本体在同一事务内完成，任一步失败整体回滚
+    @Transactional
+    public void deleteCascadeByCode(String code) {
+        if (sysRightRepository.findByCode(code).isEmpty()) {
+            throw new ResourceNotFoundException("sysRight not found: " + code);
+        }
+        sysRoleRightService.deleteByRightCode(code);
         sysRightRepository.deleteByCode(code);
     }
 
