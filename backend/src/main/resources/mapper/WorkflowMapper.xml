@@ -36,6 +36,11 @@
                 where a.flowgraph=n.flowgraph and a.flownode=n.code
                 and n.operator='R' and n.rolelist LIKE CONCAT('%', #{q.roleCode}, '%'))
             </if>
+            <if test="q.userCode != null and q.userCode != ''">
+                code in (select distinct a.workflow from page.flowcurrent a, page.flownode n
+                where a.flowgraph=n.flowgraph and a.flownode=n.code
+                and n.operator='U' and n.userlist LIKE CONCAT('%', #{q.userCode}, '%'))
+            </if>
         </where>
     </sql>
 

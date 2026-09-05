@@ -27,8 +27,9 @@ const loading = ref(false)
  * 如需调整分类项，直接修改此对象即可。
  */
 const categoryMap: Record<string, string> = {
-  B: '蓝本工艺',
-  C: '产品工艺'
+  A: '蓝本工艺',
+  B: '产品工艺',
+  C: '产品认证'
 }
 
 /** 根据分类 key 取展示文本，未匹配时回退为原值（公共方法生成） */
@@ -40,10 +41,11 @@ const formatCategory = createTextFormatter(categoryMap)
  * 如需调整状态项或配色，直接修改此对象即可。
  */
 const stateMap: Record<string, { label: string; type: TagType }> = {
-  A: { label: '待处理', type: 'warning' },
-  B: { label: '退回', type: 'warning' },
-  C: { label: '通过', type: 'success' },
-  D: { label: '驳回', type: 'danger' },
+  S: { label: '暂停', type: 'warning' },
+  E: { label: '结束', type: 'success' },
+  D: { label: '处理中', type:'primary' },
+  C: { label: '取消', type: 'info' },
+  R: { label: '作废', type: 'danger' },
 }
 
 /** 根据状态 key 取展示文本 / tag 类型，未匹配时文本回退原值、类型回退 warning（公共方法生成） */

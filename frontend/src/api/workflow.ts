@@ -41,9 +41,9 @@ export const workflowAPI = {
   remove: (id: number): Promise<ApiResponse<null>> =>
     http.delete<null>(`/api/workflow/${id}`),
 
-  /** 我发起的（处理人取自当前登录用户，后端固定取前 30 条；无实例时 data 可能为 null） */
-  sender: (): Promise<ApiResponse<WorkflowListResult | null>> =>
-    http.get<WorkflowListResult | null>('/api/workflow/sender'),
+  /** 我发起的（处理人取自当前登录用户，无实例时 data 可能为 null） */
+  sender: (query?: WorkflowQuery): Promise<ApiResponse<WorkflowListResult | null>> =>
+    http.post<WorkflowListResult | null>('/api/workflow/sender', query),
 
   /** 我的待办（POST 请求体查询；用户无角色时 data 可能为 null） */
   todo: (query?: WorkflowQuery): Promise<ApiResponse<WorkflowListResult | null>> =>
