@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.SysUserQuery;
 import com.baogang.info.entity.SysUser;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sysUser")
 public class SysUserController {
 
-    private static final int MAX_PAGE_SIZE = 200;
-
     private final SysUserService sysUserService;
 
     public SysUserController(SysUserService sysUserService) {
@@ -30,10 +29,8 @@ public class SysUserController {
     // 复杂/可变条件查询：POST 请求体承载 SysUserQuery，支持任意字段组合过滤
     @PostMapping("/search")
     public ApiResponse<PageResult<SysUser>> searchByQuery(@RequestBody SysUserQuery query) {
-        // 分页防护：page/pageSize 为 null 时退回 DTO 默认值；page 最小 1；size 限 1~200，防负 offset 报错与超大结果集
-        int page = query.getPage() == null ? 1 : Math.max(1, query.getPage());
-        int size = query.getPageSize() == null ? 10 : Math.min(Math.max(1, query.getPageSize()), MAX_PAGE_SIZE);
-        return ApiResponse.success(sysUserService.search(query, page - 1, size));
+        PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+        return ApiResponse.success(sysUserService.search(query, p.offset(), p.size()));
     }
 
     @GetMapping("/{id}")

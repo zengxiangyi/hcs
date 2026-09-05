@@ -24,7 +24,7 @@ public class FlowGraphService {
     public PageResult<FlowGraph> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<FlowGraph> result = flowGraphRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     public FlowGraph getById(Long id) {

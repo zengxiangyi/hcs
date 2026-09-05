@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.TransferOrderQuery;
 import com.baogang.info.entity.TransferOrder;
@@ -32,16 +33,16 @@ public class TransferOrderController {
     // 复杂/可变条件查询：POST 请求体承载 TransferOrderQuery，支持任意字段组合过滤
     @PostMapping("/search")
     public ApiResponse<PageResult<TransferOrder>> searchByQuery(@RequestBody TransferOrderQuery query) {
-        int page = query.getPage();
-        int size = query.getPageSize();
-        return ApiResponse.success(transferOrderService.search(query, page - 1, size));
+        PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+        return ApiResponse.success(transferOrderService.search(query, p.offset(), p.size()));
     }
 
     @GetMapping("/list")
     public ApiResponse<PageResult<TransferOrder>> list(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.success(transferOrderService.listPaged(page - 1, size));
+        PageParam p = PageParam.of(page, size);
+        return ApiResponse.success(transferOrderService.listPaged(p.offset(), p.size()));
     }
 
     @PostMapping("/save")

@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.ConstValueQuery;
 import com.baogang.info.entity.ConstValue;
@@ -30,7 +31,8 @@ public class ConstValueController {
     // 复杂/可变条件查询：POST 请求体承载 ConstValueQuery，支持任意字段组合过滤
     @PostMapping("/search")
     public ApiResponse<PageResult<ConstValue>> search(@Valid @RequestBody ConstValueQuery query) {
-        return ApiResponse.success(constValueService.search(query, query.getPage() - 1, query.getPageSize()));
+        PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+        return ApiResponse.success(constValueService.search(query, p.offset(), p.size()));
     }
 
     @GetMapping("/{id}")

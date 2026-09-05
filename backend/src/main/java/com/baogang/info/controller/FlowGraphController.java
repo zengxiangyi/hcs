@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.GraphQuery;
 import com.baogang.info.dto.SysRoleQuery;
@@ -32,10 +33,8 @@ public class FlowGraphController {
 
     @PostMapping("/search")
     public ApiResponse<PageResult<FlowGraph>> list(@RequestBody GraphQuery query) {
-        //
-        int page = query.getPage();
-        int size = query.getPageSize();
-        return ApiResponse.success(flowGraphService.listPaged(page-1, size));
+        PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+        return ApiResponse.success(flowGraphService.listPaged(p.offset(), p.size()));
     }
 
     @GetMapping("/{id}")

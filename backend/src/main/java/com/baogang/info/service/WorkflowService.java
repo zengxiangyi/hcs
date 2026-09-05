@@ -28,7 +28,7 @@ public class WorkflowService {
     public PageResult<Workflow> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Workflow> result = workflowRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     public Workflow getById(Long id) {
@@ -80,7 +80,7 @@ public class WorkflowService {
     public PageResult<Workflow> findBySender(String sender,int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Workflow> result = workflowRepository.findBySender(sender,pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     public PageResult<Workflow> done(WorkflowQuery query, int page, int pageSize) {

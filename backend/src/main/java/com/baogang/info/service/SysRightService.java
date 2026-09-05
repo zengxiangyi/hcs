@@ -28,7 +28,7 @@ public class SysRightService {
     public PageResult<SysRight> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<SysRight> result = sysRightRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     public SysRight getById(Long id) {

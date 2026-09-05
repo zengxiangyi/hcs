@@ -28,7 +28,7 @@ public class TransferOrderService {
     public PageResult<TransferOrder> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<TransferOrder> result = transferOrderRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     @Transactional

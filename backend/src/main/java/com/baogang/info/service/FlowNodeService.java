@@ -25,7 +25,7 @@ public class FlowNodeService {
     public PageResult<FlowNode> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<FlowNode> result = flowNodeRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     public FlowNode getById(Long id) {

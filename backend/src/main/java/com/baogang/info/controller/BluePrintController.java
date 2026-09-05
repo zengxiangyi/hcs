@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.BluePrintQuery;
 import com.baogang.info.entity.BluePrint;
@@ -26,12 +27,8 @@ public class BluePrintController {
     // 复杂/可变条件查询：POST 请求体承载 BluePrintQuery，支持任意字段组合过滤
     @PostMapping("/search")
     public ApiResponse<PageResult<BluePrint>> searchByQuery(@RequestBody BluePrintQuery query) {
-        int page = query.getPage();
-        int size = query.getPageSize();
-        if (page < 1 || size < 1) {
-            return ApiResponse.error(400, "分页参数错误");
-        }
-        return ApiResponse.success(bluePrintService.search(query, page - 1, size));
+        PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+        return ApiResponse.success(bluePrintService.search(query, p.offset(), p.size()));
     }
 
     @PostMapping("/save")

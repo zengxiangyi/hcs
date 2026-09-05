@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.SysRightQuery;
 import com.baogang.info.entity.SysRight;
@@ -33,9 +34,8 @@ public class SysRightController {
     // 复杂/可变条件查询：POST 请求体承载 SysRightQuery，支持任意字段组合过滤
     @PostMapping("/search")
     public ApiResponse<PageResult<SysRight>> searchByQuery(@RequestBody SysRightQuery query) {
-        int page = query.getPage();
-        int size = query.getPageSize();
-        return ApiResponse.success(sysRightService.search(query, page - 1, size));
+        PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+        return ApiResponse.success(sysRightService.search(query, p.offset(), p.size()));
     }
 
     @GetMapping("/{id}")

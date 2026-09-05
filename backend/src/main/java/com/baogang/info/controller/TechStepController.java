@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.TechStepQuery;
 import com.baogang.info.entity.TechStep;
@@ -27,9 +28,8 @@ public class TechStepController {
         if (query == null) {
             return ApiResponse.error(400, "请求体不能为空");
         }
-        int page = query.getPage();
-        int size = query.getPageSize();
-        return ApiResponse.success(techStepService.search(query, page - 1, size));
+        PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+        return ApiResponse.success(techStepService.search(query, p.offset(), p.size()));
     }
 
     @GetMapping("/{id}")

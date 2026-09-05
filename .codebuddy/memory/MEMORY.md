@@ -40,6 +40,7 @@
   - **`page` = 本工作区 backend 的库，共 18 张表**：approval(10列)/blueprint(31)/constvalue(6)/flowcurrent(6)/flowedge(11)/flowgraph(6)/flowhistory(12)/flownode(14)/sysright(6)/sysrole(5)/sysroleright(4)/sysroleuser(4)/sysuser(10)/taskprocess(13)/techstep(8)/transferorder(23)/users(6)/workflow(11)。（2026-09-05 实测，此前记录的「16 表」有误）
   - 表结构文档已全量导出到 `backend/docs/DB/table/<表名>.md`（18 个文件）。**公共部分（数据源/生成时间/通用生成 SQL/通用约定/18 表清单索引）统一放在同目录 `README.md`，每个表文件只保留本表独有的信息**（2026-09-05 压缩，此前重复的开头块与「说明」尾部通用句已提取）。
   - 表文件模板：标题 + `` `> page.<表名> · 表注释` `` 一行 → 「字段清单」表（序号·COLUMN_NAME·类型·COLUMN_COMMENT，**类型与长度合并写成 `varchar(100)`**）→ 「说明」（只写本表特有注意点，无则省略）。统一 `order by ordinal_position`（物理列序）。
+  - **schema 真源 = `backend/docs/DB/table/`**（2026-09-05 起）。旧真源 `backend/docs/tables.md`（15 表，由 entity `@Column` 提取）**已按用户要求删除**，其引用已全量改写；`backend/CODEBUDDY.md`、`docs/ai/contract.md`、`docs/ai/conventions.md`、`docs/structure.md`、`backend/docs/ai/db-conventions.md` 均指新路径。
   - `hcs`（35 表）、`hcs_test`、`erp`（11 表，sys_*）为其它系统/历史库。
 - 注意：MCP 建连默认库是 `sakila`，查本项目数据时 SQL 要显式带库名前缀（如 `page.sysuser`）或先 `USE page`。
 
@@ -49,6 +50,16 @@
 2. `frontend\.codebuddy\memory`（前端主日志，含 MEMORY.md）
 3. `backend\.codebuddy\memory`（后端日志，含 MEMORY.md）
 
+## 分页页码约定（用户 2026-09-05 明确，同日补充验证/上限规则）
+
+- **前端分页页码从 1 开始；后端 MyBatis LIMIT 用 0 基偏移**。契约（请求/响应）统一 1 基页码。
+- 转换在 Controller 层完成：入口 `page - 1` 传给 Service，Service 算 `offset = page * size`，返回 `PageResult` 时 `page + 1` 还原为 1 基（已用 sysRight 模块验证：SysRightController → SysRightService.search → SysRightMapper.xml `LIMIT #{offset}, #{limit}`）。
+- **分页参数验证与上限规则**（用户 2026-09-05 明确；同日抽取为公共 `PageParam`）：前端把查询条件与分页参数封装在一个 Query DTO（如 `SysUserQuery`，含 page/pageSize）POST 到 `/search`；**Controller 层负责验证与限制**——page/pageSize 为 null 时退回 DTO 默认值（1 / 10），page 最小 1，size 限 1~200（`MAX_PAGE_SIZE`），防负 offset 报错与超大结果集。**MyBatis 和 JPA 一律按服务端算好的分页参数计算**，Service 层不做二次校验。
+- **统一入口 `com.baogang.info.common.PageParam`**（2026-09-05 建立，已铺满 16 个 Controller / 19 处入口）：`record PageParam(int page, int size)`，`PageParam.of(page, size)` 做归一，`p.offset()` 给 Service 的 0 基偏移，**`p.page()` 保留 1 基**（给 `WorkflowService.todo/done` 这类内部自己算 `(page-1)*size` 的接口）。注释只写在 PageParam 里，Controller 侧不重复写注释。新增分页接口照此写法，不要再手写 `Math.max/min` 或 `page - 1`。
+- 例外：`WorkflowService.findBySender(page)` 的 page 是 **JPA `PageRequest.of` 的 0 基页码**，与 offset 语义不同（数值巧合）。
+- **MyBatis 与 JPA 差异**（2026-09-05 实查后已统一）：原 JPA `listPaged` 响应 `page` 为 0 基未 +1，MyBatis search 为 1 基。**已修复**：13 个 Service（14 处，WorkflowService 2 处）的 JPA `PageResult.of(..., page, size)` 均改为 `page + 1, size`，现全后端响应 `page` 统一 1 基。`WorkflowService.todo/done` 收 1 基、内部 `(page-1)*pageSize`，本就自洽未动。改动需 `.\deploy-test.ps1 -Part Back` 生效。
+
 ## 用户偏好
 
 - 每次回复末尾必须输出「任务状态摘要」（已完成/进行中/待处理/已阻止/备注），前后各空一行。
+- **「待处理」里不要再列「重新打包部署（`.\deploy-test.ps1 -Part Back`）」和「跑 `mvn compile` 做编译确认」**（用户 2026-09-05 明确）：这些是多次改动攒够后统一执行的收尾动作，不是每次对话的遗留项。同理，也不要主动跑部署/编译脚本。但仍需在正文里说明「改动需重新打包部署才生效」，让用户自己掌握时机。

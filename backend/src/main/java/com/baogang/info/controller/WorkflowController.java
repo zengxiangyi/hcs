@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.dto.WorkflowQuery;
 import com.baogang.info.entity.Workflow;
@@ -37,7 +38,8 @@ public class WorkflowController {
     public ApiResponse<PageResult<Workflow>> list(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.success(workflowService.listPaged(page-1, size));
+        PageParam p = PageParam.of(page, size);
+        return ApiResponse.success(workflowService.listPaged(p.offset(), p.size()));
     }
 
     @GetMapping("/{id}")
@@ -88,8 +90,8 @@ public class WorkflowController {
         return ApiResponse.success(null);
     }
     // 我的代办
-    @GetMapping("/todo")
-    public ApiResponse<PageResult<Workflow>> todo(){
+    @PostMapping("/todo")
+    public ApiResponse<PageResult<Workflow>> todo(@Valid @RequestBody WorkflowQuery query){
         // 查询员工工号
         String user= UserInfo.currentUsername();
         if(StringTool.isNotBlank(user)){
@@ -97,29 +99,28 @@ public class WorkflowController {
             List<String> roles=sysRoleUserService.findRolesByuserCode(user);
             if(roles!=null&&roles.size()>0){
                 // 按角色查询代办
-                WorkflowQuery query=new WorkflowQuery();
                 query.setDealUser(user);
                 query.setRoleCode(roles.get(0));
-                query.setPage(1);
-                query.setPageSize(30);
-                return ApiResponse.success(workflowService.todo(query,1,30));
+                PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+                query.setPage(p.page());
+                query.setPageSize(p.size());
+                return ApiResponse.success(workflowService.todo(query, p.page(), p.size()));
             }
         }
         return ApiResponse.success(null);
     }
 
     // 我的已办
-    @GetMapping("/done")
-    public ApiResponse<PageResult<Workflow>> done(){
+    @PostMapping("/done")
+    public ApiResponse<PageResult<Workflow>> done(@Valid @RequestBody WorkflowQuery query){
         // 查询员工工号
         String user= UserInfo.currentUsername();
         if(StringTool.isNotBlank(user)){
-            //
-            WorkflowQuery query=new WorkflowQuery();
             query.setDealUser(user);
-            query.setPage(1);
-            query.setPageSize(30);
-            return ApiResponse.success(workflowService.done(query,1,30));
+            PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+            query.setPage(p.page());
+            query.setPageSize(p.size());
+            return ApiResponse.success(workflowService.done(query, p.page(), p.size()));
         }
         return ApiResponse.success(null);
     }

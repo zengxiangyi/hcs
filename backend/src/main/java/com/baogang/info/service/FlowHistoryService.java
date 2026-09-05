@@ -24,7 +24,7 @@ public class FlowHistoryService {
     public PageResult<FlowHistory> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<FlowHistory> result = flowHistoryRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     public FlowHistory getById(Long id) {

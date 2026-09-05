@@ -1,6 +1,7 @@
 package com.baogang.info.controller;
 
 import com.baogang.info.common.ApiResponse;
+import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
 import com.baogang.info.entity.FlowCurrent;
 import com.baogang.info.service.FlowCurrentService;
@@ -31,7 +32,8 @@ public class FlowCurrentController {
     public ApiResponse<PageResult<FlowCurrent>> list(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.success(flowCurrentService.listPaged(page-1, size));
+        PageParam p = PageParam.of(page, size);
+        return ApiResponse.success(flowCurrentService.listPaged(p.offset(), p.size()));
     }
 
     @GetMapping("/{id}")

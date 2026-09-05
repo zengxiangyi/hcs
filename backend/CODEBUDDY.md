@@ -35,7 +35,7 @@ Maven Wrapper 构建（Windows 用 `./mvnw.cmd`）。**无独立 lint 步骤**�
 ## 最小必读事实
 
 - **双持久化**：单表简单 CRUD → JPA；动态/复合/JOIN → MyBatis，**XML 是查询真源**（`resources/mapper/*.xml`）。混用需 `@Transactional`。
-- **DB 列名/表名一律小写无下划线**，JPA 必须显式 `@Column(name=...)`；SQL 写驼峰表名在 Linux 会报表不存在。**`ddl-auto=none`，所有 DDL/DML 由 DBA 执行，AI 只以 SQL 文本交付**。schema 真源 = `docs/tables.md`。
+- **DB 列名/表名一律小写无下划线**，JPA 必须显式 `@Column(name=...)`；SQL 写驼峰表名在 Linux 会报表不存在。**`ddl-auto=none`，所有 DDL/DML 由 DBA 执行，AI 只以 SQL 文本交付**。schema 真源 = `docs/DB/table/`。
 - 响应一律 `ApiResponse<T>`，分页 `PageResult<T>`（1-based `page`）；复杂查询 `POST /xxx/search` + `XxxQuery`。
 - 认证只做身份验证（JWT STATELESS），**不做角色鉴权**；角色/权限随 `LoginOut.roles/rights` 下发前端。
 - 受保护只读：`mvnw`/`mvnw.cmd`、`info.iml`、`target/`、`.mvn/`、`.idea/`。

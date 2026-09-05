@@ -27,7 +27,7 @@ public class BluePrintService {
     public PageResult<BluePrint> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<BluePrint> result = bluePrintRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     @Transactional

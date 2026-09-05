@@ -26,7 +26,7 @@ public class FlowEdgeService {
     public PageResult<FlowEdge> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<FlowEdge> result = flowEdgeRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     public FlowEdge getById(Long id) {

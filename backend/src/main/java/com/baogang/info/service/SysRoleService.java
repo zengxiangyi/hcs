@@ -28,7 +28,7 @@ public class SysRoleService {
     public PageResult<SysRole> listPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<SysRole> result = sysRoleRepository.findAll(pageable);
-        return PageResult.of(result.getContent(), result.getTotalElements(), page, size);
+        return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
     public SysRole getById(Long id) {

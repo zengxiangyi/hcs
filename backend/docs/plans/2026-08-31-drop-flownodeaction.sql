@@ -8,7 +8,7 @@
 --   1. 代码中已无对应 JPA 实体，全仓库（src/ + docs/）0 处引用；
 --   2. 流程流转能力现由 flownode（节点定义）+ flowedge（连线，含 cond 条件）+ FlowEngine 承担，
 --      flowNodeAction 的「当前节点 + action -> nextNode」职责已被 flowedge 取代；
---   3. tables.md 已不再收录该表。
+--   3. DB/table/ 下已不再收录该表。
 --
 -- ⚠️ 风险：DROP TABLE 不可回滚。建议按「第 1 步改名观察 -> 第 2 步备份 -> 第 3 步删除」顺序执行。
 -- ============================================================
@@ -67,5 +67,5 @@ DROP TABLE `_dropped_20260831_flowNodeAction`;
 
 
 -- ---------- 执行后 ----------
--- 1. 从 docs/tables.md 移除「已下线」提示段落；
+-- 1. 从 docs/DB/table/ 移除「已下线」提示段落；
 -- 2. 确认 `_bak_20260831_flowNodeAction` 保留策略（建议保留至下一发布周期后再清理）。

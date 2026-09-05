@@ -5,4 +5,4 @@
 - **`spring.jpa.hibernate.ddl-auto=none`**：Hibernate 不建表不改表。**所有 DDL/DML 由 DBA 执行，AI 只以 SQL 文本交付 schema 变更，禁止自行连库执行**。新增实体后需先确认 DBA 已建表，否则应用启动即报错。
 - MyBatis `map-underscore-to-camel-case=true`：列 `createtime` ↔ 字段 `createTime`。
 - SQL 日志：`logging.level.org.hibernate.SQL=DEBUG` 与 `logging.level.com.baogang.info.mapper=DEBUG`。
-- **schema 真源 = `backend/docs/tables.md`**（15 张表，由 entity `@Column` 提取，开头「命名约定」列出偏离项）；`backend/docs/tb.sql` 已过时；`backend/docs/blue.md` 是 BluePrint 字段中文对照可用。
+- **schema 真源 = `backend/docs/DB/table/`**（`page` 库 18 张表，一表一文件 + `README.md` 索引，由库中 `information_schema` 导出；数据源、通用约定、拼写/大小写例外、表清单索引全部集中在 `README.md`）；`backend/docs/tb.sql` 已过时；`backend/docs/blue.md` 是 BluePrint 字段中文对照可用。
