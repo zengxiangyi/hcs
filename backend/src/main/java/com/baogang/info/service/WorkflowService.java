@@ -88,22 +88,25 @@ public class WorkflowService {
         return workflowRepository.findByFlowGraph(flowGraph);
     }
 
-    public PageResult<Workflow> findBySender(String sender,int page, int size) {
+    // 以下分页方法的页码参数均为 0 基（由 Controller 的 PageParam.page0() 传入），
+    // 响应 PageResult 时统一 +1 还原为契约 1 基页码
+
+    public PageResult<Workflow> findBySender(String sender, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Workflow> result = workflowRepository.findBySender(sender,pageable);
+        Page<Workflow> result = workflowRepository.findBySender(sender, pageable);
         return PageResult.of(result.getContent(), result.getTotalElements(), page + 1, size);
     }
 
-    public PageResult<Workflow> done(WorkflowQuery query, int page, int pageSize) {
+    public PageResult<Workflow> done(WorkflowQuery query, int pageOffset, int size) {
         long total = workflowMapper.countDone(query);
-        List<Workflow> content = workflowMapper.queryDone(query,(page-1)*pageSize,pageSize);
-        return PageResult.of(content, total, page, pageSize);
+        List<Workflow> content = workflowMapper.queryDone(query, (long) pageOffset * size, size);
+        return PageResult.of(content, total, pageOffset + 1, size);
     }
 
-    public PageResult<Workflow> todo(WorkflowQuery query, int page, int pageSize) {
+    public PageResult<Workflow> todo(WorkflowQuery query, int pageOffset, int size) {
         long total = workflowMapper.countTodo(query);
-        List<Workflow> content = workflowMapper.queryTodo(query, (page-1)*pageSize,pageSize);
-        return PageResult.of(content, total, page, pageSize);
+        List<Workflow> content = workflowMapper.queryTodo(query, (long) pageOffset * size, size);
+        return PageResult.of(content, total, pageOffset + 1, size);
     }
 
 }

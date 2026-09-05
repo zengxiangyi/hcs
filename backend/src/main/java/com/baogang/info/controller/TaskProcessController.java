@@ -29,7 +29,7 @@ public class TaskProcessController {
     @PostMapping("/search")
     public ApiResponse<PageResult<TaskProcess>> searchByQuery(@RequestBody TaskProcessQuery query) {
         PageParam p = PageParam.of(query.getPage(), query.getPageSize());
-        return ApiResponse.success(taskProcessService.search(query, p.offset(), p.size()));
+        return ApiResponse.success(taskProcessService.search(query, p.page0(), p.size()));
     }
 
     @GetMapping("/list")
@@ -37,7 +37,7 @@ public class TaskProcessController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         PageParam p = PageParam.of(page, size);
-        return ApiResponse.success(taskProcessService.listPaged(p.offset(), p.size()));
+        return ApiResponse.success(taskProcessService.listPaged(p.page0(), p.size()));
     }
 
     @PostMapping("/save")

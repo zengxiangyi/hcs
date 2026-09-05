@@ -36,8 +36,9 @@ const loading = ref(false)
  * 如需调整分类项，直接修改此对象即可。
  */
 const categoryMap: Record<string, string> = {
-  B: '蓝本工艺',
-  C: '产品工艺'
+  A: '蓝本工艺',
+  B: '产品工艺',
+  C: '产品认证'
 }
 
 /** 根据分类 key 取展示文本，未匹配时回退为原值（公共方法生成） */

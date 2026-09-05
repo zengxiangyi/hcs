@@ -4,7 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目" />
+    <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
+      <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-05.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.codebuddy/memory/MEMORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/MEMORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/Module.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/Module.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/docs/Template.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/Template.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/PageParam.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/PageParam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/BluePrintController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/BluePrintController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/ConstValueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/ConstValueController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowCurrentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowCurrentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowEdgeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowEdgeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowGraphController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowGraphController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowHistoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowHistoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowNodeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowNodeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRightController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRightController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleRightController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleRightController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysRoleUserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/SysUserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TechStepController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TechStepController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TransferOrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TransferOrderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/WorkflowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/WorkflowService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

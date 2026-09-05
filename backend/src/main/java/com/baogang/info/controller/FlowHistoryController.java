@@ -26,7 +26,7 @@ public class FlowHistoryController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         PageParam p = PageParam.of(page, size);
-        return ApiResponse.success(flowHistoryService.listPaged(p.offset(), p.size()));
+        return ApiResponse.success(flowHistoryService.listPaged(p.page0(), p.size()));
     }
 
     @GetMapping("/{id}")

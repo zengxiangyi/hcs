@@ -55,12 +55,13 @@
 
 ## 分页页码约定（用户 2026-09-05 明确，同日补充验证/上限规则）
 
-- **前端分页页码从 1 开始；后端 MyBatis LIMIT 用 0 基偏移**。契约（请求/响应）统一 1 基页码。
-- 转换在 Controller 层完成：入口 `page - 1` 传给 Service，Service 算 `offset = page * size`，返回 `PageResult` 时 `page + 1` 还原为 1 基（已用 sysRight 模块验证：SysRightController → SysRightService.search → SysRightMapper.xml `LIMIT #{offset}, #{limit}`）。
+- **契约 1 基，Service 一律 0 基页码**（2026-09-05 定稿）：请求与响应（含 `PageResult.page`）均为 1 基；**Service 方法收到的页码参数是 0 基页码，不是行偏移**（旧文档写成「0 基偏移」是错的）。
+- 完整链路：`PageParam.of(page, size)` 归一 → Controller 取 `p.page0()`（= 契约页码 - 1）传给 Service → JPA 侧直接 `PageRequest.of(page, size)`，MyBatis 侧由 Service 自己算 LIMIT 偏移 `(long) pageOffset * size` → 返回 `PageResult.of(..., pageOffset + 1, size)` 还原 1 基（范本：SysRightController → SysRightService.search → SysRightMapper.xml `LIMIT #{offset}, #{limit}`）。
 - **分页参数验证与上限规则**（用户 2026-09-05 明确；同日抽取为公共 `PageParam`）：前端把查询条件与分页参数封装在一个 Query DTO（如 `SysUserQuery`，含 page/pageSize）POST 到 `/search`；**Controller 层负责验证与限制**——page/pageSize 为 null 时退回 DTO 默认值（1 / 10），page 最小 1，size 限 1~200（`MAX_PAGE_SIZE`），防负 offset 报错与超大结果集。**MyBatis 和 JPA 一律按服务端算好的分页参数计算**，Service 层不做二次校验。
-- **统一入口 `com.baogang.info.common.PageParam`**（2026-09-05 建立，已铺满 16 个 Controller / 19 处入口）：`record PageParam(int page, int size)`，`PageParam.of(page, size)` 做归一，`p.offset()` 给 Service 的 0 基偏移，**`p.page()` 保留 1 基**（给 `WorkflowService.todo/done` 这类内部自己算 `(page-1)*size` 的接口）。注释只写在 PageParam 里，Controller 侧不重复写注释。新增分页接口照此写法，不要再手写 `Math.max/min` 或 `page - 1`。
-- 例外：`WorkflowService.findBySender(page)` 的 page 是 **JPA `PageRequest.of` 的 0 基页码**，与 offset 语义不同（数值巧合）。
-- **MyBatis 与 JPA 差异**（2026-09-05 实查后已统一）：原 JPA `listPaged` 响应 `page` 为 0 基未 +1，MyBatis search 为 1 基。**已修复**：13 个 Service（14 处，WorkflowService 2 处）的 JPA `PageResult.of(..., page, size)` 均改为 `page + 1, size`，现全后端响应 `page` 统一 1 基。`WorkflowService.todo/done` 收 1 基、内部 `(page-1)*pageSize`，本就自洽未动。改动需 `.\deploy-test.ps1 -Part Back` 生效。
+- **统一入口 `com.baogang.info.common.PageParam`**（2026-09-05 建立，已铺满 16 个 Controller / 19 处入口）：`record PageParam(int page, int size)`；`PageParam.of(page, size)` 做归一（默认 1/10、page 下限 1、size 夹 1~`ConstValue.MAX_PAGE_SIZE`）；**`p.page0()` 给 Service 的 0 基页码**，`p.size()` 给每页条数，`p.page()` 保留契约 1 基（不要传给 Service）。注释只写在 PageParam 里，Controller 侧不重复写注释。新增分页接口照此写法，不要再手写 `Math.max/min` 或 `page - 1`。
+- 命名沿革（勿回退）：该方法原名 `offset()`，返回 `page - 1`，与分页语境「offset = 行偏移」的常识冲突，是长期误导源；2026-09-05 正名为 `page0()`，16 个 Controller / 19 处入口已同步。
+- **两侧 Service 写法无例外**：JPA（`listPaged`/`findBySender`）形参 `int page, int size` → `PageRequest.of(page, size)`；MyBatis（`search`/`todo`/`done`）形参 `int pageOffset, int size` → `(long) pageOffset * size` 得 LIMIT 偏移（long 防大页码溢出）。两类均 `+1` 还原 1 基响应。
+- 历史修复：原 JPA `listPaged` 响应 `page` 为 0 基未 +1，2026-09-05 已把 13 个 Service（14 处）统一为 `page + 1`，全后端响应 `page` 现为 1 基。改动需 `.\deploy-test.ps1 -Part Back` 生效。
 
 ## 用户偏好
 

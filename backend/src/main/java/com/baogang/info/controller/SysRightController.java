@@ -26,7 +26,7 @@ public class SysRightController {
     @PostMapping("/search")
     public ApiResponse<PageResult<SysRight>> searchByQuery(@RequestBody SysRightQuery query) {
         PageParam p = PageParam.of(query.getPage(), query.getPageSize());
-        return ApiResponse.success(sysRightService.search(query, p.offset(), p.size()));
+        return ApiResponse.success(sysRightService.search(query, p.page0(), p.size()));
     }
 
     @GetMapping("/{id}")

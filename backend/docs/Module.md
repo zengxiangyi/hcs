@@ -49,7 +49,7 @@ com.baogang.info
 | 类 | 包 | 用途 |
 | -- | -- | ---- |
 | `ApiResponse<T>` | `com.baogang.info.common` | 统一响应包装，`ApiResponse.success(data)` |
-| `PageParam` | `com.baogang.info.common` | 分页归一：`PageParam.of(page, pageSize)`，`p.offset()` 给 0 基偏移 |
+| `PageParam` | `com.baogang.info.common` | 分页归一：`PageParam.of(page, pageSize)`，`p.page0()` 给 0 基页码 |
 | `PageResult<T>` | `com.baogang.info.common` | 分页结果：`PageResult.of(content, total, page, size)`，page 传 1 基 |
 | `ResourceNotFoundException` | `com.baogang.info.exception` | 资源不存在时抛出，全局异常处理器转 HTTP 400 |
 
@@ -58,8 +58,9 @@ com.baogang.info
 1. **URL 动词式风格**：查询 `POST /xxx/search`；详情 `GET /xxx/{id}`；创建 `POST /xxx/save`；
    更新 `PUT /xxx/update`（id 在 body，为 null 抛 `IllegalArgumentException` → 400）；
    删除 `DELETE /xxx/{id}`（有业务唯一键时为 `DELETE /xxx/{key}/{value}`）。
-2. **分页契约 1 基**：Query DTO 的 `page/pageSize` 默认 1/10；Controller 用 `PageParam.of()` 归一，
-   Service 收 0 基 offset，`PageResult.of(..., pageOffset + 1, size)` 还原 1 基响应。
+2. **分页契约 1 基**：Query DTO 的 `page/pageSize` 默认 1/10；Controller 用 `PageParam.of()` 归一并取
+   `p.page0()`（0 基页码）传给 Service；JPA 侧直接 `PageRequest.of(page, size)`，MyBatis 侧由 Service
+   用 `(long) pageOffset * size` 得 LIMIT 偏移；`PageResult.of(..., pageOffset + 1, size)` 还原 1 基响应。
 3. **Mapper XML 表名硬编码 `page.` 前缀**（如 `FROM page.sysuser`），表名/列名一律全小写无下划线。
    唯一例外：`flownode` 表的 `X/Y/W/H` 四列必须大写。
 4. **404 语义统一**：资源不存在抛 `ResourceNotFoundException`（全局处理器处理），

@@ -26,7 +26,7 @@ public class TransferOrderController {
     @PostMapping("/search")
     public ApiResponse<PageResult<TransferOrder>> searchByQuery(@RequestBody TransferOrderQuery query) {
         PageParam p = PageParam.of(query.getPage(), query.getPageSize());
-        return ApiResponse.success(transferOrderService.search(query, p.offset(), p.size()));
+        return ApiResponse.success(transferOrderService.search(query, p.page0(), p.size()));
     }
 
     @GetMapping("/list")
@@ -34,7 +34,7 @@ public class TransferOrderController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         PageParam p = PageParam.of(page, size);
-        return ApiResponse.success(transferOrderService.listPaged(p.offset(), p.size()));
+        return ApiResponse.success(transferOrderService.listPaged(p.page0(), p.size()));
     }
 
     @PostMapping("/save")

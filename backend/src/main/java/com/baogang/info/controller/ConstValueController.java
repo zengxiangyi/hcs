@@ -26,7 +26,7 @@ public class ConstValueController {
     @PostMapping("/search")
     public ApiResponse<PageResult<ConstValue>> search(@Valid @RequestBody ConstValueQuery query) {
         PageParam p = PageParam.of(query.getPage(), query.getPageSize());
-        return ApiResponse.success(constValueService.search(query, p.offset(), p.size()));
+        return ApiResponse.success(constValueService.search(query, p.page0(), p.size()));
     }
 
     @GetMapping("/{id}")

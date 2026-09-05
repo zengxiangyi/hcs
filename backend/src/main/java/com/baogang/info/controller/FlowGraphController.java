@@ -25,7 +25,7 @@ public class FlowGraphController {
     @PostMapping("/search")
     public ApiResponse<PageResult<FlowGraph>> list(@RequestBody GraphQuery query) {
         PageParam p = PageParam.of(query.getPage(), query.getPageSize());
-        return ApiResponse.success(flowGraphService.listPaged(p.offset(), p.size()));
+        return ApiResponse.success(flowGraphService.listPaged(p.page0(), p.size()));
     }
 
     @GetMapping("/{id}")

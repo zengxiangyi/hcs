@@ -161,7 +161,7 @@ public interface ${Name}Mapper {
 </mapper>
 ```
 
-规则：表名硬编码 `page.` 前缀；列名全小写；分页 `LIMIT #{offset}, #{limit}`（0 基偏移由 Service 传入）。
+规则：表名硬编码 `page.` 前缀；列名全小写；分页 `LIMIT #{offset}, #{limit}`（偏移由 Service 用 `(long) pageOffset * size` 算出）。
 
 ## Service类
 
@@ -268,7 +268,7 @@ public class ${Name}Controller {
     @PostMapping("/search")
     public ApiResponse<PageResult<${Name}>> searchByQuery(@RequestBody ${Name}Query query) {
         PageParam p = PageParam.of(query.getPage(), query.getPageSize());
-        return ApiResponse.success(${name}Service.search(query, p.offset(), p.size()));
+        return ApiResponse.success(${name}Service.search(query, p.page0(), p.size()));
     }
 
     @GetMapping("/{id}")

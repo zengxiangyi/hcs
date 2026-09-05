@@ -3,16 +3,19 @@ package com.baogang.info.common;
 /**
  * 分页参数归一结果，供 Controller 入口统一使用。
  * <p>
- * 契约页码为 1 基（前端与响应一致），而 Service/MyBatis 按 0 基偏移拼 LIMIT、
- * JPA 的 PageRequest 也是 0 基，故转换只在这里做一次，Controller 一律取 {@link #offset()}。
+ * 契约页码为 1 基（前端请求与响应一致），<b>Service 一律按 0 基页码工作</b>：
+ * JPA 侧直接 {@code PageRequest.of(p, size)}，
+ * MyBatis 侧由 Service 自行 {@code (long) p * size} 得到 LIMIT 偏移。
+ * 转换只在这里做一次，Controller 一律取 {@link #page0()} 传给 Service，
+ * Service 返回 PageResult 时再 +1 还原为契约 1 基页码。
  */
 public record PageParam(int page, int size) {
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
 
-    /** 0 基偏移，直接传给 Service 拼 LIMIT / PageRequest */
-    public int offset() {
+    /** 0 基页码（= 契约页码 - 1），直接传给 Service */
+    public int page0() {
         return page - 1;
     }
 

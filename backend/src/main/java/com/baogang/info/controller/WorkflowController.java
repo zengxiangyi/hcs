@@ -32,7 +32,7 @@ public class WorkflowController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         PageParam p = PageParam.of(page, size);
-        return ApiResponse.success(workflowService.listPaged(p.offset(), p.size()));
+        return ApiResponse.success(workflowService.listPaged(p.page0(), p.size()));
     }
 
     @GetMapping("/{id}")
@@ -85,11 +85,12 @@ public class WorkflowController {
 
     // 我发起的
     @GetMapping("/sender")
-    public ApiResponse<PageResult<Workflow>> sender(){
+    public ApiResponse<PageResult<Workflow>> sender(@Valid @RequestBody WorkflowQuery query){
         // 查询员工工号
         String user= UserInfo.currentUsername();
         if(StringTool.isNotBlank(user)){
-            return ApiResponse.success(workflowService.findBySender(user,0,30));
+            PageParam p = PageParam.of(query.getPage(), query.getPageSize());
+            return ApiResponse.success(workflowService.findBySender(user, p.page0(), p.size()));
         }
         return ApiResponse.success(null);
     }
@@ -106,9 +107,7 @@ public class WorkflowController {
                 query.setDealUser(user);
                 query.setRoleCode(roles.get(0));
                 PageParam p = PageParam.of(query.getPage(), query.getPageSize());
-                query.setPage(p.page());
-                query.setPageSize(p.size());
-                return ApiResponse.success(workflowService.todo(query, p.page(), p.size()));
+                return ApiResponse.success(workflowService.todo(query, p.page0(), p.size()));
             }
         }
         return ApiResponse.success(null);
@@ -122,9 +121,7 @@ public class WorkflowController {
         if(StringTool.isNotBlank(user)){
             query.setDealUser(user);
             PageParam p = PageParam.of(query.getPage(), query.getPageSize());
-            query.setPage(p.page());
-            query.setPageSize(p.size());
-            return ApiResponse.success(workflowService.done(query, p.page(), p.size()));
+            return ApiResponse.success(workflowService.done(query, p.page0(), p.size()));
         }
         return ApiResponse.success(null);
     }
