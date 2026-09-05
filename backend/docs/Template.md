@@ -235,7 +235,7 @@ public class ${Name}Service {
 规则：
 
 - 不存在一律抛 `ResourceNotFoundException`（→ 400），不返回 null、不手写 404 code。
-- search 的 `pageOffset` 是 0 基，返回时 `pageOffset + 1` 还原 1 基响应。
+- search 的 `pageOffset` 是 0 基页码，返回时 `pageOffset + 1` 还原 1 基响应；LIMIT 偏移用 `(long) pageOffset * size` 算出。
 
 ## Controller类
 
