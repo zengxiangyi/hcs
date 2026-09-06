@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
-import { workflowAPI, type WorkflowRow } from '../../api/workflow'
+import { workflowAPI, type TodoRow } from '../../api/workflow'
 import { flowEngineAPI } from '../../api/flowEngine'
 
 defineOptions({ name: 'Todo' })
@@ -13,7 +13,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 }
 
 // 表格数据 + 分页
-const tableData = ref<WorkflowRow[]>([])
+const tableData = ref<TodoRow[]>([])
 const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -89,14 +89,14 @@ type ApproveMode = 'approve' | 'reject'
 // 审批对话框状态
 const dialogVisible = ref(false)
 const dialogMode = ref<ApproveMode>('approve')
-const currentRow = ref<WorkflowRow | null>(null)
+const currentRow = ref<TodoRow | null>(null)
 const approveNote = ref('')
 const submitting = ref(false)
 
 const dialogTitle = computed(() => (dialogMode.value === 'approve' ? '通过任务' : '驳回任务'))
 
 /** 打开审批对话框：先填写审批描述，确认后才发起请求 */
-function openApproveDialog(row: WorkflowRow, mode: ApproveMode) {
+function openApproveDialog(row: TodoRow, mode: ApproveMode) {
   currentRow.value = row
   dialogMode.value = mode
   approveNote.value = ''
@@ -122,7 +122,7 @@ async function submitApprove() {
   try {
     await flowEngineAPI.deal({
       workflow: row.code,
-      flowGraph: row.flowGraph,
+      flowGraph: row.flowgraph,
       edge: isApprove ? 'agree' : 'reject',
     })
     ElMessage.success(isApprove ? '已通过' : '已驳回')
@@ -146,7 +146,6 @@ onMounted(fetchData)
 
     <!-- 表格 -->
     <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
-      <el-table-column prop="id" v-if="false" label="ID" width="80" />
       <el-table-column prop="code" label="任务编号" min-width="140" />
       <el-table-column prop="name" label="任务名称" min-width="160" />
       <el-table-column prop="category" label="分类" min-width="120">
@@ -154,19 +153,20 @@ onMounted(fetchData)
           {{ formatCategory(row.category) }}
         </template>
       </el-table-column>
+      <el-table-column prop="nodeName" label="当前节点" min-width="140" />
       <el-table-column prop="sender" label="发起人" min-width="120" />
-      <el-table-column prop="startTime" label="发起时间" min-width="180" />
+      <el-table-column prop="beginTime" label="发起时间" min-width="180" />
       <el-table-column prop="state" label="状态" min-width="100">
         <template #default="{ row }">
           <el-tag :type="formatStateType(row.state)">{{ formatStateLabel(row.state) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="flowGraph" v-if="false" label="流程图编号" min-width="140" />
+      <el-table-column prop="flowgraph" v-if="false" label="流程图编号" min-width="140" />
       <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" type="success" @click="openApproveDialog(row as WorkflowRow, 'approve')">同意</el-button>
-          <el-button size="small" type="danger" @click="openApproveDialog(row as WorkflowRow, 'reject')">驳回</el-button>
+          <el-button size="small" type="success" @click="openApproveDialog(row as TodoRow, 'approve')">同意</el-button>
+          <el-button size="small" type="danger" @click="openApproveDialog(row as TodoRow, 'reject')">驳回</el-button>
         </template>
       </el-table-column>
     </el-table>

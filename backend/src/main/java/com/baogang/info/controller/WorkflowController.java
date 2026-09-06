@@ -3,6 +3,7 @@ package com.baogang.info.controller;
 import com.baogang.info.common.ApiResponse;
 import com.baogang.info.common.PageParam;
 import com.baogang.info.common.PageResult;
+import com.baogang.info.common.Todo;
 import com.baogang.info.dto.WorkflowQuery;
 import com.baogang.info.entity.Workflow;
 import com.baogang.info.exception.ResourceNotFoundException;
@@ -97,7 +98,7 @@ public class WorkflowController {
     }
     // 我的代办
     @PostMapping("/todo")
-    public ApiResponse<PageResult<Workflow>> todo(@Valid @RequestBody WorkflowQuery query){
+    public ApiResponse<PageResult<Todo>> todo(@Valid @RequestBody WorkflowQuery query){
         // 查询员工工号
         String user= UserInfo.currentUsername();
         if(StringTool.isNotBlank(user)){

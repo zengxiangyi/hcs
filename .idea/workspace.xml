@@ -5,17 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/Todo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-06.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-06.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowEngineController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowEngineController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/FlowEdgeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/repository/FlowEdgeRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowEdgeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowEdgeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/mapper/WorkflowMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/mapper/WorkflowMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/WorkflowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/WorkflowService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api/flowEngine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/flowEngine.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/api/workflow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/workflow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/done.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/done.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/todo.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/todo.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -32,6 +29,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>

@@ -24,8 +24,48 @@ export interface WorkflowQuery {
   pageSize?: number
 }
 
+/** 待办行（对齐后端 common.Todo）。字段全部来自 WorkflowMapper.queryTodo 的 SELECT 列映射，均为字符串。
+ *  JSON key 与 Java 字段名一致：starttime（节点等待开始）/ beginTime（流程发起时间）区分，
+ *  flowgraph（流程图编号）/ flownode（节点编码）均为小写。 */
+export interface TodoRow {
+  /** 流程实例 code（= workflow.code，当前待办所属流程） */
+  workflow: string
+  /** 流程图编号 */
+  flowgraph: string
+  /** 流程节点编码 */
+  flownode: string
+  /** 节点开始等待时间（flowcurrent.starttime） */
+  starttime: string
+  /** 备注（flowcurrent.remark） */
+  remark: string
+  /** 节点名称（flowNode.name） */
+  nodeName: string
+  /** 操作人分类 */
+  operator: string
+  /** 角色列表 */
+  rolelist: string
+  /** 用户列表 */
+  userlist: string
+  /** 流程编号（workflow.code） */
+  code: string
+  /** 流程名称 */
+  name: string
+  /** 流程分类 */
+  category: string
+  /** 目标对象 ID */
+  targetcode: string
+  /** 发起人 */
+  sender: string
+  /** 发起时间（workflow.starttime） */
+  beginTime: string
+  /** 流程状态 */
+  state: string
+}
+
 /** 分页返回 */
 export type WorkflowListResult = PageResult<WorkflowRow>
+/** 待办分页返回（/workflow/todo 返回 PageResult<Todo>） */
+export type TodoListResult = PageResult<TodoRow>
 
 /** 流程实例接口（WorkflowController /workflow） */
 export const workflowAPI = {
@@ -50,8 +90,8 @@ export const workflowAPI = {
     http.post<WorkflowListResult | null>('/api/workflow/sender', query),
 
   /** 我的待办（POST 请求体查询；用户无角色时 data 可能为 null） */
-  todo: (query?: WorkflowQuery): Promise<ApiResponse<WorkflowListResult | null>> =>
-    http.post<WorkflowListResult | null>('/api/workflow/todo', query),
+  todo: (query?: WorkflowQuery): Promise<ApiResponse<TodoListResult | null>> =>
+    http.post<TodoListResult | null>('/api/workflow/todo', query),
 
   /** 我的已办（POST 请求体查询；用户无角色时 data 可能为 null） */
   done: (query?: WorkflowQuery): Promise<ApiResponse<WorkflowListResult | null>> =>

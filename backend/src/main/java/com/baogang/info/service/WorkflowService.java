@@ -1,6 +1,7 @@
 package com.baogang.info.service;
 
 import com.baogang.info.common.PageResult;
+import com.baogang.info.common.Todo;
 import com.baogang.info.dto.WorkflowQuery;
 import com.baogang.info.entity.Workflow;
 import com.baogang.info.exception.ResourceNotFoundException;
@@ -103,15 +104,14 @@ public class WorkflowService {
         return PageResult.of(content, total, pageOffset + 1, size);
     }
 
-    public PageResult<Workflow> todo(WorkflowQuery query, int pageOffset, int size) {
+    public PageResult<Todo> todo(WorkflowQuery query, int pageOffset, int size) {
         long total = workflowMapper.countTodo(query);
-        List<Workflow> content = workflowMapper.queryTodo(query, (long) pageOffset * size, size);
+        List<Todo> content = workflowMapper.queryTodo(query, (long) pageOffset * size, size);
         return PageResult.of(content, total, pageOffset + 1, size);
     }
 
     @Transactional
     public String changeState(String code,String state){
-
         int rows=workflowRepository.updateState(state,code);
         if(rows==0){
             throw new ResourceNotFoundException("workflow not found: " + code);
