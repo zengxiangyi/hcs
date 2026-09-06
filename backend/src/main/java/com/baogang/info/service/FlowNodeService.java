@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FlowNodeService {
@@ -50,9 +51,9 @@ public class FlowNodeService {
 
     @Transactional
     public FlowNode update(FlowNode flowNode) {
-        List<FlowNode> oldData = getByFlowGraphAndCode(flowNode.getFlowGraph(),flowNode.getCode());
-        if(CollectionTool.isNotEmpty(oldData)) {
-            FlowNode existing = oldData.get(0);
+        Optional<FlowNode> oldData = flowNodeRepository.findById(flowNode.getId());
+        if(oldData.isPresent()) {
+            FlowNode existing = oldData.get();
             existing.setCode(flowNode.getCode());
             existing.setName(flowNode.getName());
             existing.setCategory(flowNode.getCategory());

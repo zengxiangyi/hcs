@@ -19,10 +19,10 @@ export interface FlowNode {
    * 坐标/尺寸（JSON 键为小写 x/y/w/h——Java 属性名来自 getX() 等标准 getter；
    * 大写 X/Y/W/H 仅是 DB 列名）。前端读写必须用小写。
    */
-  x: string
-  y: string
-  w: string
-  h: string
+  X: string
+  Y: string
+  W: string
+  H: string
   /** 节点颜色 */
   color: string
   /** 操作人 */

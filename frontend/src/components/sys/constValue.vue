@@ -16,6 +16,7 @@ interface ConstValueForm {
 
 const loading = ref(false)
 const tableData = ref<ConstValueRow[]>([])
+const selectedRows = ref<ConstValueRow[]>([])
 const categoryMap=ref<{key:string,value:string}[]>([])
 
 const query = ref({ code: '', name: '', category: '' })
@@ -105,6 +106,29 @@ function handleDelete(row: ConstValueRow) {
     .catch(() => {})
 }
 
+function handleSelectionChange(rows: ConstValueRow[]) {
+  selectedRows.value = rows
+}
+
+async function handleBatchDelete() {
+  if (!selectedRows.value.length) {
+    ElMessage.warning('请先选择要删除的常量值')
+    return
+  }
+  const names = selectedRows.value.map((r) => r.name).join('、')
+  ElMessageBox.confirm(`确认删除选中的 ${selectedRows.value.length} 条常量值（${names}）？`, '提示', { type: 'warning' })
+    .then(async () => {
+      try {
+        await Promise.all(selectedRows.value.map((r) => constValueAPI.remove(r.id)))
+        ElMessage.success('批量删除成功')
+        refresh()
+      } catch (e) {
+        ElMessage.error((e as Error).message || '批量删除失败')
+      }
+    })
+    .catch(() => {})
+}
+
 function handleSave() {
   if (!formRef.value) return
   formRef.value.validate(async (valid) => {
@@ -160,7 +184,8 @@ onMounted(() => {
       <el-button type="primary" @click="handleAdd">新增</el-button>
     </div>
 
-    <el-table :data="tableData" border stripe style="width: 100%">
+    <el-table :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="id" label="id" v-if="false" width="80" />
       <el-table-column prop="code" label="编码" min-width="120" />
       <el-table-column prop="name" label="名称" min-width="140" />
