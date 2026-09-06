@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api/flowNode.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/flowNode.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/sys/constValue.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/sys/constValue.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/workflow/draw.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/workflow/draw.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/workflow/instance.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/workflow/instance.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,38 +142,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/FlowNodeController.java</url>
-          <line>52</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java</url>
-          <line>53</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java</url>
-          <line>57</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java</url>
-          <line>59</line>
-          <option name="timeStamp" value="24" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java</url>
-          <line>60</line>
-          <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/FlowNodeService.java</url>
-          <line>55</line>
-          <option name="timeStamp" value="26" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint enabled="true" type="javascript-exception" />
       </default-breakpoints>

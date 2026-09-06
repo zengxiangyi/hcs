@@ -182,6 +182,7 @@ onMounted(() => {
 
     <div class="toolbar">
       <el-button type="primary" @click="handleAdd">新增</el-button>
+      <el-button type="danger" :disabled="!selectedRows.length" @click="handleBatchDelete">批量删除</el-button>
     </div>
 
     <el-table :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">

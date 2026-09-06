@@ -123,17 +123,17 @@ async function renderCanvas() {
   const DEFAULT_W = 120
   const DEFAULT_H = 60
   const positions = nodes.value.map((n) => ({
-    x: parsePoint(n.x, 50),
-    y: parsePoint(n.y, 50),
-    w: parseNum(n.w, DEFAULT_W),
-    h: parseNum(n.h, DEFAULT_H),
+    x: parsePoint(n.X, 50),
+    y: parsePoint(n.Y, 50),
+    w: parseNum(n.W, DEFAULT_W),
+    h: parseNum(n.H, DEFAULT_H),
   }))
 
   let WIDTH = 0
   let HEIGHT = 0
   positions.forEach((p) => {
-    WIDTH = Math.max(WIDTH, p.x + p.w)
-    HEIGHT = Math.max(HEIGHT, p.y + p.h)
+    WIDTH = Math.max(WIDTH, p.X + p.W)
+    HEIGHT = Math.max(HEIGHT, p.Y + p.H)
   })
   WIDTH += PAD
   HEIGHT += PAD
@@ -183,10 +183,10 @@ function traceNodePath(ctx: CanvasRenderingContext2D, node: FlowNode, x: number,
 
 /** 绘制节点（支持透明度参数） */
 function renderNode(ctx: CanvasRenderingContext2D, node: FlowNode, DEFAULT_W: number, DEFAULT_H: number, alpha = 1.0) {
-  const x = parsePoint(node.x, 50)
-  const y = parsePoint(node.y, 50)
-  const w = parseNum(node.w, DEFAULT_W)
-  const h = parseNum(node.h, DEFAULT_H)
+  const x = parsePoint(node.X, 50)
+  const y = parsePoint(node.Y, 50)
+  const w = parseNum(node.W, DEFAULT_W)
+  const h = parseNum(node.H, DEFAULT_H)
   const text = node.name || node.code || '-'
   const color = node.color || '#409EFF'
 
@@ -233,7 +233,7 @@ type AxisPoint = { x: number; y: number }
 /** 将 edge.axis（坐标点对象数组 [{x,y},...]）过滤为有效坐标点数组，无法解析时返回空数组 */
 function parseAxis(axis: Array<{ x: number; y: number }>| undefined): AxisPoint[] {
   if (!Array.isArray(axis)) return []
-  return axis.filter((p) => p && Number.isFinite(p.x) && Number.isFinite(p.y))
+  return axis.filter((p) => p && Number.isFinite(p.X) && Number.isFinite(p.Y))
 }
 
 /** 将 edge.axis（JSON 字符串）解析为有效坐标点数组，非法 JSON 或缺失时返回空数组 */
@@ -272,15 +272,15 @@ function renderEdge(
   const toNode = nodes.find((n) => n.code === edge.toNode)
   if (!fromNode || !toNode) return
 
-  const fromW = parseNum(fromNode.w, DEFAULT_W)
-  const fromH = parseNum(fromNode.h, DEFAULT_H)
-  const toH = parseNum(toNode.h, DEFAULT_H)
+  const fromW = parseNum(fromNode.W, DEFAULT_W)
+  const fromH = parseNum(fromNode.H, DEFAULT_H)
+  const toH = parseNum(toNode.H, DEFAULT_H)
 
   // 起点取 from 节点右边缘中点，终点取 to 节点左边缘中点
-  const startX = parsePoint(fromNode.x, 50) + fromW
-  const startY = parsePoint(fromNode.y, 50) + fromH / 2
-  const endX = parsePoint(toNode.x, 50)
-  const endY = parsePoint(toNode.y, 50) + toH / 2
+  const startX = parsePoint(fromNode.X, 50) + fromW
+  const startY = parsePoint(fromNode.Y, 50) + fromH / 2
+  const endX = parsePoint(toNode.X, 50)
+  const endY = parsePoint(toNode.Y, 50) + toH / 2
 
   const color = edge.color || '#67C23A'
   // 使用 axis 折线坐标（若有），否则绘制直线
@@ -288,8 +288,8 @@ function renderEdge(
   // 绘制连线路径
   ctx.beginPath()
   if (points.length > 0) {
-    ctx.moveTo(points[0].x, points[0].y)
-    points.forEach((point) => ctx.lineTo(point.x, point.y))
+    ctx.moveTo(points[0].X, points[0].Y)
+    points.forEach((point) => ctx.lineTo(point.X, point.Y))
   } else {
     ctx.moveTo(startX, startY)
     ctx.lineTo(endX, endY)
@@ -303,7 +303,7 @@ function renderEdge(
     const len = points.length
     const bef = points[len - 2]
     const last = points[len - 1]
-    drawArrow(ctx, bef.x, bef.y, last.x, last.y, color)
+    drawArrow(ctx, bef.X, bef.Y, last.X, last.Y, color)
   } else {
     drawArrow(ctx, startX, startY, endX, endY, color)
   }
@@ -313,8 +313,8 @@ function renderEdge(
     let labelY = (startY + endY) / 2
     if (points.length > 0) {
       const mid = points[Math.floor(points.length / 2)]
-      labelX = mid.x
-      labelY = mid.y -10
+      labelX = mid.X
+      labelY = mid.Y -10
     }
     ctx.save()
     ctx.font = '12px Arial'
