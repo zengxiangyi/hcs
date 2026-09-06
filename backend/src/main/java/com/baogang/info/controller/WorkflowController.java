@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/workflow")
@@ -124,6 +125,18 @@ public class WorkflowController {
             return ApiResponse.success(workflowService.done(query, p.page0(), p.size()));
         }
         return ApiResponse.success(null);
+    }
+
+    @PostMapping("/changeState")
+    public ApiResponse<String> done(@Valid @RequestBody Map<String,String> param){
+        // 查询参数
+        String code=param.get("code");
+        String state=param.get("state");
+        if(StringTool.isNotBlank(code)&&StringTool.isNotBlank(state)){
+            String result=workflowService.changeState(code,state);
+            return ApiResponse.success(result);
+        }
+        return ApiResponse.error(400,"参数错误");
     }
 
 }

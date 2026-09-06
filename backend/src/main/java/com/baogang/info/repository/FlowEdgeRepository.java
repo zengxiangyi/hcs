@@ -2,6 +2,7 @@ package com.baogang.info.repository;
 
 import com.baogang.info.entity.FlowEdge;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,4 +30,7 @@ public interface FlowEdgeRepository extends JpaRepository<FlowEdge, Long> {
     void deleteByFlowGraphAndFromNode(String flowGraph, String fromNode);
 
     void deleteByFlowGraphAndToNode(String flowGraph, String toNode);
+
+    @Query("select e from FlowEdge e where e.flowGraph = ?1 and e.fromNode = ?2 and e.cond = ?3")
+    List<FlowEdge> findEdges(String flowGraph, String fromNode, String cond);
 }

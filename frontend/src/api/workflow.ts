@@ -37,6 +37,10 @@ export const workflowAPI = {
   update: (data: WorkflowRow): Promise<ApiResponse<WorkflowRow>> =>
     http.put<WorkflowRow>('/api/workflow/update', data),
 
+    /** 编辑流程实例（id 必填，常用于变更状态） */
+  changeState: (data: {code: string, state: string}): Promise<ApiResponse<string>> =>
+    http.post<string>('/api/workflow/changeState', data),
+
   /** 删除流程实例（按 id） */
   remove: (id: number): Promise<ApiResponse<null>> =>
     http.delete<null>(`/api/workflow/${id}`),

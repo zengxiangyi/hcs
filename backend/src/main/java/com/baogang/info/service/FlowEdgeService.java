@@ -2,6 +2,7 @@ package com.baogang.info.service;
 
 import com.baogang.info.common.PageResult;
 import com.baogang.info.entity.FlowEdge;
+import com.baogang.info.entity.FlowNode;
 import com.baogang.info.exception.ResourceNotFoundException;
 import com.baogang.info.repository.FlowEdgeRepository;
 import com.baogang.info.tool.CollectionTool;
@@ -93,4 +94,9 @@ public class FlowEdgeService {
     public List<FlowEdge> findByFlowGraph(String flowGraph) {
         return flowEdgeRepository.findByFlowGraph(flowGraph);
     }
+
+    public List<FlowEdge> findEdges(String flowGraph, String fromNode, String cond){
+        return flowEdgeRepository.findEdges(flowGraph,fromNode,cond);
+    }
+
 }

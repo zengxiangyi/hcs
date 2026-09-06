@@ -32,7 +32,8 @@ public class FlowEngineController {
 
         flowEngine.dealNode(params.get("workflow"),
                             params.get("flowGraph"),
-                            params.get("edge"));
+                            params.get("fromNode"),
+                            params.get("cond"));
         return ApiResponse.success("success");
     }
 
@@ -40,6 +41,12 @@ public class FlowEngineController {
     public ApiResponse<Map<String,Object>> current(@PathVariable String flowGraph){
         Map<String,Object> data=flowEngine.getFlowGraph(flowGraph);
         return ApiResponse.success(data);
+    }
+
+    @PostMapping("/cancel")
+    public ApiResponse<String> cancel(@RequestBody Map<String, String> params){
+        flowEngine.cancel(params.get("workflow"),params.get("reason"));
+        return ApiResponse.success("success");
     }
 
 }

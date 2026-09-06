@@ -41,11 +41,10 @@ const formatCategory = createTextFormatter(categoryMap)
  * 如需调整状态项或配色，直接修改此对象即可。
  */
 const stateMap: Record<string, { label: string; type: TagType }> = {
-  S: { label: '暂停', type: 'warning' },
-  E: { label: '结束', type: 'success' },
-  D: { label: '处理中', type:'primary' },
-  C: { label: '取消', type: 'info' },
-  R: { label: '作废', type: 'danger' },
+  S: { label: '待处理', type: 'primary' },
+  E: { label: '已结束', type: 'success' },
+  C: { label: '已取消', type: 'info' },
+  D: { label: '处理中', type: 'danger' },
 }
 
 /** 根据状态 key 取展示文本 / tag 类型，未匹配时文本回退原值、类型回退 warning（公共方法生成） */

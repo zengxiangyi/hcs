@@ -109,4 +109,14 @@ public class WorkflowService {
         return PageResult.of(content, total, pageOffset + 1, size);
     }
 
+    @Transactional
+    public String changeState(String code,String state){
+
+        int rows=workflowRepository.updateState(state,code);
+        if(rows==0){
+            throw new ResourceNotFoundException("workflow not found: " + code);
+        }
+        return "success";
+    }
+
 }

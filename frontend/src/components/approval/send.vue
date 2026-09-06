@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
 import { workflowAPI, type WorkflowRow } from '../../api/workflow'
+import { flowEngineAPI } from '../../api/flowEngine'
 
 defineOptions({ name: 'Send' })
 
@@ -50,11 +51,10 @@ const formatCategory = createTextFormatter(categoryMap)
  * 如需调整状态项或配色，直接修改此对象即可。
  */
 const stateMap: Record<string, { label: string; type: TagType }> = {
-  S: { label: '暂停', type: 'warning' },
-  E: { label: '结束', type: 'success' },
-  D: { label: '处理中', type:'primary' },
-  C: { label: '取消', type: 'info' },
-  R: { label: '作废', type: 'danger' },
+  S: { label: '待处理', type: 'primary' },
+  E: { label: '已结束', type: 'success' },
+  C: { label: '已取消', type: 'info' },
+  D: { label: '处理中', type: 'danger' },
 }
 
 /** 根据状态 key 取展示文本 / tag 类型，未匹配时文本回退原值、类型回退 warning（公共方法生成） */
@@ -102,34 +102,22 @@ function handleSizeChange() {
   fetchData()
 }
 
-async function handleCancel(row: WorkflowRow){
-  // 撤销：后端无 /approve 端点，走 PUT /workflow/update 变更状态为 C（已取消）
+function handleCancel(code: string){
+  // 弹出对话框输入撤销原因
+  ElMessageBox.prompt('请输入撤销原因', '撤销', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+  }).then(({ value }) => {
+    cancelTask(code, value)
+  }).catch(() => {
+    ElMessage.info('已取消')
+  })
+}
+
+async function cancelTask(code: string,reason: string){
   try {
-    await workflowAPI.update({ ...row, state: 'C' })
+    await flowEngineAPI.cancel({ workflow: code, reason: reason })
     ElMessage.success('已撤销')
-    fetchData()
-  } catch (err) {
-    ElMessage.error(getErrorMessage(err, '操作失败'))
-  }
-}
-
-async function handleClose(row: WorkflowRow){
-  // 作废：变更状态为 D
-  row.state='D'
-  try {
-    await workflowAPI.update(row)
-    ElMessage.success('完成')
-    fetchData()
-  } catch (err) {
-    ElMessage.error(getErrorMessage(err, '操作失败'))
-  }
-}
-
-async function handleDrop(row: WorkflowRow){
-  // 删除流程实例（DELETE /workflow/{id}）
-  try {
-    await workflowAPI.remove(row.id)
-    ElMessage.success('已删除')
     fetchData()
   } catch (err) {
     ElMessage.error(getErrorMessage(err, '操作失败'))
@@ -198,9 +186,7 @@ onMounted(fetchData)
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-button size="small" type="success" @click="seeProcess(row as WorkflowRow)">查看</el-button>
-          <el-button size="small" v-if="row.state==='A'" type="warning" @click="handleCancel(row as WorkflowRow)">撤销</el-button>
-          <el-button size="small" v-if="row.state==='C'" type="warning" @click="handleClose(row as WorkflowRow)">作废</el-button>
-          <el-button size="small" v-if="row.state==='D'" type="warning" @click="handleDrop(row as WorkflowRow)">删除</el-button>
+          <el-button size="small" v-if="row.state==='A'" type="warning" @click="handleCancel(row.code)">撤销</el-button>
         </template>
       </el-table-column>
     </el-table>

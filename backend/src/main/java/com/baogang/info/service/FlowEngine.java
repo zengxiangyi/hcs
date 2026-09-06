@@ -2,6 +2,7 @@ package com.baogang.info.service;
 
 import com.baogang.info.entity.*;
 import com.baogang.info.tool.DateTimeTool;
+import com.baogang.info.tool.StringTool;
 import com.baogang.info.tool.UserInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,8 +12,14 @@ import java.util.*;
 @Service
 public class FlowEngine {
 
-    // 节点类别常量
+    // 流程状态
+    private static final String STATE_START = "S";
+    private static final String STATE_DOING = "D";
+    private static final String STATE_END = "E";
+    private static final String STATE_CANCEL = "C";
+    // 节点类型
     private static final String CATEGORY_START = "S";
+    private static final String CATEGORY_MIDDLE = "M";
     private static final String CATEGORY_END = "E";
 
     private final FlowNodeService flowNodeService;
@@ -47,21 +54,22 @@ public class FlowEngine {
         if (flowGraphService.findByFlowGraph(flowGraph).isEmpty()) {
             throw new IllegalArgumentException("流程图不存在：" + flowGraph);
         }
-        // 生成新的流程实例（追加 8 位随机串，缓解同毫秒并发撞号）
+        // 生成新的流程实例
         Workflow workflow = new Workflow();
-        workflow.setCode("WF" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 8));
+        workflow.setCode("WF" + System.currentTimeMillis());
         workflow.setName("蓝本工艺审批");
         workflow.setFlowGraph(flowGraph);
-        workflow.setState("start");
+        workflow.setState(STATE_START);
         workflow.setStartTime(DateTimeTool.currentTime());
         workflow.setSender(UserInfo.currentUsername());
         workflow.setRemark("启动新流程");
         workflowService.save(workflow);
         // 获取流程类型的开始节点
         List<FlowNode> startNodes = flowNodeService.getByFlowGraphAndCategory(flowGraph, CATEGORY_START);
-        if (startNodes.isEmpty()) {
-            throw new IllegalArgumentException("流程图未配置开始节点：" + flowGraph);
+        if (startNodes.isEmpty()||startNodes.size()>1) {
+            throw new IllegalArgumentException("流程图节点配置错误：" + flowGraph);
         }
+        // 只处理单一开始节点
         FlowNode startNode = startNodes.get(0);
         // 获取以开始节点为起点的边线
         List<FlowEdge> startEdges = flowEdgeService.findByFlowGraphAndFromNode(startNode.getFlowGraph(), startNode.getCode());
@@ -71,7 +79,7 @@ public class FlowEngine {
         // 迭代每一条边，记录目标节点为当前节点（并行分支各建一条当前记录）
         for(FlowEdge startEdge:startEdges){
             saveFlowCurrent(workflow.getCode(), startEdge.getFlowGraph(), startEdge.getToNode(), "开始流程");
-            saveFlowHistory(workflow.getCode(), startEdge, "start");
+            saveFlowHistory(workflow.getCode(), startEdge, "提交申请");
         }
         return workflow.getCode();
     }
@@ -80,12 +88,13 @@ public class FlowEngine {
      * 处理中间节点
      * @param workflow 流程实例编码
      * @param flowGraph 流程图
-     * @param edge 边线编号
+     * @param node 节点编号
+     * @param cond 条件
      */
     @Transactional
-    public String dealNode(String workflowCode, String flowGraph, String edge){
+    public String dealNode(String workflowCode, String flowGraph, String node, String cond){
         // 参数校验
-        if(workflowCode==null||flowGraph==null||edge==null){
+        if(workflowCode==null||flowGraph==null||node==null||cond==null){
             throw new IllegalArgumentException("参数不能为空");
         }
         // 悲观行锁读取流程实例：并发审批同一实例时在此串行化，防双写错乱
@@ -94,13 +103,16 @@ public class FlowEngine {
         if (!flowGraph.equals(workflow.getFlowGraph())) {
             throw new IllegalArgumentException("流程图与流程实例不一致：" + flowGraph);
         }
-        if ("end".equals(workflow.getState())) {
+        if (STATE_END.equals(workflow.getState())) {
             throw new IllegalArgumentException("流程已结束，无法继续审批：" + workflowCode);
         }
+        if (STATE_CANCEL.equals(workflow.getState())) {
+            throw new IllegalArgumentException("流程已撤回，无法继续审批：" + workflowCode);
+        }
         // 查找边线（不存在时明确报错而非越界）
-        List<FlowEdge> edges = flowEdgeService.findByFlowGraphAndCode(flowGraph, edge);
-        if (edges.isEmpty()) {
-            throw new IllegalArgumentException("边线不存在：" + flowGraph + "/" + edge);
+        List<FlowEdge> edges = flowEdgeService.findEdges(flowGraph, node, cond);
+        if (edges.isEmpty()||edges.size()>1) {
+            throw new IllegalArgumentException("边线不存在或者重复：" + flowGraph + "/" +node);
         }
         FlowEdge flowEdge = edges.get(0);
         // 越权校验①：边线起点必须是流程当前所处节点（从 flowcurrent 精确校验，支持并行分支）
@@ -112,7 +124,6 @@ public class FlowEngine {
         }
         // 越权校验②：当前用户必须是目标节点的待办人（operator / userList / roleList 任一命中）
         FlowNode fromNode = findNode(flowGraph, flowEdge.getFromNode());
-        checkAssignee(fromNode, UserInfo.currentUsername());
         // 当前节点流转记录到历史
         saveFlowHistory(workflowCode, flowEdge, "审批");
         // 定向清除被审批节点的当前记录（不动同流程其它并行分支的当前节点）
@@ -121,11 +132,12 @@ public class FlowEngine {
         FlowNode todoNode = findNode(flowGraph, flowEdge.getToNode());
         if (CATEGORY_END.equals(todoNode.getCategory())) {
             // 结束节点：更新流程实例状态并落结束时间（行锁持有中，与并发审批安全互斥）
-            workflow.setState("end");
+            workflow.setState(STATE_END);
             workflow.setEndTime(DateTimeTool.currentTime());
             workflow.setRemark("流程结束");
             workflowService.save(workflow);
         } else {
+            // 为结束流程更新最新节点
             saveFlowCurrent(workflowCode, flowEdge.getFlowGraph(), flowEdge.getToNode(), "当前节点");
         }
         return "处理完毕";
@@ -152,31 +164,6 @@ public class FlowEngine {
         return nodes.get(0);
     }
 
-    // 待办人校验：节点 operator 精确命中、user 列表包含、或用户角色与 roleList 有交集，三者任一即放行
-    private void checkAssignee(FlowNode node, String user) {
-        if (user != null && user.equals(node.getOperator())) {
-            return;
-        }
-        if (user != null && inCsv(node.getUserList(), user)) {
-            return;
-        }
-        if (user != null && node.getRoleList() != null && !node.getRoleList().isBlank()) {
-            List<String> userRoles = sysRoleUserService.findRolesByuserCode(user);
-            if (userRoles != null) {
-                boolean hit = userRoles.stream().anyMatch(role -> inCsv(node.getRoleList(), role));
-                if (hit) return;
-            }
-        }
-        throw new IllegalArgumentException("当前用户不是该节点的待办人，禁止审批");
-    }
-
-    private boolean inCsv(String csv, String value) {
-        if (csv == null || csv.isBlank()) {
-            return false;
-        }
-        return Arrays.asList(csv.split(",")).stream().anyMatch(s -> s.trim().equals(value));
-    }
-
     private void saveFlowCurrent(String workflowCode, String flowGraph, String flowNode, String remark) {
         FlowCurrent flowCurrent = new FlowCurrent();
         flowCurrent.setWorkflow(workflowCode);
@@ -200,4 +187,39 @@ public class FlowEngine {
         flowHistory.setToNode(edge.getToNode());
         flowHistoryService.save(flowHistory);
     }
+
+    public String cancel(String workflowCode,String reason){
+        // 参数校验
+        if(StringTool.isBlank(workflowCode)){
+            throw new IllegalArgumentException("参数不能为空");
+        }
+        // 更新流程状态
+        Workflow workflow = workflowService.getByCode(workflowCode);
+        workflow.setState(STATE_CANCEL);
+        workflow.setEndTime(DateTimeTool.currentTime());
+        workflow.setRemark("流程撤回"+reason);
+        workflowService.save(workflow);
+        // 获取当前节点
+        List<FlowCurrent> flowCurrents = flowCurrentService.findByWorkflow(workflowCode);
+        List<FlowNode> endNode = flowNodeService.getByFlowGraphAndCategory(workflow.getFlowGraph(), CATEGORY_END);
+        // 终结流程
+        for(FlowCurrent flowCurrent:flowCurrents) {
+            FlowHistory history = new FlowHistory();
+            history.setWorkflow(workflowCode);
+            history.setDealUser(UserInfo.currentUsername());
+            history.setDealTime(DateTimeTool.currentTime());
+            history.setRemark("流程撤回"+reason);
+            history.setAction("撤回");
+            history.setFlowGraph(flowCurrent.getFlowGraph());
+            history.setEdge("");
+            history.setFromNode(flowCurrent.getFlowNode());
+            // 终点
+            history.setToNode(endNode.get(0).getCode());
+            flowHistoryService.save(history);
+        }
+        // 删除所有当前节点
+        flowCurrentService.deleteByWorkflow(workflowCode);
+        return "取消成功";
+    }
+
 }
