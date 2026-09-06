@@ -65,7 +65,7 @@ async function fetchData() {
   loading.value = true
   try {
     // 后端 GET /sender 不接收查询参数，处理人取自当前登录用户，固定返回前 30 条
-    const res = await workflowAPI.sender()
+    const res = await workflowAPI.sender({ page: currentPage.value, pageSize: pageSize.value })
     // 用户无实例时后端可能返回 data: null
     const data = res.data
     if (!data) {

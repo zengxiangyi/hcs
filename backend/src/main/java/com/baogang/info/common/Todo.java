@@ -4,11 +4,11 @@ public class Todo {
     // 流程实例
     private String workflow;
     // 流程图编号
-    private String flowgraph;
+    private String flowGraph;
     // 流程节点
-    private String flownode;
+    private String flowNode;
     // 开始时间
-    private String starttime;
+    private String startTime;
     // 备注
     private String remark;
     // 节点名称
@@ -16,9 +16,9 @@ public class Todo {
     // 操作人分类
     private String operator;
     // 角色列表
-    private String rolelist;
+    private String roleList;
     // 用户列表
-    private String userlist;
+    private String userList;
     // 流程编号
     private String code;
     // 流程名称
@@ -26,7 +26,7 @@ public class Todo {
     // 流程分类
     private String category;
     // 目标对象ID
-    private String targetcode;
+    private String targetCode;
     // 发起人
     private String sender;
     // 发起时间
@@ -40,30 +40,6 @@ public class Todo {
 
     public void setWorkflow(String workflow) {
         this.workflow = workflow;
-    }
-
-    public String getFlowgraph() {
-        return flowgraph;
-    }
-
-    public void setFlowgraph(String flowgraph) {
-        this.flowgraph = flowgraph;
-    }
-
-    public String getFlownode() {
-        return flownode;
-    }
-
-    public void setFlownode(String flownode) {
-        this.flownode = flownode;
-    }
-
-    public String getStarttime() {
-        return starttime;
-    }
-
-    public void setStarttime(String starttime) {
-        this.starttime = starttime;
     }
 
     public String getRemark() {
@@ -90,22 +66,6 @@ public class Todo {
         this.operator = operator;
     }
 
-    public String getRolelist() {
-        return rolelist;
-    }
-
-    public void setRolelist(String rolelist) {
-        this.rolelist = rolelist;
-    }
-
-    public String getUserlist() {
-        return userlist;
-    }
-
-    public void setUserlist(String userlist) {
-        this.userlist = userlist;
-    }
-
     public String getCode() {
         return code;
     }
@@ -120,14 +80,6 @@ public class Todo {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getTargetcode() {
-        return targetcode;
-    }
-
-    public void setTargetcode(String targetcode) {
-        this.targetcode = targetcode;
     }
 
     public String getSender() {
@@ -160,5 +112,53 @@ public class Todo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getFlowGraph() {
+        return flowGraph;
+    }
+
+    public void setFlowGraph(String flowGraph) {
+        this.flowGraph = flowGraph;
+    }
+
+    public String getFlowNode() {
+        return flowNode;
+    }
+
+    public void setFlowNode(String flowNode) {
+        this.flowNode = flowNode;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(String roleList) {
+        this.roleList = roleList;
+    }
+
+    public String getUserList() {
+        return userList;
+    }
+
+    public void setUserList(String userList) {
+        this.userList = userList;
+    }
+
+    public String getTargetCode() {
+        return targetCode;
+    }
+
+    public void setTargetCode(String targetCode) {
+        this.targetCode = targetCode;
     }
 }

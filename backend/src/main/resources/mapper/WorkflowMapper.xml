@@ -44,14 +44,33 @@
         <include refid="Query_Done"/>
     </select>
 
-    <select id="queryTodo" resultType="com.baogang.info.common.Todo">
+    <resultMap id="TodoMap" type="com.baogang.info.common.Todo">
+        <result column="workflow" property="workflow"/>
+        <result column="flowgraph" property="flowGraph"/>
+        <result column="flownode" property="flowNode"/>
+        <result column="starttime" property="startTime"/>
+        <result column="remark" property="remark"/>
+        <result column="nodename" property="nodeName"/>
+        <result column="operator" property="operator"/>
+        <result column="rolelist" property="roleList"/>
+        <result column="userlist" property="userList"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="category" property="category"/>
+        <result column="targetcode" property="targetCode"/>
+        <result column="sender" property="sender"/>
+        <result column="begintime" property="beginTime"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <select id="queryTodo" resultMap="TodoMap">
         SELECT a.workflow,a.flowgraph,a.flownode,a.starttime,a.remark,
-        c.name as nodeName,c.operator,c.rolelist,c.userlist,
+        c.name as nodename,c.operator,c.rolelist,c.userlist,
         b.code,b.name,b.category,b.targetcode,b.sender,
-        b.starttime as beginTime,b.state
+        b.starttime as begintime,b.state
         FROM page.flowcurrent a,page.workflow b,page.flowNode c
         where a.workflow=b.code and a.flowgraph=c.flowgraph and a.flownode=c.code
-        and ((c.rolelist like concat ('%',#{q.dealUser},'%') and c.category='R') or ( c.userList like concat ('%',#{q.dealUser},'%') and c.category='U'))
+        and ((c.rolelist like concat ('%',#{q.roleCode},'%') and c.operator='R') or ( c.userList like concat ('%',#{q.dealUser},'%') and c.operator='U'))
         ORDER BY a.starttime DESC
         LIMIT #{offset}, #{limit}
     </select>
@@ -60,7 +79,7 @@
         SELECT COUNT(1)
         FROM page.flowcurrent a,page.workflow b,page.flowNode c
         where a.workflow=b.code and a.flowgraph=c.flowgraph and a.flownode=c.code
-        and ((c.rolelist like concat ('%',#{q.dealUser},'%') and c.category='R') or ( c.userList like concat ('%',#{q.dealUser},'%') and c.category='U'))
+        and ((c.rolelist like concat ('%',#{q.roleCode},'%') and c.operator='R') or ( c.userList like concat ('%',#{q.dealUser},'%') and c.operator='U'))
     </select>
 
 </mapper>

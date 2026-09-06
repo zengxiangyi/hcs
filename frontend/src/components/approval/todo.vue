@@ -2,15 +2,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { createTextFormatter, createStateFormatter, type TagType } from '../../utils/enum'
-import { workflowAPI, type TodoRow } from '../../api/workflow'
+import { workflowAPI, type TodoRow, type WorkflowRow } from '../../api/workflow'
 import { flowEngineAPI } from '../../api/flowEngine'
+import { useRouter } from 'vue-router'
 
 defineOptions({ name: 'Todo' })
-
-/** 从 catch 的错误对象中提取用户可读信息 */
-function getErrorMessage(err: unknown, fallback: string): string {
-  return err instanceof Error && err.message ? err.message : fallback
-}
+const router = useRouter()
 
 // 表格数据 + 分页
 const tableData = ref<TodoRow[]>([])
@@ -47,6 +44,25 @@ const stateMap: Record<string, { label: string; type: TagType }> = {
 
 /** 根据状态 key 取展示文本 / tag 类型，未匹配时文本回退原值、类型回退 warning（公共方法生成） */
 const { label: formatStateLabel, type: formatStateType } = createStateFormatter(stateMap)
+
+const operatorMap: Record<string, { label: string; type: TagType }> = {
+  R: { label: '角色', type: 'primary' },
+  U: { label: '人员', type: 'success' },
+}
+
+/** 根据状态 key 取展示文本 / tag 类型，未匹配时文本回退原值、类型回退 warning（公共方法生成） */
+const { label: operatorLabel, type: operatorType } = createStateFormatter(operatorMap)
+
+
+/** 从 catch 的错误对象中提取用户可读信息 */
+function getErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error && err.message ? err.message : fallback
+}
+
+// 查看：携带流程编号跳转到 instance.vue
+function seeProcess(row: WorkflowRow) {
+  router.push({ name: 'Instance', query: { workflow: row.code } })
+}
 
 // 拉取列表（dealUser/roleCode 由后端按当前登录用户覆盖，前端只传分页参数）
 async function fetchData() {
@@ -122,7 +138,7 @@ async function submitApprove() {
   try {
     await flowEngineAPI.deal({
       workflow: row.code,
-      flowGraph: row.flowgraph,
+      flowGraph: row.flowGraph,
       edge: isApprove ? 'agree' : 'reject',
     })
     ElMessage.success(isApprove ? '已通过' : '已驳回')
@@ -144,7 +160,7 @@ onMounted(fetchData)
 
     <!-- 查询区：后端 WorkflowQuery 暂只支持分页，时间/编号过滤待后端补齐后恢复 -->
 
-    <!-- 表格 -->
+    <!-- 表格（字段对齐后端 common.Todo / WorkflowMapper.queryTodo 返回列） -->
     <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
       <el-table-column prop="code" label="任务编号" min-width="140" />
       <el-table-column prop="name" label="任务名称" min-width="160" />
@@ -153,20 +169,32 @@ onMounted(fetchData)
           {{ formatCategory(row.category) }}
         </template>
       </el-table-column>
+      <el-table-column prop="targetCode" v-if="false" label="目标编号" min-width="140" />
+      <el-table-column prop="flowNode" label="节点编号" min-width="100" />
       <el-table-column prop="nodeName" label="当前节点" min-width="140" />
-      <el-table-column prop="sender" label="发起人" min-width="120" />
-      <el-table-column prop="beginTime" label="发起时间" min-width="180" />
+      <el-table-column prop="startTime" label="开始时间" min-width="180" />
       <el-table-column prop="state" label="状态" min-width="100">
         <template #default="{ row }">
           <el-tag :type="formatStateType(row.state)">{{ formatStateLabel(row.state) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="flowgraph" v-if="false" label="流程图编号" min-width="140" />
-      <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
-      <el-table-column label="操作" width="160" fixed="right">
+      <el-table-column prop="operator" label="处理人类型" min-width="120">
         <template #default="{ row }">
+          <el-tag :type="operatorType(row.operator)">{{ operatorLabel(row.operator) }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="roleList" label="角色" min-width="100" />
+      <el-table-column prop="userList" label="人员" min-width="100" />
+      <el-table-column prop="flowGraph" label="流程图编号" min-width="100" />
+      <el-table-column prop="sender" label="发起人" min-width="120" />
+      <el-table-column prop="beginTime" label="发起时间" min-width="180" />
+      <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
+      <el-table-column label="操作" width="250" fixed="right">
+        <template #default="{ row }">
+          <el-button size="small" type="warning" @click="openApproveDialog(row as TodoRow, 'approve')">审核</el-button>
           <el-button size="small" type="success" @click="openApproveDialog(row as TodoRow, 'approve')">同意</el-button>
           <el-button size="small" type="danger" @click="openApproveDialog(row as TodoRow, 'reject')">驳回</el-button>
+          <el-button size="small" type="info" @click="seeProcess(row as WorkflowRow)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>

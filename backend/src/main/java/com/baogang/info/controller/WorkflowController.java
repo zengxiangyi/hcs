@@ -86,7 +86,7 @@ public class WorkflowController {
 
 
     // 我发起的
-    @GetMapping("/sender")
+    @PostMapping("/sender")
     public ApiResponse<PageResult<Workflow>> sender(@Valid @RequestBody WorkflowQuery query){
         // 查询员工工号
         String user= UserInfo.currentUsername();

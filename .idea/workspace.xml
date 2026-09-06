@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/Todo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-06.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-06.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/Todo.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/Todo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/mapper/WorkflowMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/mapper/WorkflowMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/WorkflowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/service/WorkflowService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/components.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/api/workflow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/workflow.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/todo.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/todo.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -144,20 +144,9 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/TaskProcessController.java</url>
-          <line>49</line>
-          <log-expression expression="        one.setBlueprint(bindMap.get(&quot;blueprint&quot;));&#10;" language="JAVA" mode="CODE_FRAGMENT" />
-          <placement>INTER_LINE</placement>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/com/baogang/info/entity/FlowGraph.java</url>
-          <line>21</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-      </breakpoints>
+      <default-breakpoints>
+        <breakpoint enabled="true" type="javascript-exception" />
+      </default-breakpoints>
     </breakpoint-manager>
   </component>
 </project>

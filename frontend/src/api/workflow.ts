@@ -25,17 +25,17 @@ export interface WorkflowQuery {
 }
 
 /** 待办行（对齐后端 common.Todo）。字段全部来自 WorkflowMapper.queryTodo 的 SELECT 列映射，均为字符串。
- *  JSON key 与 Java 字段名一致：starttime（节点等待开始）/ beginTime（流程发起时间）区分，
- *  flowgraph（流程图编号）/ flownode（节点编码）均为小写。 */
+ *  JSON key 与 Java 属性名一致（camelCase）：startTime（节点等待开始）/ beginTime（流程发起时间）区分，
+ *  flowGraph（流程图编号）/ flowNode（节点编码）。 */
 export interface TodoRow {
   /** 流程实例 code（= workflow.code，当前待办所属流程） */
   workflow: string
   /** 流程图编号 */
-  flowgraph: string
+  flowGraph: string
   /** 流程节点编码 */
-  flownode: string
+  flowNode: string
   /** 节点开始等待时间（flowcurrent.starttime） */
-  starttime: string
+  startTime: string
   /** 备注（flowcurrent.remark） */
   remark: string
   /** 节点名称（flowNode.name） */
@@ -43,9 +43,9 @@ export interface TodoRow {
   /** 操作人分类 */
   operator: string
   /** 角色列表 */
-  rolelist: string
+  roleList: string
   /** 用户列表 */
-  userlist: string
+  userList: string
   /** 流程编号（workflow.code） */
   code: string
   /** 流程名称 */
@@ -53,7 +53,7 @@ export interface TodoRow {
   /** 流程分类 */
   category: string
   /** 目标对象 ID */
-  targetcode: string
+  targetCode: string
   /** 发起人 */
   sender: string
   /** 发起时间（workflow.starttime） */
