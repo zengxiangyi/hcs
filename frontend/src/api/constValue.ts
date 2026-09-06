@@ -50,4 +50,9 @@ export const constValueAPI = {
     http.put<ConstValueRow>('/api/constValue/update', { ...data, id }),
   /** 删除常量值 */
   remove: (id: number) => http.delete<null>(`/api/constValue/${id}`),
+
+  /** 按分类查询 */
+  queryByCategory: (category: string) =>
+    http.get<ConstValueRow[]>(`/api/constValue/category/${category}`),
+
 }

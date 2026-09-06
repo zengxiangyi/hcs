@@ -16,6 +16,8 @@ interface ConstValueForm {
 
 const loading = ref(false)
 const tableData = ref<ConstValueRow[]>([])
+const categoryMap=ref<{key:string,value:string}[]>([])
+
 const query = ref({ code: '', name: '', category: '' })
 
 // 服务端分页
@@ -26,6 +28,9 @@ const total = ref(0)
 async function refresh() {
   loading.value = true
   try {
+    const temp=await constValueAPI.queryByCategory('ROOT')
+    categoryMap.value=temp.data.map(item=>({key:item.code,value:item.name}))
+
     const res = await constValueAPI.search({
       code: query.value.code || undefined,
       name: query.value.name || undefined,
@@ -141,7 +146,9 @@ onMounted(() => {
         <el-input v-model="query.name" placeholder="名称" clearable style="width: 180px" />
       </el-form-item>
       <el-form-item label="分类">
-        <el-input v-model="query.category" placeholder="分类" clearable style="width: 140px" />
+        <el-select v-model="query.category" placeholder="分类" style="width: 140px">
+          <el-option v-for="item in categoryMap" :key="item.key" :label="item.value" :value="item.key" />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSearch">查询</el-button>
@@ -157,7 +164,12 @@ onMounted(() => {
       <el-table-column prop="id" label="id" v-if="false" width="80" />
       <el-table-column prop="code" label="编码" min-width="120" />
       <el-table-column prop="name" label="名称" min-width="140" />
-      <el-table-column prop="category" label="分类" min-width="100" />
+      <el-table-column prop="category" label="分类" min-width="120">
+        <template #default="{ row }">
+          {{ categoryMap.find((c) => c.key === (row as ConstValueRow).category)?.value || (row as ConstValueRow).category }}
+        </template>
+      </el-table-column>
+
       <el-table-column prop="mark" label="标记" min-width="220" show-overflow-tooltip />
       <el-table-column prop="remark" label="备注" min-width="180" show-overflow-tooltip />
       <el-table-column label="操作" width="160" fixed="right">
@@ -188,7 +200,9 @@ onMounted(() => {
           <el-input v-model="form.name" placeholder="请输入名称" />
         </el-form-item>
         <el-form-item label="分类" prop="category">
-          <el-input v-model="form.category" placeholder="如 基础 / 业务" />
+          <el-select v-model="form.category" placeholder="请选择分类">
+            <el-option v-for="item in categoryMap" :key="item.key" :label="item.value" :value="item.key" />
+          </el-select>
         </el-form-item>
         <el-form-item label="标记" prop="mark">
           <el-input v-model="form.mark" placeholder="取值说明，如 0-男 1-女" />

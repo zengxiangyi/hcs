@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb6339bc-946e-4f8b-b333-3034cfba818e" name="更改" comment="更新项目">
-      <change beforePath="$PROJECT_DIR$/.codebuddy/memory/2026-09-06.md" beforeDir="false" afterPath="$PROJECT_DIR$/.codebuddy/memory/2026-09-06.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/Todo.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/common/Todo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/baogang/info/controller/WorkflowController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/mapper/WorkflowMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/components.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api/workflow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/workflow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/send.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/approval/todo.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/approval/todo.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/constValue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/constValue.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/sys/constValue.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/sys/constValue.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
